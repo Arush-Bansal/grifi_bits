@@ -28,8 +28,10 @@ export async function generateVideo(image_url: string, prompt: string): Promise<
       },
     }) as { video: { url: string } };
     return result.video.url;
-  } catch (error: any) {
-    console.error("[MediaGen] Kling Video Error details:", error.data || error);
+  } catch (error: unknown) {
+    const errorDetails = error instanceof Error ? error.message : String(error);
+    const dataDetails = (error as { data?: unknown })?.data;
+    console.error("[MediaGen] Kling Video Error details:", dataDetails || errorDetails);
     throw error;
   }
 }

@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Loader2, Music2, Pencil, Subtitles, Trash2, UploadCloud, Video, X } from "lucide-react";
 import "@xzdarcy/react-timeline-editor/dist/react-timeline-editor.css";
 import StoryboardTimeline, { type StoryboardTimelineClip } from "@/components/timeline/storyboard-timeline";
@@ -15,17 +16,35 @@ import axios from "axios";
 
 type Step = 0 | 1 | 2 | 3;
 
-type Scene = {
+interface Scene {
   id: number;
   name: string;
   imagePrompt: string;
+  videoScript: string;
   audioPrompt: string;
   imagePreview?: string;
   videoUrl?: string;
   audioUrl?: string;
   mainReference?: string;
   secondaryReference?: string;
-};
+}
+
+interface SceneResult {
+  id: number;
+  imageUrl: string;
+  videoUrl: string;
+  audioUrl: string;
+}
+
+interface ProjectData {
+  productName: string;
+  description: string;
+  scenes: Scene[];
+  imageNames: string[];
+  captions: boolean;
+  music: string;
+  selectedReference?: string | null;
+}
 
 type ReferenceCard = {
   id: string;
@@ -80,14 +99,14 @@ const defaultReferences: ReferenceCard[] = [
 ];
 
 const defaultScenes: Scene[] = [
-  { id: 1, name: "Hook", imagePrompt: "Close up product + surprised face", audioPrompt: "I did not expect this to work" },
-  { id: 2, name: "Problem", imagePrompt: "Messy desk before use", audioPrompt: "My old setup was wasting time every day" },
-  { id: 3, name: "Discovery", imagePrompt: "User discovering product online", audioPrompt: "Then I found this simple fix" },
-  { id: 4, name: "Unbox", imagePrompt: "Hands opening package cleanly", audioPrompt: "Everything looked premium from the box" },
-  { id: 5, name: "Demo", imagePrompt: "Use product in bright natural room", audioPrompt: "Watch how fast this takes effect" },
-  { id: 6, name: "Result", imagePrompt: "Before/after split scene", audioPrompt: "You can see the difference right away" },
-  { id: 7, name: "Social Proof", imagePrompt: "Overlay positive ratings", audioPrompt: "Thousands already switched to this" },
-  { id: 8, name: "CTA", imagePrompt: "Product hero with brand color splash", audioPrompt: "Tap below and try it now" }
+  { id: 1, name: "Hook", imagePrompt: "Close up product + surprised face", videoScript: "I did not expect this to work", audioPrompt: "I did not expect this to work" },
+  { id: 2, name: "Problem", imagePrompt: "Messy desk before use", videoScript: "My old setup was wasting time every day", audioPrompt: "My old setup was wasting time every day" },
+  { id: 3, name: "Discovery", imagePrompt: "User discovering product online", videoScript: "Then I found this simple fix", audioPrompt: "Then I found this simple fix" },
+  { id: 4, name: "Unbox", imagePrompt: "Hands opening package cleanly", videoScript: "Everything looked premium from the box", audioPrompt: "Everything looked premium from the box" },
+  { id: 5, name: "Demo", imagePrompt: "Use product in bright natural room", videoScript: "Watch how fast this takes effect", audioPrompt: "Watch how fast this takes effect" },
+  { id: 6, name: "Result", imagePrompt: "Before/after split scene", videoScript: "You can see the difference right away", audioPrompt: "You can see the difference right away" },
+  { id: 7, name: "Social Proof", imagePrompt: "Overlay positive ratings", videoScript: "Thousands already switched to this", audioPrompt: "Thousands already switched to this" },
+  { id: 8, name: "CTA", imagePrompt: "Product hero with brand color splash", videoScript: "Tap below and try it now", audioPrompt: "Tap below and try it now" }
 ];
 
 const TIMELINE_DEFAULT_DURATION_SECONDS = 3;
@@ -142,7 +161,8 @@ const normalizeTimelineClips = (clips: StoryboardTimelineClip[]): StoryboardTime
   });
 };
 
-export default function CreatePage() {
+function CreatePageContent() {
+  const searchParams = useSearchParams();
   const [step, setStep] = useState<Step>(0);
   const [productName, setProductName] = useState("");
   const [productLink, setProductLink] = useState("");
@@ -157,6 +177,7 @@ export default function CreatePage() {
   const [timelineIsPlaying, setTimelineIsPlaying] = useState(false);
   const [captions, setCaptions] = useState(true);
   const [music, setMusic] = useState("ambient-glow");
+  const [projectId, setProjectId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [linkFeedback, setLinkFeedback] = useState("Paste a website, Amazon, or product page URL, then click Fetch.");
@@ -167,6 +188,32 @@ export default function CreatePage() {
   const [isAiAvatarLibraryOpen, setIsAiAvatarLibraryOpen] = useState(false);
   const [aiAvatars, setAiAvatars] = useState<string[]>([]);
   const [loadingAvatars, setLoadingAvatars] = useState(false);
+  const [editingImagePrompt, setEditingImagePrompt] = useState<Record<number, boolean>>({});
+
+  useEffect(() => {
+    const id = searchParams.get("id");
+    if (id) {
+      setProjectId(id);
+      axios.get(`/api/projects/${id}`)
+        .then(res => {
+          const project = res.data;
+          setProductName(project.product_name);
+          setDescription(project.product_description || "");
+          setScenes(
+            (project.scenes || defaultScenes).map((s: Scene) => ({
+              ...s,
+              videoScript: s.videoScript || ""
+            }))
+          );
+          setCaptions(project.captions_enabled ?? true);
+          setMusic(project.music_track || "ambient-glow");
+          if (project.scenes && project.scenes.length > 0) {
+            setTimelineClips(buildInitialTimelineClips(project.scenes));
+          }
+        })
+        .catch(err => console.error("Failed to fetch project:", err));
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     if (isAiAvatarLibraryOpen && aiAvatars.length === 0) {
@@ -214,7 +261,7 @@ export default function CreatePage() {
     setTimelineCurrentTime((prev) => Math.min(prev, timelineTotalDuration));
   }, [timelineTotalDuration]);
 
-  const updateScene = (sceneId: number, key: "imagePrompt" | "audioPrompt", value: string) => {
+  const updateScene = (sceneId: number, key: "imagePrompt" | "audioPrompt" | "videoScript", value: string) => {
     setScenes((prev) => prev.map((scene) => (scene.id === sceneId ? { ...scene, [key]: value } : scene)));
   };
 
@@ -225,6 +272,7 @@ export default function CreatePage() {
       setScenes((prev) =>
         prev.map((s) => (s.id === sceneId ? { ...s, imagePreview: data.imageUrl } : s))
       );
+      setEditingImagePrompt((prev) => ({ ...prev, [sceneId]: false }));
     } catch (error: unknown) {
       const axiosErr = error as { response?: { data?: { error?: string } }; message?: string };
       const message = axiosErr?.response?.data?.error || axiosErr.message || "Image generation failed.";
@@ -430,16 +478,27 @@ export default function CreatePage() {
       setReferences(nextReferences);
 
       // Map generated scenes
-      const nextScenes = data.SCENES.map((scene: { name: string; image_prompt: string; speech: string }, index: number) => ({
+      const nextScenes = data.SCENES.map((scene: { name: string; image_prompt: string; video_prompt: string; speech: string }, index: number) => ({
         id: index + 1,
         name: scene.name,
         imagePrompt: scene.image_prompt,
+        videoScript: scene.video_prompt,
         audioPrompt: scene.speech
       }));
       setScenes(nextScenes);
       setTimelineClips(buildInitialTimelineClips(nextScenes));
 
       setStep(1); // Advance to references
+
+      // Early save the project
+      saveProjectWithData({
+        productName,
+        description,
+        scenes: nextScenes,
+        imageNames: imageFiles.map((f) => f.name),
+        captions,
+        music
+      });
     },
     onError: (error: Error) => {
       const axiosError = error as { response?: { data?: { error?: string } } };
@@ -450,7 +509,10 @@ export default function CreatePage() {
   const generateMediaMutation = useMutation({
     mutationFn: async () => {
       const { data } = await axios.post("/api/generate-media", {
-        scenes,
+        scenes: scenes.map(s => ({
+          ...s,
+          videoPrompt: s.videoScript
+        })),
         references: Object.fromEntries(references.map((r) => [r.id, r.tagline])),
         voiceId: process.env.ELEVEN_LABS_VOICE_ID
       });
@@ -459,7 +521,7 @@ export default function CreatePage() {
     onSuccess: (data) => {
       // Update scenes with generated URLs
       setScenes((prev) => prev.map((scene) => {
-        const result = data.sceneResults.find((r: any) => r.id === scene.id);
+        const result = (data.sceneResults as SceneResult[]).find((r) => r.id === scene.id);
         if (result) {
           return {
             ...scene,
@@ -473,27 +535,35 @@ export default function CreatePage() {
       alert("Media generation complete!");
     },
     onError: (error: Error) => {
-      const axiosError = error as any;
+      const axiosError = error as { response?: { data?: { error?: string } } };
       alert(axiosError.response?.data?.error || "Failed to generate media.");
     }
   });
 
   const saveProject = async () => {
+    await saveProjectWithData({
+      productName,
+      description,
+      imageNames: imageFiles.map((file) => file.name),
+      selectedReference: null,
+      scenes,
+      captions,
+      music
+    });
+  };
+
+  const saveProjectWithData = async (data: ProjectData) => {
     setSaving(true);
     try {
-      await fetch("/api/projects", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          productName,
-          description,
-          imageNames: imageFiles.map((file) => file.name),
-          selectedReference: null,
-          scenes,
-          captions,
-          music
-        })
+      const res = await axios.post("/api/projects", {
+        ...data,
+        id: projectId || undefined
       });
+      if (res.data.projectId && !projectId) {
+        setProjectId(res.data.projectId);
+      }
+    } catch (err) {
+      console.error("Failed to save project:", err);
     } finally {
       setSaving(false);
     }
@@ -732,11 +802,11 @@ export default function CreatePage() {
                 Each row is one scene with editable prompts and read-only mock previews for start image and audio.
               </p>
               <div className="mesh-bg overflow-x-auto rounded-2xl border border-border/70 bg-background/70">
-                <div className="min-w-[1920px]">
-                  <div className="hidden grid-cols-[180px_minmax(320px,1fr)_240px_minmax(320px,1fr)_240px_200px_200px] border-b border-border/70 bg-secondary/40 text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground md:grid">
+                <div className="min-w-[2000px]">
+                  <div className="hidden grid-cols-[180px_minmax(320px,1fr)_minmax(400px,1.5fr)_minmax(320px,1fr)_240px_200px_200px] border-b border-border/70 bg-secondary/40 text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground md:grid">
                     <p className="border-r border-border/60 px-4 py-3">Scene</p>
-                    <p className="border-r border-border/60 px-4 py-3">Start Image Prompt</p>
-                    <p className="border-r border-border/60 px-4 py-3">Start Image Preview</p>
+                    <p className="border-r border-border/60 px-4 py-3">Video Script</p>
+                    <p className="border-r border-border/60 px-4 py-3">Start Image</p>
                     <p className="border-r border-border/60 px-4 py-3">Audio Script</p>
                     <p className="border-r border-border/60 px-4 py-3">Audio Preview</p>
                     <p className="border-r border-border/60 px-4 py-3">Main Reference</p>
@@ -758,7 +828,7 @@ export default function CreatePage() {
                     return (
                       <article
                         key={scene.id}
-                        className="grid gap-4 border-b border-border/60 bg-white/75 p-4 last:border-b-0 md:grid-cols-[180px_minmax(320px,1fr)_240px_minmax(320px,1fr)_240px_200px_200px] md:gap-0 md:p-0"
+                        className="grid gap-4 border-b border-border/60 bg-white/75 p-4 last:border-b-0 md:grid-cols-[180px_minmax(320px,1fr)_minmax(400px,1.5fr)_minmax(320px,1fr)_240px_200px_200px] md:gap-0 md:p-0"
                       >
                         <div className="md:border-r md:border-border/60 md:px-4 md:py-4">
                           <p className="text-xs uppercase tracking-[0.16em] text-primary">Scene {scene.id}</p>
@@ -767,61 +837,80 @@ export default function CreatePage() {
 
                         <div className="space-y-2 md:border-r md:border-border/60 md:px-4 md:py-4">
                           <div className="flex items-center justify-between">
-                            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground md:hidden">Start Image Prompt</p>
+                            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground md:hidden">Video Script</p>
                             <button type="button" className="inline-flex items-center gap-1 text-xs text-primary">
                               <Pencil className="h-3.5 w-3.5" /> Edit
                             </button>
                           </div>
                           <Textarea
-                            value={scene.imagePrompt}
-                            onChange={(e) => updateScene(scene.id, "imagePrompt", e.target.value)}
+                            value={scene.videoScript}
+                            onChange={(e) => updateScene(scene.id, "videoScript", e.target.value)}
                             className="min-h-[92px] bg-white"
                           />
                         </div>
 
-                        <div className="space-y-2 md:border-r md:border-border/60 md:px-4 md:py-4">
-                          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground md:hidden">Start Image Preview</p>
-                          <div className="overflow-hidden rounded-xl border border-border/60 bg-white">
-                            {scene.imagePreview ? (
-                              <>
-                                <button
-                                  type="button"
+                        <div className="relative space-y-2 md:border-r md:border-border/60 md:px-4 md:py-4">
+                          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground md:hidden">Start Image</p>
+                          
+                          {/* Image Box Container */}
+                          <div className="relative overflow-hidden rounded-xl border border-border/60 bg-white min-h-[142px]">
+                            {sceneGenerating[scene.id]?.image ? (
+                              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-white/90 backdrop-blur-sm">
+                                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                                <span className="mt-2 text-xs font-medium text-primary">Generating image…</span>
+                              </div>
+                            ) : null}
+
+                            {scene.imagePreview && !editingImagePrompt[scene.id] ? (
+                              <div className="relative group h-full min-h-[142px]">
+                                <Image 
+                                  src={scene.imagePreview} 
+                                  alt={`Scene ${scene.id} start image`} 
+                                  fill 
+                                  className="object-cover cursor-pointer hover:opacity-95 transition-opacity" 
                                   onClick={() => setLightboxImage(scene.imagePreview!)}
-                                  className="relative h-[110px] w-full block cursor-pointer hover:opacity-90 transition-opacity"
-                                >
-                                  <Image src={scene.imagePreview} alt={`Scene ${scene.id} start image preview`} fill className="object-cover" unoptimized />
-                                </button>
-                                <div className="border-t border-border/60 px-3 py-2 flex items-center justify-between">
-                                  <span className="text-[11px] uppercase tracking-[0.12em] text-muted-foreground">Actual Generation</span>
-                                  <button
-                                    type="button"
-                                    onClick={() => handleGenerateSceneImage(scene.id, scene.imagePrompt)}
-                                    disabled={sceneGenerating[scene.id]?.image}
-                                    className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
-                                  >
-                                    {sceneGenerating[scene.id]?.image ? <><Loader2 className="h-3 w-3 animate-spin" /> Generating…</> : "Regenerate"}
-                                  </button>
-                                </div>
-                              </>
-                            ) : (
-                              <>
+                                  unoptimized 
+                                />
                                 <button
                                   type="button"
-                                  onClick={() => handleGenerateSceneImage(scene.id, scene.imagePrompt)}
-                                  disabled={sceneGenerating[scene.id]?.image || !scene.imagePrompt.trim()}
-                                  className="flex h-[110px] w-full items-center justify-center bg-muted/40 px-3 text-center text-xs text-muted-foreground cursor-pointer hover:bg-primary/10 hover:text-primary transition-colors disabled:cursor-not-allowed disabled:opacity-60"
+                                  onClick={() => setEditingImagePrompt((prev) => ({ ...prev, [scene.id]: true }))}
+                                  className="absolute right-2 top-2 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-md opacity-0 transition-opacity group-hover:opacity-100 hover:bg-black/70"
+                                  title="Edit Prompt"
                                 >
-                                  {sceneGenerating[scene.id]?.image ? (
-                                    <span className="flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> Generating…</span>
-                                  ) : (
-                                    "Generate media to see preview"
-                                  )}
+                                  <Pencil className="h-4 w-4" />
                                 </button>
-                                <div className="flex items-center justify-between border-t border-border/60 px-3 py-2 text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
-                                  <span>No asset</span>
-                                  <span>Ready</span>
+                              </div>
+                            ) : (
+                              <div className="p-3 space-y-3">
+                                <div className="flex items-center justify-between">
+                                  <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Start Image Prompt</span>
+                                  {scene.imagePreview && (
+                                    <button 
+                                      type="button" 
+                                      onClick={() => setEditingImagePrompt((prev) => ({ ...prev, [scene.id]: false }))}
+                                      className="text-[10px] font-medium text-muted-foreground hover:text-foreground"
+                                    >
+                                      Cancel
+                                    </button>
+                                  )}
                                 </div>
-                              </>
+                                <Textarea
+                                  value={scene.imagePrompt}
+                                  onChange={(e) => updateScene(scene.id, "imagePrompt", e.target.value)}
+                                  placeholder="Describe the starting frame..."
+                                  className="min-h-[60px] text-xs resize-none border-dashed"
+                                />
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  className="h-8 w-full text-xs"
+                                  onClick={() => handleGenerateSceneImage(scene.id, scene.imagePrompt)}
+                                  disabled={!scene.imagePrompt.trim()}
+                                >
+                                  <Video className="mr-2 h-3.5 w-3.5" />
+                                  {scene.imagePreview ? "Regenerate" : "Generate Image"}
+                                </Button>
+                              </div>
                             )}
                           </div>
                         </div>
@@ -1089,22 +1178,32 @@ export default function CreatePage() {
             </div>
           )}
 
-          <div className="mt-8 flex items-center justify-between">
+          <div className="mt-8 flex items-center justify-between gap-4">
             <Button variant="outline" onClick={() => setStep((prev) => previousStepMap[prev])} disabled={step === 0}>
               Back
             </Button>
-            <Button
-              onClick={() => {
-                if (step === 0) {
-                  orchestrateMutation.mutate();
-                } else {
-                  setStep((prev) => nextStepMap[prev]);
-                }
-              }}
-              disabled={(step === 0 && (!productName || !description || orchestrateMutation.isPending)) || step === 3}
-            >
-              {step === 0 ? (orchestrateMutation.isPending ? "Generating Plan..." : "Generate AI Plan") : "Next"}
-            </Button>
+            <div className="flex items-center gap-3">
+              <Button
+                variant="outline"
+                className={cn((!projectId || step !== 0) && "hidden")}
+                onClick={() => setStep(1)}
+                disabled={orchestrateMutation.isPending}
+              >
+                Next
+              </Button>
+              <Button
+                onClick={() => {
+                  if (step === 0) {
+                    orchestrateMutation.mutate();
+                  } else {
+                    setStep((prev) => nextStepMap[prev]);
+                  }
+                }}
+                disabled={(step === 0 && (!productName || !description || orchestrateMutation.isPending)) || step === 3}
+              >
+                {step === 0 ? (orchestrateMutation.isPending ? "Generating Plan..." : projectId ? "Generate New Plan" : "Generate AI Plan") : "Next"}
+              </Button>
+            </div>
           </div>
         </section>
       </main>
@@ -1178,5 +1277,20 @@ export default function CreatePage() {
         </div>
       )}
     </>
+  );
+}
+
+export default function CreatePage() {
+  return (
+    <Suspense fallback={
+       <div className="flex min-h-screen items-center justify-center bg-background">
+         <div className="flex flex-col items-center gap-4">
+           <Loader2 className="h-8 w-8 animate-spin text-primary" />
+           <p className="text-sm text-muted-foreground font-medium animate-pulse uppercase tracking-widest">Initializing LabEnvironment...</p>
+         </div>
+       </div>
+    }>
+      <CreatePageContent />
+    </Suspense>
   );
 }

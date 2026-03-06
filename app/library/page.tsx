@@ -6,12 +6,23 @@ import { Plus, Video, Calendar, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
+type Scene = {
+  id: number;
+  name: string;
+  imagePrompt: string;
+  videoScript: string;
+  audioPrompt: string;
+  imagePreview?: string;
+  videoUrl?: string;
+  audioUrl?: string;
+};
+
 type Project = {
   id: string;
   product_name: string;
   product_description: string;
   created_at: string;
-  scenes: any[];
+  scenes: Scene[];
 };
 
 export default function LibraryPage() {
