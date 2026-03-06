@@ -164,6 +164,19 @@ export default function CreatePage() {
   const referenceObjectUrlsRef = useRef<string[]>([]);
   const [sceneGenerating, setSceneGenerating] = useState<Record<number, { image?: boolean; audio?: boolean }>>({});
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
+  const [isAiAvatarLibraryOpen, setIsAiAvatarLibraryOpen] = useState(false);
+  const [aiAvatars, setAiAvatars] = useState<string[]>([]);
+  const [loadingAvatars, setLoadingAvatars] = useState(false);
+
+  useEffect(() => {
+    if (isAiAvatarLibraryOpen && aiAvatars.length === 0) {
+      setLoadingAvatars(true);
+      axios.get("/api/ai-avatars")
+        .then(res => setAiAvatars(res.data.avatars || []))
+        .catch(err => console.error("Failed to fetch avatars:", err))
+        .finally(() => setLoadingAvatars(false));
+    }
+  }, [isAiAvatarLibraryOpen, aiAvatars.length]);
 
   useEffect(() => {
     const nextUrls = imageFiles.map((file) => URL.createObjectURL(file));
@@ -295,6 +308,23 @@ export default function CreatePage() {
         image: nextImageUrl
       }
     ]);
+  };
+
+  const addAiAvatarReference = (imageUrl: string) => {
+    const nextCount = customReferenceCount;
+    const nextReferenceId = `custom-${nextCount}`;
+
+    setCustomReferenceCount((prev) => prev + 1);
+    setReferences((prev) => [
+      ...prev,
+      {
+        id: nextReferenceId,
+        label: `AI Avatar ${nextCount}`,
+        tagline: "AI Generated Avatar",
+        image: imageUrl
+      }
+    ]);
+    setIsAiAvatarLibraryOpen(false);
   };
 
   const fetchLinkMutation = useMutation({
@@ -594,6 +624,19 @@ export default function CreatePage() {
                       <div className="group block w-full text-left">
                         <div className="relative h-44 w-full">
                           <Image src={reference.image} alt={reference.label} fill className="object-cover transition group-hover:scale-105" unoptimized />
+                          {reference.id.startsWith("custom-") && (
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setReferences((prev) => prev.filter((r) => r.id !== reference.id));
+                              }}
+                              className="absolute right-2 top-2 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-md transition-all hover:bg-destructive"
+                              title="Remove reference"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </button>
+                          )}
                         </div>
                         <div className="bg-white/90 p-4">
                           <Input
@@ -671,6 +714,13 @@ export default function CreatePage() {
                       e.target.value = "";
                     }}
                   />
+                </article>
+                <article className="overflow-hidden rounded-2xl border border-dashed border-primary/40 bg-white/60">
+                  <button onClick={() => setIsAiAvatarLibraryOpen(true)} type="button" className="flex min-h-[278px] w-full cursor-pointer flex-col items-center justify-center gap-2 p-4 text-center hover:bg-white/40">
+                    <span className="text-2xl">✨</span>
+                    <p className="text-sm font-semibold text-foreground">AI Avatar Library</p>
+                    <p className="text-xs text-muted-foreground">Select an AI avatar reference</p>
+                  </button>
                 </article>
               </div>
             </div>
@@ -1085,6 +1135,48 @@ export default function CreatePage() {
             </div>
           </div>
         )}
+
+      {isAiAvatarLibraryOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="relative w-full max-w-2xl rounded-xl bg-background p-6 shadow-xl">
+            <button
+              onClick={() => setIsAiAvatarLibraryOpen(false)}
+              className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+            >
+              <X className="h-4 w-4" />
+              <span className="sr-only">Close</span>
+            </button>
+            <div className="mb-4">
+              <h2 className="text-lg font-semibold">AI Avatar Library</h2>
+              <p className="text-sm text-muted-foreground">Select an avatar to use as a reference.</p>
+            </div>
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 max-h-[60vh] overflow-y-auto pr-2">
+              {loadingAvatars ? (
+                <div className="col-span-full py-8 text-center text-sm text-muted-foreground">Loading avatars...</div>
+              ) : aiAvatars.length === 0 ? (
+                <div className="col-span-full py-8 text-center text-sm text-muted-foreground">No avatars found in library.</div>
+              ) : (
+                aiAvatars.map((file, index) => (
+                  <button
+                    key={file}
+                    onClick={() => addAiAvatarReference(`/ai-avatars/${file}`)}
+                    className="group relative aspect-square overflow-hidden rounded-lg border border-border hover:border-primary focus:outline-none focus:ring-2 focus:ring-primary"
+                  >
+                    <Image
+                      src={`/ai-avatars/${file}`}
+                      alt={`AI Avatar ${index + 1}`}
+                      fill
+                      className="object-cover transition group-hover:scale-105"
+                      unoptimized
+                    />
+                    <div className="absolute inset-0 bg-primary/0 transition-colors group-hover:bg-primary/10" />
+                  </button>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
