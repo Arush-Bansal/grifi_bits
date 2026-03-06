@@ -5,15 +5,38 @@ import { ElevenLabsClient } from "elevenlabs";
 import fs from "fs";
 import path from "path";
 
-export async function generateImage(prompt: string): Promise<string> {
-  console.log(`[MediaGen] Generating image with Google Imagen: ${prompt.slice(0, 50)}...`);
-  const { image } = await aiGenerateImage({
-    model: google.image("imagen-4.0-generate-001"),
-    prompt,
-    aspectRatio: "9:16",
-  });
+export async function generateImage(prompt: string, mainRef?: string, secondaryRef?: string): Promise<string> {
+  console.log(`[MediaGen] Generating image with ${mainRef ? 'Gemini 2.0 Flash (with refs)' : 'Google Imagen'}: ${prompt.slice(0, 50)}...`);
+  
+  try {
+    // If references are provided, the user wants to use Gemini (interpreted from "gemini-2.5-flash-image")
+    if (mainRef || secondaryRef) {
+      const { image } = await aiGenerateImage({
+        model: google.image("gemini-2.5-flash-image"),
+        prompt: `${prompt}${mainRef ? ` (reference: ${mainRef})` : ""}${secondaryRef ? ` (secondary reference: ${secondaryRef})` : ""}`,
+        aspectRatio: "9:16",
+      });
+      return `data:image/png;base64,${image.base64}`;
+    }
 
-  return `data:image/png;base64,${image.base64}`;
+    const { image } = await aiGenerateImage({
+      model: google.image("imagen-4.0-generate-001"),
+      prompt,
+      aspectRatio: "9:16",
+    });
+
+    return `data:image/png;base64,${image.base64}`;
+  } catch (error) {
+    console.error("[MediaGen] Image Gen Error:", error);
+    // Fallback to gemini-2.5-flash-image if imagen fails, as requested
+    console.log("[MediaGen] Falling back to gemini-2.5-flash-image...");
+    const { image } = await aiGenerateImage({
+      model: google.image("gemini-2.5-flash-image"),
+      prompt,
+      aspectRatio: "9:16",
+    });
+    return `data:image/png;base64,${image.base64}`;
+  }
 }
 
 export async function generateVideo(image_url: string, prompt: string): Promise<string> {

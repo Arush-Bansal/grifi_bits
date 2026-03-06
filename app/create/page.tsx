@@ -189,6 +189,7 @@ function CreatePageContent() {
   const [aiAvatars, setAiAvatars] = useState<string[]>([]);
   const [loadingAvatars, setLoadingAvatars] = useState(false);
   const [editingImagePrompt, setEditingImagePrompt] = useState<Record<number, boolean>>({});
+  const [editingAudioPrompt, setEditingAudioPrompt] = useState<Record<number, boolean>>({});
 
   useEffect(() => {
     const id = searchParams.get("id");
@@ -265,10 +266,15 @@ function CreatePageContent() {
     setScenes((prev) => prev.map((scene) => (scene.id === sceneId ? { ...scene, [key]: value } : scene)));
   };
 
-  const handleGenerateSceneImage = async (sceneId: number, imagePrompt: string) => {
+  const handleGenerateSceneImage = async (sceneId: number, imagePrompt: string, mainRef?: string, secondaryRef?: string) => {
     setSceneGenerating((prev) => ({ ...prev, [sceneId]: { ...prev[sceneId], image: true } }));
     try {
-      const { data } = await axios.post("/api/preview-scene", { type: "image", imagePrompt });
+      const { data } = await axios.post("/api/preview-scene", { 
+        type: "image", 
+        imagePrompt,
+        mainReference: mainRef,
+        secondaryReference: secondaryRef
+      });
       setScenes((prev) =>
         prev.map((s) => (s.id === sceneId ? { ...s, imagePreview: data.imageUrl } : s))
       );
@@ -289,6 +295,7 @@ function CreatePageContent() {
       setScenes((prev) =>
         prev.map((s) => (s.id === sceneId ? { ...s, audioUrl: data.audioUrl } : s))
       );
+      setEditingAudioPrompt((prev) => ({ ...prev, [sceneId]: false }));
     } catch (error: unknown) {
       const axiosErr = error as { response?: { data?: { error?: string } }; message?: string };
       const message = axiosErr?.response?.data?.error || axiosErr.message || "Audio generation failed.";
@@ -802,33 +809,19 @@ function CreatePageContent() {
                 Each row is one scene with editable prompts and read-only mock previews for start image and audio.
               </p>
               <div className="mesh-bg overflow-x-auto rounded-2xl border border-border/70 bg-background/70">
-                <div className="min-w-[2000px]">
-                  <div className="hidden grid-cols-[180px_minmax(320px,1fr)_minmax(400px,1.5fr)_minmax(320px,1fr)_240px_200px_200px] border-b border-border/70 bg-secondary/40 text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground md:grid">
+                <div className="w-full">
+                  <div className="hidden grid-cols-[140px_1fr_1.2fr_1.2fr] border-b border-border/70 bg-secondary/40 text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground md:grid">
                     <p className="border-r border-border/60 px-4 py-3">Scene</p>
                     <p className="border-r border-border/60 px-4 py-3">Video Script</p>
                     <p className="border-r border-border/60 px-4 py-3">Start Image</p>
-                    <p className="border-r border-border/60 px-4 py-3">Audio Script</p>
-                    <p className="border-r border-border/60 px-4 py-3">Audio Preview</p>
-                    <p className="border-r border-border/60 px-4 py-3">Main Reference</p>
-                    <p className="px-4 py-3">Secondary Reference</p>
+                    <p className="px-4 py-3">Audio</p>
                   </div>
 
                   {scenes.map((scene) => {
-                    const trimmedAudio = scene.audioPrompt.trim();
-                    const audioPreviewText =
-                      trimmedAudio.length > 90 ? `${trimmedAudio.slice(0, 90)}...` : trimmedAudio || "No script yet";
-
-                    const handleSceneRefUpload = (sceneId: number, refKey: "mainReference" | "secondaryReference", files: FileList | null) => {
-                      const file = files?.[0];
-                      if (!file) return;
-                      const url = URL.createObjectURL(file);
-                      setScenes((prev) => prev.map((s) => (s.id === sceneId ? { ...s, [refKey]: url } : s)));
-                    };
-
                     return (
                       <article
                         key={scene.id}
-                        className="grid gap-4 border-b border-border/60 bg-white/75 p-4 last:border-b-0 md:grid-cols-[180px_minmax(320px,1fr)_minmax(400px,1.5fr)_minmax(320px,1fr)_240px_200px_200px] md:gap-0 md:p-0"
+                        className="grid gap-4 border-b border-border/60 bg-white/75 p-4 last:border-b-0 md:grid-cols-[140px_1fr_1.2fr_1.2fr] md:gap-0 md:p-0"
                       >
                         <div className="md:border-r md:border-border/60 md:px-4 md:py-4">
                           <p className="text-xs uppercase tracking-[0.16em] text-primary">Scene {scene.id}</p>
@@ -900,11 +893,47 @@ function CreatePageContent() {
                                   placeholder="Describe the starting frame..."
                                   className="min-h-[60px] text-xs resize-none border-dashed"
                                 />
+
+                                <div className="grid grid-cols-2 gap-2">
+                                  <div className="space-y-1">
+                                    <label className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Main Ref</label>
+                                    <select 
+                                      value={references.find(r => r.image === scene.mainReference)?.id || ""}
+                                      onChange={(e) => {
+                                        const ref = references.find(r => r.id === e.target.value);
+                                        setScenes(prev => prev.map(s => s.id === scene.id ? { ...s, mainReference: ref?.image } : s));
+                                      }}
+                                      className="w-full text-xs h-7 rounded border border-border bg-white px-1"
+                                    >
+                                      <option value="">None</option>
+                                      {references.map(r => (
+                                        <option key={r.id} value={r.id}>{r.label}</option>
+                                      ))}
+                                    </select>
+                                  </div>
+                                  <div className="space-y-1">
+                                    <label className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Sec Ref</label>
+                                    <select 
+                                      value={references.find(r => r.image === scene.secondaryReference)?.id || ""}
+                                      onChange={(e) => {
+                                        const ref = references.find(r => r.id === e.target.value);
+                                        setScenes(prev => prev.map(s => s.id === scene.id ? { ...s, secondaryReference: ref?.image } : s));
+                                      }}
+                                      className="w-full text-xs h-7 rounded border border-border bg-white px-1"
+                                    >
+                                      <option value="">None</option>
+                                      {references.map(r => (
+                                        <option key={r.id} value={r.id}>{r.label}</option>
+                                      ))}
+                                    </select>
+                                  </div>
+                                </div>
+
                                 <Button
                                   type="button"
                                   size="sm"
                                   className="h-8 w-full text-xs"
-                                  onClick={() => handleGenerateSceneImage(scene.id, scene.imagePrompt)}
+                                  onClick={() => handleGenerateSceneImage(scene.id, scene.imagePrompt, scene.mainReference, scene.secondaryReference)}
                                   disabled={!scene.imagePrompt.trim()}
                                 >
                                   <Video className="mr-2 h-3.5 w-3.5" />
@@ -915,113 +944,73 @@ function CreatePageContent() {
                           </div>
                         </div>
 
-                        <div className="space-y-2 md:border-r md:border-border/60 md:px-4 md:py-4">
-                          <div className="flex items-center justify-between">
-                            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground md:hidden">Audio Script</p>
-                            <button type="button" className="inline-flex items-center gap-1 text-xs text-primary">
-                              <Pencil className="h-3.5 w-3.5" /> Edit
-                            </button>
-                          </div>
-                          <Textarea
-                            value={scene.audioPrompt}
-                            onChange={(e) => updateScene(scene.id, "audioPrompt", e.target.value)}
-                            className="min-h-[92px] bg-white"
-                          />
-                        </div>
+                        <div className="relative space-y-2 md:px-4 md:py-4">
+                          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground md:hidden">Audio</p>
+                          
+                          {/* Audio Box Container */}
+                          <div className="relative overflow-hidden rounded-xl border border-border/60 bg-white min-h-[142px]">
+                            {sceneGenerating[scene.id]?.audio ? (
+                              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-white/90 backdrop-blur-sm">
+                                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                                <span className="mt-2 text-xs font-medium text-primary">Generating audio…</span>
+                              </div>
+                            ) : null}
 
-                        <div className="space-y-2 md:px-4 md:py-4">
-                          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground md:hidden">Audio Preview</p>
-                          <div className="rounded-xl border border-border/60 bg-white p-3">
-                            <div className="flex items-center justify-between text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
-                              <span>{scene.audioUrl ? "Actual Audio" : "No Audio"}</span>
-                              <span>{scene.audioUrl ? "Generated" : "Pending"}</span>
-                            </div>
-                            <p className="mt-2 text-sm text-foreground">{audioPreviewText}</p>
-                            {scene.audioUrl && (
-                              <audio key={scene.audioUrl} controls src={scene.audioUrl} className="mt-2 h-8 w-full" />
-                            )}
-                            <button
-                              type="button"
-                              onClick={() => handleGenerateSceneAudio(scene.id, scene.audioPrompt)}
-                              disabled={sceneGenerating[scene.id]?.audio || !scene.audioPrompt.trim()}
-                              className="mt-3 w-full rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-xs font-medium text-primary hover:bg-primary/15 transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 flex items-center justify-center gap-2"
-                            >
-                              {sceneGenerating[scene.id]?.audio ? (
-                                <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Generating…</>
-                              ) : scene.audioUrl ? (
-                                "Regenerate Audio"
-                              ) : (
-                                "Generate Audio"
-                              )}
-                            </button>
-                            <div className="mt-3 grid grid-cols-6 items-end gap-1">
-                              {[35, 58, 42, 70, 50, 66].map((height, barIndex) => (
-                                <div key={`${scene.id}-audio-bar-${barIndex}`} className="rounded-sm bg-primary/55" style={{ height: `${height}%` }} />
-                              ))}
-                            </div>
-                          </div>
-                        </div>
+                            {scene.audioUrl && !editingAudioPrompt[scene.id] ? (
+                              <div className="relative group p-3 h-full min-h-[142px] flex flex-col justify-between">
+                                <div>
+                                  <div className="flex items-center justify-between text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
+                                    <span>Actual Audio</span>
+                                    <span>Generated</span>
+                                  </div>
+                                  <p className="mt-2 text-xs text-foreground line-clamp-3">{scene.audioPrompt}</p>
+                                </div>
+                                
+                                <div className="mt-2">
+                                  <audio key={scene.audioUrl} controls src={scene.audioUrl} className="h-8 w-full" />
+                                </div>
 
-                        <div className="space-y-2 md:border-l md:border-border/60 md:px-4 md:py-4">
-                          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground md:hidden">Main Reference</p>
-                          <div className="overflow-hidden rounded-xl border border-border/60 bg-white">
-                            {scene.mainReference ? (
-                              <>
                                 <button
                                   type="button"
-                                  onClick={() => setLightboxImage(scene.mainReference!)}
-                                  className="relative h-[110px] w-full block cursor-pointer hover:opacity-90 transition-opacity"
+                                  onClick={() => setEditingAudioPrompt((prev) => ({ ...prev, [scene.id]: true }))}
+                                  className="absolute right-2 top-2 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-md opacity-0 transition-opacity group-hover:opacity-100 hover:bg-black/70"
+                                  title="Edit Script"
                                 >
-                                  <Image src={scene.mainReference} alt={`Scene ${scene.id} main reference`} fill className="object-cover" unoptimized />
+                                  <Pencil className="h-4 w-4" />
                                 </button>
-                                <div className="border-t border-border/60 px-3 py-2 flex items-center justify-between">
-                                  <span className="text-[11px] uppercase tracking-[0.12em] text-muted-foreground">Uploaded</span>
-                                  <label htmlFor={`main-ref-${scene.id}`} className="text-xs font-medium text-primary hover:underline cursor-pointer">Re-upload</label>
-                                  <input id={`main-ref-${scene.id}`} type="file" accept="image/*" className="hidden" onChange={(e) => { handleSceneRefUpload(scene.id, "mainReference", e.target.files); e.target.value = ""; }} />
-                                </div>
-                              </>
+                              </div>
                             ) : (
-                              <>
-                                <label htmlFor={`main-ref-${scene.id}`} className="flex h-[110px] w-full items-center justify-center bg-muted/40 px-3 text-center text-xs text-muted-foreground cursor-pointer hover:bg-primary/10 hover:text-primary transition-colors">
-                                  <span className="flex flex-col items-center gap-1"><UploadCloud className="h-5 w-5" />Upload image</span>
-                                </label>
-                                <input id={`main-ref-${scene.id}`} type="file" accept="image/*" className="hidden" onChange={(e) => { handleSceneRefUpload(scene.id, "mainReference", e.target.files); e.target.value = ""; }} />
-                                <div className="flex items-center justify-between border-t border-border/60 px-3 py-2 text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
-                                  <span>No asset</span><span>Ready</span>
+                              <div className="p-3 space-y-3">
+                                <div className="flex items-center justify-between">
+                                  <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Audio Script</span>
+                                  {scene.audioUrl && (
+                                    <button 
+                                      type="button" 
+                                      onClick={() => setEditingAudioPrompt((prev) => ({ ...prev, [scene.id]: false }))}
+                                      className="text-[10px] font-medium text-muted-foreground hover:text-foreground"
+                                    >
+                                      Cancel
+                                    </button>
+                                  )}
                                 </div>
-                              </>
-                            )}
-                          </div>
-                        </div>
-
-                        <div className="space-y-2 md:px-4 md:py-4">
-                          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground md:hidden">Secondary Reference</p>
-                          <div className="overflow-hidden rounded-xl border border-border/60 bg-white">
-                            {scene.secondaryReference ? (
-                              <>
-                                <button
+                                <Textarea
+                                  value={scene.audioPrompt}
+                                  onChange={(e) => updateScene(scene.id, "audioPrompt", e.target.value)}
+                                  placeholder="What should be said in this scene?"
+                                  className="min-h-[60px] text-xs resize-none border-dashed"
+                                />
+                                <Button
                                   type="button"
-                                  onClick={() => setLightboxImage(scene.secondaryReference!)}
-                                  className="relative h-[110px] w-full block cursor-pointer hover:opacity-90 transition-opacity"
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-8 w-full text-xs border-primary/30 text-primary hover:bg-primary/5"
+                                  onClick={() => handleGenerateSceneAudio(scene.id, scene.audioPrompt)}
+                                  disabled={!scene.audioPrompt.trim()}
                                 >
-                                  <Image src={scene.secondaryReference} alt={`Scene ${scene.id} secondary reference`} fill className="object-cover" unoptimized />
-                                </button>
-                                <div className="border-t border-border/60 px-3 py-2 flex items-center justify-between">
-                                  <span className="text-[11px] uppercase tracking-[0.12em] text-muted-foreground">Uploaded</span>
-                                  <label htmlFor={`sec-ref-${scene.id}`} className="text-xs font-medium text-primary hover:underline cursor-pointer">Re-upload</label>
-                                  <input id={`sec-ref-${scene.id}`} type="file" accept="image/*" className="hidden" onChange={(e) => { handleSceneRefUpload(scene.id, "secondaryReference", e.target.files); e.target.value = ""; }} />
-                                </div>
-                              </>
-                            ) : (
-                              <>
-                                <label htmlFor={`sec-ref-${scene.id}`} className="flex h-[110px] w-full items-center justify-center bg-muted/40 px-3 text-center text-xs text-muted-foreground cursor-pointer hover:bg-primary/10 hover:text-primary transition-colors">
-                                  <span className="flex flex-col items-center gap-1"><UploadCloud className="h-5 w-5" />Upload image</span>
-                                </label>
-                                <input id={`sec-ref-${scene.id}`} type="file" accept="image/*" className="hidden" onChange={(e) => { handleSceneRefUpload(scene.id, "secondaryReference", e.target.files); e.target.value = ""; }} />
-                                <div className="flex items-center justify-between border-t border-border/60 px-3 py-2 text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
-                                  <span>No asset</span><span>Ready</span>
-                                </div>
-                              </>
+                                  <Music2 className="mr-2 h-3.5 w-3.5" />
+                                  {scene.audioUrl ? "Regenerate Audio" : "Generate Audio"}
+                                </Button>
+                              </div>
                             )}
                           </div>
                         </div>

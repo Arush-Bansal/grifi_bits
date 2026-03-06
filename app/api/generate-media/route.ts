@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
     const sceneResults = [];
     for (const scene of scenes) {
       // Step A: Image
-      const imageUrl = await generateImage(scene.imagePrompt);
+      const imageUrl = await generateImage(scene.imagePrompt, scene.mainReference, scene.secondaryReference);
       
       // Step B: Audio
       const audioPath = await generateAudio(scene.audioPrompt, voiceId || process.env.ELEVEN_LABS_VOICE_ID, tempDir);

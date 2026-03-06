@@ -60,8 +60,9 @@ export async function GET() {
 
   const { data, error } = await supabase
     .from("projects")
-    .select("*")
-    .order("created_at", { ascending: false });
+    .select("id, product_name, product_description, created_at")
+    .order("created_at", { ascending: false })
+    .limit(20);
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

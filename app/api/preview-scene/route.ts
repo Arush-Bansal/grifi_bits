@@ -6,7 +6,7 @@ import fs from "fs";
 
 export async function POST(req: NextRequest) {
     try {
-        const { type, imagePrompt, audioScript, voiceId } = await req.json();
+        const { type, imagePrompt, audioScript, voiceId, mainReference, secondaryReference } = await req.json();
 
         if (!type || !["image", "audio", "both"].includes(type)) {
             return NextResponse.json(
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
                 return NextResponse.json({ error: "imagePrompt is required for image generation." }, { status: 400 });
             }
             console.log("[PreviewScene] Generating image…");
-            imageUrl = await generateImage(imagePrompt);
+            imageUrl = await generateImage(imagePrompt, mainReference, secondaryReference);
         }
 
         // Generate audio

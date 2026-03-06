@@ -22,7 +22,7 @@ type Project = {
   product_name: string;
   product_description: string;
   created_at: string;
-  scenes: Scene[];
+  scenes?: Scene[];
 };
 
 export default function LibraryPage() {
