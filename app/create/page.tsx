@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Loader2, Music2, Pencil, Subtitles, UploadCloud, Video, X } from "lucide-react";
+import { Loader2, Music2, Pencil, Subtitles, Trash2, UploadCloud, Video, X } from "lucide-react";
 import "@xzdarcy/react-timeline-editor/dist/react-timeline-editor.css";
 import StoryboardTimeline, { type StoryboardTimelineClip } from "@/components/timeline/storyboard-timeline";
 import { Button } from "@/components/ui/button";
@@ -250,7 +250,7 @@ export default function CreatePage() {
     if (!files) {
       return;
     }
-    setImageFiles(Array.from(files).slice(0, 8));
+    setImageFiles((prev) => [...prev, ...Array.from(files)].slice(0, 8));
   };
 
   const updateReferenceImage = (referenceId: string, files: FileList | null) => {
@@ -302,12 +302,50 @@ export default function CreatePage() {
       const { data } = await axios.post("/api/fetch-link", { url });
       return data;
     },
-    onSuccess: (data, url) => {
+    onSuccess: async (data, url) => {
       setProductName(data.title || productName);
       setDescription((prev) => (data.description ? `${prev}\n\n${data.description}` : prev));
       setFetchedProductLinks((prev) => [...new Set([...prev, url])]);
       setLinkFeedback(`Fetched info for ${data.title}.`);
       setProductLink("");
+
+      // Auto-populate product images from fetched base64 data URIs
+      if (data.imageUrls && data.imageUrls.length > 0) {
+        const remainingSlots = 8 - imageFiles.length;
+        const imagesToAdd = (data.imageUrls as string[]).slice(0, Math.min(5, remainingSlots));
+
+        if (imagesToAdd.length > 0) {
+          setLinkFeedback(`Fetched info for ${data.title}. Loading ${imagesToAdd.length} product images…`);
+
+          const newFiles: File[] = [];
+          for (let i = 0; i < imagesToAdd.length; i++) {
+            try {
+              const dataUri = imagesToAdd[i];
+              // Parse data URI: data:<mime>;base64,<data>
+              const match = dataUri.match(/^data:([^;]+);base64,(.+)$/);
+              if (!match) continue;
+
+              const mime = match[1];
+              const b64 = match[2];
+              const binary = atob(b64);
+              const bytes = new Uint8Array(binary.length);
+              for (let j = 0; j < binary.length; j++) {
+                bytes[j] = binary.charCodeAt(j);
+              }
+              const ext = mime.split("/")[1] || "jpg";
+              const file = new File([bytes], `product-image-${i + 1}.${ext}`, { type: mime });
+              newFiles.push(file);
+            } catch (err) {
+              console.warn(`Failed to convert image ${i + 1}:`, err);
+            }
+          }
+
+          if (newFiles.length > 0) {
+            setImageFiles((prev) => [...prev, ...newFiles].slice(0, 8));
+            setLinkFeedback(`Fetched info for ${data.title}. Added ${newFiles.length} product image${newFiles.length > 1 ? "s" : ""}.`);
+          }
+        }
+      }
     },
     onError: (error: Error) => {
       const axiosError = error as { response?: { data?: { error?: string } } };
@@ -979,8 +1017,22 @@ export default function CreatePage() {
               <p className="mb-3 text-sm font-semibold">Uploaded images</p>
               <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
                 {previewUrls.map((url, index) => (
-                  <div key={`${imageFiles[index]?.name ?? "image"}-${index}`} className="relative h-28 overflow-hidden rounded-lg border border-border">
-                    <Image src={url} alt={imageFiles[index]?.name ?? `upload-${index + 1}`} fill className="object-cover" unoptimized />
+                  <div key={`${imageFiles[index]?.name ?? "image"}-${index}`} className="group relative h-28 overflow-hidden rounded-lg border border-border">
+                    <button
+                      type="button"
+                      onClick={() => setLightboxImage(url)}
+                      className="relative h-full w-full block cursor-pointer hover:opacity-90 transition-opacity"
+                    >
+                      <Image src={url} alt={imageFiles[index]?.name ?? `upload-${index + 1}`} fill className="object-cover" unoptimized />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setImageFiles((prev) => prev.filter((_, i) => i !== index))}
+                      className="absolute top-1.5 right-1.5 z-10 rounded-full bg-black/60 p-1.5 text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 cursor-pointer"
+                      title="Remove image"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
                   </div>
                 ))}
               </div>
