@@ -1,21 +1,19 @@
 import * as fal from "@fal-ai/serverless-client";
+import { google } from "@ai-sdk/google";
+import { generateImage as aiGenerateImage } from "ai";
 import { ElevenLabsClient } from "elevenlabs";
 import fs from "fs";
 import path from "path";
 
-// Configure Fal.ai
-// In Next.js, we should use environment variables
-// FAL_KEY should be set in .env
-
 export async function generateImage(prompt: string): Promise<string> {
-  console.log(`[MediaGen] Generating image with Fal.ai: ${prompt.slice(0, 50)}...`);
-  const result = await fal.run("fal-ai/flux/schnell", {
-    input: {
-      prompt,
-      image_size: "portrait_9_16",
-    },
-  }) as { images: Array<{ url: string }> };
-  return result.images[0].url;
+  console.log(`[MediaGen] Generating image with Google Imagen: ${prompt.slice(0, 50)}...`);
+  const { image } = await aiGenerateImage({
+    model: google.image("imagen-4.0-generate-001"),
+    prompt,
+    aspectRatio: "9:16",
+  });
+
+  return `data:image/png;base64,${image.base64}`;
 }
 
 export async function generateVideo(image_url: string, prompt: string): Promise<string> {
@@ -42,20 +40,19 @@ export async function generateAudio(text: string, voiceId: string, outputDir: st
   const filePath = path.join(outputDir, filename);
 
   console.log(`[MediaGen] Generating audio with ElevenLabs: ${text.slice(0, 50)}...`);
-  
+
   const audio = await client.generate({
     voice: voiceId,
     text: text,
     model_id: "eleven_multilingual_v2",
   });
 
-  // Since el.generate returns a Readable stream or Buffer depending on usage
-  const fileStream = fs.createWriteStream(filePath);
-  // @ts-expect-error - handling stream piping
-  (audio as any).pipe(fileStream);
+  // ElevenLabs SDK v1.x returns an AsyncIterable<Buffer>
+  const chunks: Buffer[] = [];
+  for await (const chunk of audio as AsyncIterable<Buffer>) {
+    chunks.push(Buffer.from(chunk));
+  }
+  fs.writeFileSync(filePath, Buffer.concat(chunks));
 
-  return new Promise((resolve, reject) => {
-    fileStream.on("finish", () => resolve(filePath));
-    fileStream.on("error", reject);
-  });
+  return filePath;
 }
