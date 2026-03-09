@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { generateImage, generateAudio, generateVideo } from "@/lib/media-gen";
+import { generateImage, generateAudio, generateVideo, getAudioDuration } from "@/lib/media-gen";
 import path from "path";
 import os from "os";
 import fs from "fs";
@@ -31,6 +31,7 @@ export async function POST(req: NextRequest) {
       
       // Step B: Audio
       const audioPath = await generateAudio(scene.audioPrompt, voiceId || process.env.ELEVEN_LABS_VOICE_ID, tempDir);
+      const audioDuration = await getAudioDuration(audioPath);
       // In a real app, upload audioPath to storage and get URL
       
       // Step C: Video (Image to Video)
@@ -40,6 +41,7 @@ export async function POST(req: NextRequest) {
         id: scene.id,
         imageUrl,
         audioUrl: `/api/audio?path=${encodeURIComponent(audioPath)}`,
+        audioDuration,
         videoUrl
       });
     }

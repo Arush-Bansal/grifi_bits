@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { generateImage, generateAudio } from "@/lib/media-gen";
+import { generateImage, generateAudio, getAudioDuration } from "@/lib/media-gen";
 import path from "path";
 import os from "os";
 import fs from "fs";
@@ -17,6 +17,7 @@ export async function POST(req: NextRequest) {
 
         let imageUrl: string | undefined;
         let audioUrl: string | undefined;
+        let audioDuration: number | undefined;
 
         // Generate image
         if (type === "image" || type === "both") {
@@ -39,9 +40,10 @@ export async function POST(req: NextRequest) {
             console.log("[PreviewScene] Generating audio…");
             const audioPath = await generateAudio(audioScript, resolvedVoiceId, tempDir);
             audioUrl = `/api/audio?path=${encodeURIComponent(audioPath)}`;
+            audioDuration = await getAudioDuration(audioPath);
         }
 
-        return NextResponse.json({ imageUrl, audioUrl });
+        return NextResponse.json({ imageUrl, audioUrl, audioDuration });
     } catch (error: unknown) {
         const err = error as Error;
         console.error("[PreviewScene] Error:", err);

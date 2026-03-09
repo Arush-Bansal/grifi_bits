@@ -1,7 +1,6 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { useProjectsQuery } from "../create/_hooks";
 import { Plus, Video, Calendar, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -17,22 +16,9 @@ type Scene = {
   audioUrl?: string;
 };
 
-type Project = {
-  id: string;
-  product_name: string;
-  product_description: string;
-  created_at: string;
-  scenes?: Scene[];
-};
-
 export default function LibraryPage() {
-  const { data: projects, isLoading } = useQuery<Project[]>({
-    queryKey: ["projects"],
-    queryFn: async () => {
-      const { data } = await axios.get("/api/projects");
-      return data;
-    },
-  });
+  const { data: projects, isLoading } = useProjectsQuery();
+  const projectsList = (projects || []) as any[];
 
   if (isLoading) {
     return (
@@ -64,9 +50,9 @@ export default function LibraryPage() {
         </Link>
       </div>
 
-      {projects && projects.length > 0 ? (
+      {projectsList && projectsList.length > 0 ? (
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {projects.map((project) => (
+          {projectsList.map((project: any) => (
             <article
               key={project.id}
               className="group relative overflow-hidden rounded-2xl border border-border bg-background/50 transition-all hover:border-primary/40 hover:shadow-xl"

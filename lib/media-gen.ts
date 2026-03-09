@@ -4,28 +4,37 @@ import { generateImage as aiGenerateImage } from "ai";
 import { ElevenLabsClient } from "elevenlabs";
 import fs from "fs";
 import path from "path";
+import { execFile } from "child_process";
+import { promisify } from "util";
+import { uploadImageFromBase64 } from "./supabase/storage";
 
-export async function generateImage(prompt: string, mainRef?: string, secondaryRef?: string): Promise<string> {
-  console.log(`[MediaGen] Generating image with ${mainRef ? 'Gemini 2.0 Flash (with refs)' : 'Google Imagen'}: ${prompt.slice(0, 50)}...`);
+const execFileAsync = promisify(execFile);
+
+export async function generateImage(prompt: string, mainRef?: string, secondaryRef?: string, aspectRatio: "9:16" | "1:1" | "16:9" = "9:16"): Promise<string> {
+  console.log(`[MediaGen] Generating image with ${mainRef ? 'Gemini 2.5 Flash (with refs)' : 'Google Imagen'}: ${prompt.slice(0, 50)}...`);
   
   try {
     // If references are provided, the user wants to use Gemini (interpreted from "gemini-2.5-flash-image")
+    let base64: string;
     if (mainRef || secondaryRef) {
       const { image } = await aiGenerateImage({
         model: google.image("gemini-2.5-flash-image"),
         prompt: `${prompt}${mainRef ? ` (reference: ${mainRef})` : ""}${secondaryRef ? ` (secondary reference: ${secondaryRef})` : ""}`,
-        aspectRatio: "9:16",
+        aspectRatio,
       });
-      return `data:image/png;base64,${image.base64}`;
+      base64 = image.base64;
+    } else {
+      const { image } = await aiGenerateImage({
+        model: google.image("imagen-4.0-generate-001"),
+        prompt,
+        aspectRatio,
+      });
+      base64 = image.base64;
     }
 
-    const { image } = await aiGenerateImage({
-      model: google.image("imagen-4.0-generate-001"),
-      prompt,
-      aspectRatio: "9:16",
-    });
-
-    return `data:image/png;base64,${image.base64}`;
+    const publicUrl = await uploadImageFromBase64(base64);
+    if (!publicUrl) throw new Error("Failed to upload generated image to Supabase");
+    return publicUrl;
   } catch (error) {
     console.error("[MediaGen] Image Gen Error:", error);
     // Fallback to gemini-2.5-flash-image if imagen fails, as requested
@@ -33,9 +42,10 @@ export async function generateImage(prompt: string, mainRef?: string, secondaryR
     const { image } = await aiGenerateImage({
       model: google.image("gemini-2.5-flash-image"),
       prompt,
-      aspectRatio: "9:16",
+      aspectRatio,
     });
-    return `data:image/png;base64,${image.base64}`;
+    const publicUrl = await uploadImageFromBase64(image.base64);
+    return publicUrl || `data:image/png;base64,${image.base64}`; // Final fallback to base64 if upload fails
   }
 }
 
@@ -80,4 +90,19 @@ export async function generateAudio(text: string, voiceId: string, outputDir: st
   fs.writeFileSync(filePath, Buffer.concat(chunks));
 
   return filePath;
+}
+
+export async function getAudioDuration(filePath: string): Promise<number> {
+  try {
+    const { stdout } = await execFileAsync("ffprobe", [
+      "-v", "error",
+      "-show_entries", "format=duration",
+      "-of", "default=noprint_wrappers=1:nokey=1",
+      filePath
+    ]);
+    return parseFloat(stdout.trim());
+  } catch (error) {
+    console.error("[MediaGen] Error getting audio duration:", error);
+    return 3; // Fallback to default
+  }
 }

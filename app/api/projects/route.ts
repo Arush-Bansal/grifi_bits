@@ -10,14 +10,37 @@ type ProjectPayload = {
   scenes: Array<{ id: number; name: string; imagePrompt: string; videoScript: string; audioPrompt: string }>;
   captions: boolean;
   music: string;
+  references?: Array<{
+    id: string;
+    label: string;
+    tagline: string;
+    image: string;
+    aiPrompt?: string;
+  }>;
+  plans?: Array<{
+    id: string;
+    title: string;
+    description: string;
+    imagePrompt: string;
+    imagePreview?: string;
+  }>;
+  selectedPlanIndex?: number;
+  settings?: {
+    orientation: "landscape" | "portrait";
+    duration: number;
+    logoEnding: boolean;
+    language: string;
+    captions: boolean;
+    additionalInstructions?: string;
+  };
 };
 
 export async function POST(request: Request) {
   const payload = (await request.json()) as ProjectPayload;
 
-  if (!payload.productName || !payload.description) {
-    return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
-  }
+  // Relaxed validation for initial creation
+  const productName = payload.productName || "Untitled Project";
+  const productDescription = payload.description || "";
 
   const supabase = createSupabaseAdmin();
   if (!supabase) {
@@ -34,13 +57,17 @@ export async function POST(request: Request) {
     .from("projects")
     .upsert({
       id: payload.id, // Supabase will insert if undefined, or update if matches
-      product_name: payload.productName,
-      product_description: payload.description,
-      image_names: payload.imageNames,
-      selected_reference: payload.selectedReference,
-      scenes: payload.scenes,
-      captions_enabled: payload.captions,
-      music_track: payload.music,
+      product_name: productName,
+      product_description: productDescription,
+      image_names: payload.imageNames || [],
+      selected_reference: payload.selectedReference || null,
+      scenes: payload.scenes || [],
+      references: payload.references || [],
+      plans: payload.plans || [],
+      selected_plan_index: payload.selectedPlanIndex || 0,
+      settings: payload.settings || {},
+      captions_enabled: payload.captions ?? true,
+      music_track: payload.music || "ambient-glow",
       updated_at: new Date().toISOString()
     })
     .select("id")
@@ -60,7 +87,7 @@ export async function GET() {
 
   const { data, error } = await supabase
     .from("projects")
-    .select("id, product_name, product_description, created_at")
+    .select("id, product_name, product_description, created_at, plans, selected_plan_index, settings")
     .order("created_at", { ascending: false })
     .limit(20);
 
