@@ -3,7 +3,13 @@
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { useCreatePageContext } from "../_context/CreatePageContext";
+import { useProject } from "../_hooks/useProject";
+import { useUIState } from "../_hooks/useUIState";
+import { useProductInfo } from "../_hooks/useProductInfo";
+import { useAiPlan } from "../_hooks/useAiPlan";
+import { useCreateMutations } from "../_hooks/useCreateMutations";
+import { useSceneState } from "../_hooks/useSceneState";
+import { useReferenceState } from "../_hooks/useReferenceState";
 import { Step } from "../types";
 
 const stepToRoute: Record<Step, string> = {
@@ -16,10 +22,27 @@ const stepToRoute: Record<Step, string> = {
 
 export function StepNavigation() {
   const router = useRouter();
-  const state = useCreatePageContext();
+  const { projectId, projectData, saveProjectWithData } = useProject();
+  const { step, setStep } = useUIState();
+  const { product_name, product_description, imageFiles, previewUrls } = useProductInfo();
+  const { plans, selected_plan_index, settings, setSelectedPlanIndex } = useAiPlan();
+  const sceneState = useSceneState();
+  const referenceState = useReferenceState();
+
+  const mutations = useCreateMutations({
+    setPlans: () => {}, // Handled via cache in useAiPlan
+    setSelectedPlanIndex,
+    setStep,
+    saveProjectWithData,
+    imageFiles,
+    syncState: projectData || {},
+    setReferences: referenceState.setReferences,
+    setScenes: sceneState.setScenes,
+    setTimelineClips: sceneState.setTimelineClips,
+    handleGenerateSceneImage: sceneState.handleGenerateSceneImage
+  });
 
   const handleNavigate = (nextStep: number) => {
-    const projectId = state.projectId;
     const url = `${stepToRoute[nextStep as Step]}${projectId ? `?id=${projectId}` : ""}`;
     router.push(url);
   };
@@ -28,50 +51,50 @@ export function StepNavigation() {
     <div className="mt-8 flex items-center justify-between gap-4">
       <Button 
         variant="outline" 
-        onClick={() => handleNavigate(state.step - 1)} 
-        disabled={state.step === 0}
+        onClick={() => handleNavigate(step - 1)} 
+        disabled={step === 0}
       >
         Back
       </Button>
       <div className="flex items-center gap-3">
         <Button
           variant="outline"
-          className={cn((!state.projectId || (state.step !== 0 && state.step !== 1)) && "hidden")}
-          onClick={() => handleNavigate(state.step + 1)}
-          disabled={state.orchestrateMutation.isPending}
+          className={cn((!projectId || (step !== 0 && step !== 1)) && "hidden")}
+          onClick={() => handleNavigate(step + 1)}
+          disabled={mutations.orchestrateMutation.isPending}
         >
           Next
         </Button>
         <Button
           onClick={() => {
-            if (state.step === 0) {
-              state.generateConceptsMutation.mutate({ 
-                product_name: state.product_name, 
-                product_description: state.product_description 
+            if (step === 0) {
+              mutations.generateConceptsMutation.mutate({ 
+                product_name, 
+                product_description 
               });
-            } else if (state.step === 1) {
-              state.orchestrateMutation.mutate({
-                product_name: state.product_name,
-                product_description: state.product_description,
-                image_names: state.imageFiles.length > 0 
-                  ? state.imageFiles.map((f: File) => f.name) 
-                  : state.previewUrls.map((p: { name: string; url: string }) => p.name),
-                selected_plan: state.plans[state.selected_plan_index]?.title,
-                settings: state.settings,
-                product_id: state.projectId || undefined
+            } else if (step === 1) {
+              mutations.orchestrateMutation.mutate({
+                product_name,
+                product_description,
+                image_names: imageFiles.length > 0 
+                  ? imageFiles.map((f: File) => f.name) 
+                  : previewUrls.map((p: { name: string; url: string }) => p.name),
+                selected_plan: plans[selected_plan_index]?.title,
+                settings,
+                product_id: projectId || undefined
               });
             } else {
-              handleNavigate(state.step + 1);
+              handleNavigate(step + 1);
             }
           }}
           disabled={
-            (state.step === 0 && (!state.product_name || !state.product_description || state.generateConceptsMutation.isPending)) || 
-            (state.step === 1 && state.orchestrateMutation.isPending) ||
-            state.step === 4
+            (step === 0 && (!product_name || !product_description || mutations.generateConceptsMutation.isPending)) || 
+            (step === 1 && mutations.orchestrateMutation.isPending) ||
+            step === 4
           }
         >
-          {state.step === 0 ? (state.generateConceptsMutation.isPending ? "Generating Concepts..." : "Generate Concepts") : 
-           state.step === 1 ? (state.orchestrateMutation.isPending ? "Building Plan..." : "Generate AI Plan") : 
+          {step === 0 ? (mutations.generateConceptsMutation.isPending ? "Generating Concepts..." : "Generate Concepts") : 
+           step === 1 ? (mutations.orchestrateMutation.isPending ? "Building Plan..." : "Generate AI Plan") : 
            "Next"}
         </Button>
       </div>

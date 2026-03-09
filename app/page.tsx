@@ -4,19 +4,23 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { useSaveProjectMutation } from "./create/_hooks";
+import axios from "axios";
 
 export default function HomePage() {
   const router = useRouter();
 
   const createProjectMutation = useSaveProjectMutation({
     onSuccess: (data) => {
-      if (data.projectId) {
-        router.push(`/create/setup?id=${data.projectId}`);
+      if (data.id) {
+        router.push(`/create/setup?id=${data.id}`);
       }
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       console.error("Failed to create project:", error);
-      const message = error.response?.data?.error || error.message || "Unknown error";
+      let message = error.message || "Unknown error";
+      if (axios.isAxiosError(error)) {
+        message = (error.response?.data as { error?: string })?.error || message;
+      }
       alert(`Failed to create project: ${message}`);
     }
   });

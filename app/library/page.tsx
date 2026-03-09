@@ -1,13 +1,39 @@
 "use client";
 
-import { useProjectsQuery } from "../create/_hooks";
-import { Plus, Video, Calendar, ArrowRight } from "lucide-react";
+import { useProjectsQuery, useSaveProjectMutation, useDeleteProjectMutation } from "../create/_hooks";
+import { ProjectData } from "../create/types";
+import { Plus, Video, Calendar, ArrowRight, Trash2, Edit3, Check, X } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { Input } from "@/components/ui/input";
 
 export default function LibraryPage() {
   const { data: projects, isLoading } = useProjectsQuery();
-  const projectsList = projects || [];
+  const deleteMutation = useDeleteProjectMutation();
+  const saveMutation = useSaveProjectMutation();
+  
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editName, setEditName] = useState("");
+
+  const projectsList = (projects || []) as ProjectData[];
+
+  const handleRename = (project: ProjectData) => {
+    if (!project.id) return;
+    if (editName.trim() === "" || editName === project.product_name) {
+      setEditingId(null);
+      return;
+    }
+    saveMutation.mutate({ ...project, product_name: editName });
+    setEditingId(null);
+  };
+
+  const handleDelete = (id: string | undefined) => {
+    if (!id) return;
+    if (confirm("Are you sure you want to delete this project?")) {
+      deleteMutation.mutate(id);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -53,12 +79,57 @@ export default function LibraryPage() {
                 </div>
               </div>
               <div className="p-5">
-                <h3 className="text-lg font-bold group-hover:text-primary transition-colors">{project.product_name}</h3>
+                <div className="flex items-start justify-between gap-2">
+                  {editingId === project.id ? (
+                    <div className="flex w-full items-center gap-2">
+                      <Input
+                        value={editName}
+                        onChange={(e) => setEditName(e.target.value)}
+                        className="h-8 flex-1"
+                        autoFocus
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") handleRename(project);
+                          if (e.key === "Escape") setEditingId(null);
+                        }}
+                      />
+                      <button onClick={() => handleRename(project)} className="text-primary hover:text-primary/80">
+                        <Check className="h-4 w-4" />
+                      </button>
+                      <button onClick={() => setEditingId(null)} className="text-muted-foreground hover:text-foreground">
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <h3 className="text-lg font-bold group-hover:text-primary transition-colors line-clamp-1">{project.product_name}</h3>
+                      <button 
+                        onClick={() => {
+                          if (project.id) {
+                            setEditingId(project.id);
+                            setEditName(project.product_name || "");
+                          }
+                        }}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-primary"
+                      >
+                        <Edit3 className="h-4 w-4" />
+                      </button>
+                    </>
+                  )}
+                </div>
                 <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{project.product_description}</p>
                 <div className="mt-4 flex items-center justify-between">
-                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                    <Calendar className="h-3.5 w-3.5" />
-                    {project.created_at ? new Date(project.created_at).toLocaleDateString() : 'No date'}
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => handleDelete(project.id)}
+                      className="text-muted-foreground hover:text-destructive transition-colors"
+                      title="Delete project"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                      <Calendar className="h-3.5 w-3.5" />
+                      {project.created_at ? new Date(project.created_at).toLocaleDateString() : 'No date'}
+                    </div>
                   </div>
                   <Link href={`/create?id=${project.id}`} className="text-sm font-semibold text-primary hover:underline flex items-center gap-1">
                     Edit <ArrowRight className="h-3.5 w-3.5" />

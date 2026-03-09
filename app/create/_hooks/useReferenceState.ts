@@ -1,13 +1,23 @@
 "use client";
 
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback, useEffect, useMemo } from "react";
 import { ReferenceCard } from "../types";
+import { useProject } from "./useProject";
 
 export function useReferenceState() {
-  const [references, setReferences] = useState<ReferenceCard[]>([]);
+  const { projectData, uiState, updateCache, updateUiCache } = useProject();
+  
+  const references = useMemo(() => projectData?.references || [], [projectData?.references]);
   const [customReferenceCount, setCustomReferenceCount] = useState(1);
-  const [editingRefId, setEditingRefId] = useState<string | null>(null);
+  const editingRefId = useMemo(() => uiState.editingRefId, [uiState.editingRefId]);
   const referenceObjectUrlsRef = useRef<string[]>([]);
+
+  useEffect(() => {
+    if (references.length > 0) {
+      const customCount = references.filter(r => typeof r?.id === "string" && r.id.startsWith("custom-")).length;
+      setCustomReferenceCount(customCount + 1);
+    }
+  }, [references]);
 
   useEffect(() => {
     const currentRefs = referenceObjectUrlsRef.current;
@@ -16,11 +26,16 @@ export function useReferenceState() {
     };
   }, []);
 
+  const setReferences = useCallback((newRefs: ReferenceCard[] | ((prev: ReferenceCard[]) => ReferenceCard[])) => {
+    const next = typeof newRefs === "function" ? newRefs(references) : newRefs;
+    updateCache({ references: next });
+  }, [references, updateCache]);
+
   const updateReferenceLimit = useCallback((id: string, key: "label" | "tagline", value: string) => {
     setReferences((prev) =>
       prev.map((r) => (r.id === id ? { ...r, [key]: value } : r))
     );
-  }, []);
+  }, [setReferences]);
 
   const updateReferenceImage = useCallback((referenceId: string, files: FileList | null) => {
     const nextFile = files?.[0];
@@ -32,7 +47,7 @@ export function useReferenceState() {
     setReferences((prev) =>
       prev.map((reference) => (reference.id === referenceId ? { ...reference, image: nextImageUrl } : reference))
     );
-  }, []);
+  }, [setReferences]);
 
   const addReferenceCard = useCallback((files: FileList | null) => {
     const nextFile = files?.[0];
@@ -51,10 +66,10 @@ export function useReferenceState() {
         id: nextReferenceId,
         label: `Custom ${nextCount}`,
         tagline: "Custom reference image",
-        image: nextImageUrl
+        image_url: nextImageUrl
       }
     ]);
-  }, [customReferenceCount]);
+  }, [customReferenceCount, setReferences]);
 
   const addAiAvatarReference = useCallback((imageUrl: string) => {
     const nextCount = customReferenceCount;
@@ -67,10 +82,10 @@ export function useReferenceState() {
         id: nextReferenceId,
         label: `AI Avatar ${nextCount}`,
         tagline: "AI Generated Avatar",
-        image: imageUrl
+        image_url: imageUrl
       }
     ]);
-  }, [customReferenceCount]);
+  }, [customReferenceCount, setReferences]);
 
   return {
     references,
@@ -78,10 +93,12 @@ export function useReferenceState() {
     customReferenceCount,
     setCustomReferenceCount,
     editingRefId,
-    setEditingRefId,
+    setEditingRefId: (id: string | null) => updateUiCache({ editingRefId: id }),
     updateReferenceLimit,
     updateReferenceImage,
     addReferenceCard,
-    addAiAvatarReference
+    addAiAvatarReference,
+    loading_avatars: false, // Defaulting as not implemented yet but used in layout
+    ai_avatars: [] // Defaulting as not implemented yet but used in layout
   };
 }

@@ -23,7 +23,7 @@ export const buildInitialTimelineClips = (sourceScenes: Scene[]): StoryboardTime
   let cursor = 0;
 
   return sourceScenes.map((scene, index) => {
-    const duration = scene.audioDuration || TIMELINE_DEFAULT_DURATION_SECONDS;
+    const duration = scene.audio_duration || TIMELINE_DEFAULT_DURATION_SECONDS;
     const start = Number(cursor.toFixed(2));
     const end = Number((start + duration).toFixed(2));
     cursor = end;

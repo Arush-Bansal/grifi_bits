@@ -1,0 +1,5 @@
+app/create/_components/plan-selection-step.tsx(78,33): error TS2551: Property 'imagePreview' does not exist on type 'PlanConcept'. Did you mean 'image_preview'?
+app/create/_components/plan-selection-step.tsx(80,41): error TS2551: Property 'imagePreview' does not exist on type 'PlanConcept'. Did you mean 'image_preview'?
+app/create/_utils/index.ts(26,28): error TS2551: Property 'audioDuration' does not exist on type 'Scene'. Did you mean 'audio_duration'?
+app/page.tsx(13,16): error TS2339: Property 'projectId' does not exist on type 'ProjectData'.
+app/page.tsx(14,46): error TS2339: Property 'projectId' does not exist on type 'ProjectData'.

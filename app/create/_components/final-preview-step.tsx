@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { Music2, Subtitles, Video } from "lucide-react";
+import Image from "next/image";
 import { Scene, VideoSettings } from "../types";
 
 interface FinalPreviewStepProps {
@@ -56,10 +57,10 @@ export function FinalPreviewStep({
           {activeTimelineClip?.sceneId ? (
             (() => {
               const activeScene = scenes.find((s) => s.id === activeTimelineClip.sceneId);
-              if (activeScene?.videoUrl) {
+              if (activeScene?.video_url) {
                 return (
                   <video
-                    src={activeScene.videoUrl}
+                    src={activeScene.video_url}
                     controls
                     className="absolute inset-0 h-full w-full object-cover"
                   />
@@ -67,12 +68,13 @@ export function FinalPreviewStep({
               }
               return (
                 <div className="absolute inset-0">
-                  {activeScene?.imageUrl ? (
+                  {activeScene?.image_url ? (
                     <div className="relative h-full w-full">
-                      <img
-                        src={activeScene.imageUrl}
+                      <Image
+                        src={activeScene.image_url}
                         alt="Preview"
-                        className="h-full w-full object-cover opacity-40 blur-[2px]"
+                        fill
+                        className="object-cover opacity-40 blur-[2px]"
                       />
                       <div className="absolute inset-0 bg-black/20" />
                     </div>
@@ -98,7 +100,7 @@ export function FinalPreviewStep({
             </>
           )}
           <div className="absolute bottom-4 left-4 right-4 rounded-xl bg-black/30 px-3 py-2 text-xs text-white">
-            {settings.captions ? "Caption preview enabled" : "Captions disabled"}
+            {settings.captions_enabled ? "Caption preview enabled" : "Captions disabled"}
           </div>
           <div className="absolute left-4 top-4 rounded-full bg-white/85 px-3 py-1 text-xs font-medium text-primary">
             {productName || "Your Brand"}
@@ -131,16 +133,16 @@ export function FinalPreviewStep({
             </div>
             <button
               type="button"
-              onClick={() => setSettings(prev => ({ ...prev, captions: !prev.captions }))}
+              onClick={() => setSettings(prev => ({ ...prev, captions_enabled: !prev.captions_enabled }))}
               className={cn(
                 "relative inline-flex h-7 w-12 items-center rounded-full transition-colors",
-                settings.captions ? "bg-primary" : "bg-muted"
+                settings.captions_enabled ? "bg-primary" : "bg-muted"
               )}
             >
               <span
                 className={cn(
                   "inline-block h-5 w-5 transform rounded-full bg-white transition-transform",
-                  settings.captions ? "translate-x-6" : "translate-x-1"
+                  settings.captions_enabled ? "translate-x-6" : "translate-x-1"
                 )}
               />
             </button>
@@ -156,8 +158,8 @@ export function FinalPreviewStep({
             <Music2 className="h-4 w-4 text-primary" />
             <select
               id="music"
-              value={settings.musicTrack || "ambient-glow"}
-              onChange={(e) => setSettings(prev => ({ ...prev, musicTrack: e.target.value }))}
+              value={settings.music_track || "ambient-glow"}
+              onChange={(e) => setSettings(prev => ({ ...prev, music_track: e.target.value }))}
               className="h-10 w-full rounded-md border border-input bg-white px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               <option value="ambient-glow">Ambient Glow</option>

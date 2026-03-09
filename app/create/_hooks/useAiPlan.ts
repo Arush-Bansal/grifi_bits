@@ -1,20 +1,51 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useCallback } from "react";
 import { PlanConcept, VideoSettings } from "../types";
+import { useProject } from "./useProject";
+
+const DEFAULT_SETTINGS: VideoSettings = {
+  orientation: "portrait",
+  duration: 20,
+  logo_ending: false,
+  language: "english",
+  captions_enabled: true,
+  additional_instructions: "",
+  music_track: "ambient-glow"
+};
 
 export function useAiPlan() {
-  const [plans, setPlans] = useState<PlanConcept[]>([]);
-  const [selected_plan_index, setSelectedPlanIndex] = useState(0);
-  const [settings, setSettings] = useState<VideoSettings>({
-    orientation: "portrait",
-    duration: 20,
-    logoEnding: false,
-    language: "english",
-    captions: true,
-    additionalInstructions: "",
-    musicTrack: "ambient-glow"
-  });
+  const { projectData, updateCache } = useProject();
+
+  const plans = useMemo(() => projectData?.plans || [], [projectData?.plans]);
+  const selected_plan_index = useMemo(() => projectData?.selected_plan_index ?? 0, [projectData?.selected_plan_index]);
+  
+  const settings = useMemo(() => {
+    const dbSettings = (projectData?.settings || {}) as Partial<VideoSettings>;
+    return {
+      ...DEFAULT_SETTINGS,
+      ...dbSettings,
+      captions_enabled: projectData?.captions_enabled ?? dbSettings.captions_enabled ?? DEFAULT_SETTINGS.captions_enabled,
+      music_track: projectData?.music_track || dbSettings.music_track || DEFAULT_SETTINGS.music_track
+    };
+  }, [projectData?.settings, projectData?.captions_enabled, projectData?.music_track]);
+
+  const setPlans = useCallback((newPlans: PlanConcept[]) => {
+    updateCache({ plans: newPlans });
+  }, [updateCache]);
+
+  const setSelectedPlanIndex = useCallback((index: number) => {
+    updateCache({ selected_plan_index: index });
+  }, [updateCache]);
+
+  const setSettings = useCallback((newSettings: VideoSettings | ((prev: VideoSettings) => VideoSettings)) => {
+    const next = typeof newSettings === "function" ? newSettings(settings) : newSettings;
+    updateCache({ 
+      settings: next,
+      captions_enabled: next.captions_enabled,
+      music_track: next.music_track
+    });
+  }, [settings, updateCache]);
 
   return {
     plans, setPlans,

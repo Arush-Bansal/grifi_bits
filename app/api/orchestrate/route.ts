@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { orchestrateAdPlan } from "@/lib/ai-orchestrator";
 import { createSupabaseAdmin } from "@/lib/supabase/server";
+import { Database, Json } from "@/lib/supabase/database.types";
 
 export async function POST(req: NextRequest) {
   try {
@@ -38,9 +39,15 @@ export async function POST(req: NextRequest) {
           main_reference: scene.main_ref,
           secondary_reference: scene.second_ref
         }));
-        await supabase.from("scenes").insert(sceneInserts as any);
+        await supabase.from("scenes").insert(sceneInserts as Database['public']['Tables']['scenes']['Insert'][]);
 
-        // 3. Insert new references (Specs + Uploaded Image Specs)
+        // 2.5 Add frontend `id` field based on `scene_order` for JSON representation
+        const scenesJson = sceneInserts.map(scene => ({
+          ...scene,
+          id: scene.scene_order
+        }));
+
+        // 3. Insert new references
         const refInserts = plan.REFERENCE_SPECS.map(spec => ({
           project_id: product_id,
           reference_key: spec.id,
@@ -57,34 +64,29 @@ export async function POST(req: NextRequest) {
           original_name: spec.original_name
         }));
 
-        await supabase.from("project_references").insert([...refInserts, ...uploadedInserts] as any);
+        await supabase.from("project_references").insert([...refInserts, ...uploadedInserts] as Database['public']['Tables']['project_references']['Insert'][]);
 
-        // 4. Return structured response matching frontend types
-        const scenes = plan.SCENES.map((s, i) => ({
-          id: i + 1,
-          name: s.name,
-          imagePrompt: s.image_prompt,
-          videoScript: s.video_prompt,
-          audioPrompt: s.speech,
-          mainReference: s.main_ref,
-          secondaryReference: s.second_ref
-        }));
+        // 4. Update the project record itself with the new structured data
+        await supabase
+          .from("projects")
+          .update({
+            scenes: scenesJson as unknown as Json,
+            references: [
+              ...refInserts.map(r => ({ ...r, image_url: "https://via.placeholder.com/300x300?text=Generating..." })),
+              ...uploadedInserts.map(r => ({ ...r, image_url: "https://via.placeholder.com/300" }))
+            ] as unknown as Json,
+            updated_at: new Date().toISOString()
+          })
+          .eq("id", product_id);
 
-        const references = [...plan.REFERENCE_SPECS.map(spec => ({
-          id: spec.id,
-          label: spec.name,
-          tagline: spec.description,
-          image: "https://via.placeholder.com/300x300?text=Generating...",
-          aiPrompt: spec.prompt
-        })), ...(plan.UPLOADED_IMAGE_SPECS || []).map(spec => ({
-          id: `uploaded-${spec.original_name}`,
-          label: spec.ai_name,
-          tagline: spec.ai_description,
-          image: "https://via.placeholder.com/300",
-          originalName: spec.original_name
-        }))];
+        // 5. Fetch and return the "Full Project" object
+        const { data: fullProject } = await supabase
+          .from("projects")
+          .select("*")
+          .eq("id", product_id)
+          .single();
 
-        return NextResponse.json({ scenes, references });
+        return NextResponse.json(fullProject);
       }
     }
 

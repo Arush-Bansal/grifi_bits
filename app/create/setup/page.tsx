@@ -2,29 +2,45 @@
 
 import { ProductSetupStep } from "../_components/product-setup-step";
 import { StepNavigation } from "../_components/step-navigation";
-import { useCreatePageContext } from "../_context/CreatePageContext";
+import { useProductInfo } from "../_hooks/useProductInfo";
 
 export default function SetupPage() {
-  const state = useCreatePageContext();
+  const {
+    product_name,
+    set_product_name,
+    product_description,
+    set_product_description,
+    productLink,
+    setProductLink,
+    handleFetchLink,
+    fetchLinkMutation,
+    linkFeedback,
+    fetchedProductLinks,
+    imageFiles,
+    removeImage,
+    previewUrls,
+    setLightboxImage,
+    handleFileInput
+  } = useProductInfo();
 
   return (
     <>
       <ProductSetupStep
-        productName={state.product_name}
-        setProductName={state.setProductName}
-        description={state.product_description}
-        setDescription={state.setDescription}
-        productLink={state.productLink}
-        setProductLink={state.setProductLink}
-        handleFetchLink={state.handleFetchLink}
-        fetchLinkLoading={state.fetchLinkMutation.isPending}
-        linkFeedback={state.linkFeedback}
-        fetchedProductLinks={state.fetchedProductLinks}
-        imageFiles={state.imageFiles}
-        removeImage={state.removeImage}
-        previewUrls={state.previewUrls.map((p: { url: string }) => p.url)}
-        setLightboxImage={state.setLightboxImage}
-        handleFileInput={state.handleFileInput}
+        productName={product_name}
+        setProductName={set_product_name}
+        description={product_description}
+        setDescription={set_product_description}
+        productLink={productLink}
+        setProductLink={setProductLink}
+        handleFetchLink={handleFetchLink}
+        fetchLinkLoading={fetchLinkMutation.isPending}
+        linkFeedback={linkFeedback}
+        fetchedProductLinks={fetchedProductLinks}
+        imageFiles={imageFiles}
+        removeImage={removeImage}
+        previewUrls={previewUrls.map((p) => p.url)}
+        setLightboxImage={setLightboxImage}
+        handleFileInput={handleFileInput}
       />
       <StepNavigation />
     </>

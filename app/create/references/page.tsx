@@ -2,23 +2,14 @@
 
 import { ReferenceStyleStep } from "../_components/reference-style-step";
 import { StepNavigation } from "../_components/step-navigation";
-import { useCreatePageContext } from "../_context/CreatePageContext";
+import { useProject } from "../_hooks/useProject";
 
 export default function ReferencesPage() {
-  const state = useCreatePageContext();
+  const { projectId } = useProject();
 
   return (
     <>
-      <ReferenceStyleStep
-        references={state.references}
-        setReferences={state.setReferences}
-        editingRefId={state.editingRefId}
-        setEditingRefId={state.setEditingRefId}
-        updateReferenceLimit={state.updateReferenceLimit}
-        updateReferenceImage={state.updateReferenceImage}
-        addReferenceCard={state.addReferenceCard}
-        setIsAiAvatarLibraryOpen={state.setIsAiAvatarLibraryOpen}
-      />
+      {projectId && <ReferenceStyleStep projectId={projectId} />}
       <StepNavigation />
     </>
   );

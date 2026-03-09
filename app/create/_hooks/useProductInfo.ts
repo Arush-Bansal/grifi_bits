@@ -3,16 +3,28 @@
 import { useState, useCallback, useEffect } from "react";
 import { uploadImage } from "@/lib/supabase/storage";
 import { useFetchLinkMutation } from "./index";
+import { useProject } from "./useProject";
 
 export function useProductInfo() {
-  const [product_name, setProductName] = useState("");
+  const { projectData, updateCache } = useProject();
+  
   const [productLink, setProductLink] = useState("");
   const [fetchedProductLinks, setFetchedProductLinks] = useState<string[]>([]);
-  const [product_description, setDescription] = useState("");
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<Array<{ name: string; url: string }>>([]);
   const [linkFeedback, setLinkFeedback] = useState("Paste a website, Amazon, or product page URL, then click Fetch.");
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (projectData?.references && projectData.references.length > 0) {
+      const uploadedItems = projectData.references
+        .filter((r) => r.image_url.includes("supabase") || r.image_url.includes("blob") || r.original_name)
+        .map((r) => ({ name: r.original_name || r.label, url: r.image_url }));
+      if (uploadedItems.length > 0) {
+        setPreviewUrls(uploadedItems);
+      }
+    }
+  }, [projectData?.references]);
 
   useEffect(() => {
     const nextUrls = imageFiles.map((file) => URL.createObjectURL(file));
@@ -41,8 +53,16 @@ export function useProductInfo() {
 
   const fetchLinkMutation = useFetchLinkMutation({
     onSuccess: async (data, url) => {
-      setProductName(data.title || product_name);
-      setDescription((prev) => (data.description ? `${prev}\n\n${data.description}` : prev));
+      const newName = data.title || projectData?.product_name || "";
+      const newDesc = data.description 
+        ? `${projectData?.product_description || ""}\n\n${data.description}`.trim()
+        : projectData?.product_description || "";
+
+      updateCache({
+        product_name: newName,
+        product_description: newDesc
+      });
+
       setFetchedProductLinks((prev) => [...new Set([...prev, url])]);
       setLinkFeedback(`Fetched info for ${data.title}.`);
       setProductLink("");
@@ -89,11 +109,6 @@ export function useProductInfo() {
         }
       }
     },
-    onError: (error: Error) => {
-      const axiosError = error as { response?: { data?: { error?: string } } };
-      const message = axiosError.response?.data?.error || error.message || "Failed to fetch link.";
-      setLinkFeedback(message);
-    }
   });
 
   const handleFetchLink = useCallback(() => {
@@ -117,10 +132,12 @@ export function useProductInfo() {
   }, [productLink, fetchedProductLinks, fetchLinkMutation]);
 
   return {
-    product_name, setProductName,
+    product_name: projectData?.product_name || "",
+    set_product_name: (val: string) => updateCache({ product_name: val }),
+    product_description: projectData?.product_description || "",
+    set_product_description: (val: string) => updateCache({ product_description: val }),
     productLink, setProductLink,
     fetchedProductLinks,
-    product_description, setDescription,
     imageFiles, setImageFiles,
     previewUrls, setPreviewUrls,
     removeImage,

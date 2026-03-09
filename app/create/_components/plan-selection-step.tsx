@@ -75,9 +75,9 @@ export function PlanSelectionStep({
             <div className="mt-8 overflow-hidden rounded-2xl border border-border bg-secondary/20 p-6">
               <div className="flex flex-col md:flex-row gap-6">
                 <div className="relative aspect-square w-full md:w-64 flex-shrink-0 overflow-hidden rounded-xl border-2 border-primary/20 shadow-lg">
-                  {selectedPlan.imagePreview ? (
+                  {selectedPlan.image_preview ? (
                     <Image
-                      src={selectedPlan.imagePreview}
+                      src={selectedPlan.image_preview}
                       alt={selectedPlan.title}
                       fill
                       className="object-cover"
@@ -113,8 +113,8 @@ export function PlanSelectionStep({
               </div>
               <textarea
                 placeholder="E.g. Make it more upbeat, focus on the ingredients, use a specific tone..."
-                value={settings.additionalInstructions || ""}
-                onChange={(e) => setSettings({ ...settings, additionalInstructions: e.target.value })}
+                value={settings.additional_instructions || ""}
+                onChange={(e) => setSettings({ ...settings, additional_instructions: e.target.value })}
                 className="w-full min-h-[100px] rounded-2xl border border-border bg-background p-4 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none shadow-sm placeholder:text-muted-foreground/50"
               />
             </div>
@@ -187,16 +187,16 @@ export function PlanSelectionStep({
               <p className="text-xs text-muted-foreground">Add your brand logo scene at the end of the video</p>
             </div>
             <button
-              onClick={() => setSettings({ ...settings, logoEnding: !settings.logoEnding })}
+              onClick={() => setSettings({ ...settings, logo_ending: !settings.logo_ending })}
               className={cn(
                 "relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-offset-background",
-                settings.logoEnding ? "bg-primary" : "bg-muted"
+                settings.logo_ending ? "bg-primary" : "bg-muted"
               )}
             >
               <span
                 className={cn(
                   "inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
-                  settings.logoEnding ? "translate-x-5" : "translate-x-0"
+                  settings.logo_ending ? "translate-x-5" : "translate-x-0"
                 )}
               />
             </button>
@@ -209,16 +209,16 @@ export function PlanSelectionStep({
               <p className="text-xs text-muted-foreground">Show text overlays during the video</p>
             </div>
             <button
-              onClick={() => setSettings({ ...settings, captions: !settings.captions })}
+              onClick={() => setSettings({ ...settings, captions_enabled: !settings.captions_enabled })}
               className={cn(
                 "relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-offset-background",
-                settings.captions ? "bg-primary" : "bg-muted"
+                settings.captions_enabled ? "bg-primary" : "bg-muted"
               )}
             >
               <span
                 className={cn(
                   "inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
-                  settings.captions ? "translate-x-5" : "translate-x-0"
+                  settings.captions_enabled ? "translate-x-5" : "translate-x-0"
                 )}
               />
             </button>

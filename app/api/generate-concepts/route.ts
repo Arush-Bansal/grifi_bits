@@ -15,10 +15,16 @@ export async function POST(req: NextRequest) {
 
     // Generate square preview images for each concept
     const conceptsWithImages = await Promise.all(
-      concepts.map(async (concept) => {
+      concepts.map(async (concept: { id: string; title: string; description: string; image_prompt?: string; imagePrompt?: string }) => {
         try {
-          const imagePreview = await generateImage(concept.imagePrompt, undefined, undefined, "1:1");
-          return { ...concept, imagePreview };
+          const image_preview = await generateImage(concept.image_prompt || concept.imagePrompt || "", undefined, undefined, "1:1");
+          return { 
+            id: concept.id,
+            title: concept.title,
+            description: concept.description,
+            image_prompt: concept.image_prompt || concept.imagePrompt,
+            image_preview 
+          };
         } catch (error) {
           console.error("Failed to generate concept image:", error);
           return concept;

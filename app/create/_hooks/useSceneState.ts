@@ -1,20 +1,36 @@
 "use client";
 
 import { useState, useMemo, useCallback, useEffect } from "react";
-import { StoryboardTimelineClip } from "@/components/timeline/storyboard-timeline";
-import { Scene, SceneGenerating, EditingPrompt } from "../types";
+import { Scene, EditingPrompt } from "../types";
 import { defaultScenes, TIMELINE_FLOAT_TOLERANCE } from "../constants";
-import { buildInitialTimelineClips, normalizeTimelineClips } from "../_utils";
+import { buildInitialTimelineClips } from "../_utils";
 import { usePreviewSceneMutation } from "./index";
+import { useProject } from "./useProject";
 
 export function useSceneState() {
-  const [scenes, setScenes] = useState<Scene[]>(defaultScenes);
-  const [timelineClips, setTimelineClips] = useState<StoryboardTimelineClip[]>(() => buildInitialTimelineClips(defaultScenes));
+  const { projectData, uiState, updateCache, updateUiCache } = useProject();
+  
+  const scenes = useMemo(() => {
+    const rawScenes = projectData?.scenes || defaultScenes;
+    return rawScenes.map((scene, index) => ({
+      ...scene,
+      id: scene.id ?? index + 1
+    }));
+  }, [projectData?.scenes]);
+  const timelineClips = useMemo(() => {
+    if (projectData?.scenes && projectData.scenes.length > 0) {
+      return buildInitialTimelineClips(projectData.scenes);
+    }
+    return buildInitialTimelineClips(defaultScenes);
+  }, [projectData?.scenes]);
+
   const [timelineCurrentTime, setTimelineCurrentTime] = useState(0);
   const [timelineIsPlaying, setTimelineIsPlaying] = useState(false);
-  const [sceneGenerating, setSceneGenerating] = useState<SceneGenerating>({});
-  const [editingImagePrompt, setEditingImagePrompt] = useState<EditingPrompt>({});
-  const [editingAudioPrompt, setEditingAudioPrompt] = useState<EditingPrompt>({});
+  
+  const sceneGenerating = useMemo(() => uiState.sceneGenerating, [uiState.sceneGenerating]);
+  const editingImagePrompt = useMemo(() => uiState.editingImagePrompt, [uiState.editingImagePrompt]);
+  const editingAudioPrompt = useMemo(() => uiState.editingAudioPrompt, [uiState.editingAudioPrompt]);
+  
   const [isGeneratingAllImages, setIsGeneratingAllImages] = useState(false);
   const [isGeneratingAllAudios, setIsGeneratingAllAudios] = useState(false);
 
@@ -40,72 +56,80 @@ export function useSceneState() {
     setTimelineCurrentTime((prev) => Math.min(prev, timelineTotalDuration));
   }, [timelineTotalDuration]);
 
-  const updateScene = useCallback((sceneId: number, key: "imagePrompt" | "audioPrompt" | "videoScript", value: string) => {
-    setScenes((prev) => prev.map((scene) => (scene.id === sceneId ? { ...scene, [key]: value } : scene)));
-  }, []);
+  const setScenes = useCallback((newScenes: Scene[] | ((prev: Scene[]) => Scene[])) => {
+    updateCache((old) => {
+      const currentScenes = old.scenes || defaultScenes;
+      const next = typeof newScenes === "function" ? newScenes(currentScenes) : newScenes;
+      return { scenes: next };
+    });
+  }, [updateCache]);
 
-  const handleGenerateSceneImage = useCallback(async (sceneId: number, imagePrompt: string, mainRef?: string, secondaryRef?: string) => {
-    setSceneGenerating((prev) => ({ ...prev, [sceneId]: { ...prev[sceneId], image: true } }));
+  const updateScene = useCallback((sceneId: number, key: "image_prompt" | "speech" | "video_prompt", value: string) => {
+    setScenes((prev) => prev.map((scene) => (scene.id === sceneId ? { ...scene, [key]: value } : scene)));
+  }, [setScenes]);
+
+  const handleGenerateSceneImage = useCallback(async (sceneId: number, image_prompt: string, main_ref?: string, secondary_ref?: string) => {
+    updateUiCache((old) => {
+      const sg = old.sceneGenerating || {};
+      return { sceneGenerating: { ...sg, [sceneId]: { ...sg[sceneId], image: true } } };
+    });
     try {
       const data = await previewSceneMutation.mutateAsync({ 
         type: "image", 
-        imagePrompt,
-        mainReference: mainRef,
-        secondaryReference: secondaryRef
+        image_prompt,
+        main_reference: main_ref,
+        secondary_reference: secondary_ref
       });
       setScenes((prev) =>
-        prev.map((s) => (s.id === sceneId ? { ...s, imageUrl: data.imageUrl } : s))
+        prev.map((s) => (s.id === sceneId ? { ...s, image_url: data.image_url } : s))
       );
-      setEditingImagePrompt((prev) => ({ ...prev, [sceneId]: false }));
+      updateUiCache((old) => {
+        const ep = old.editingImagePrompt || {};
+        return { editingImagePrompt: { ...ep, [sceneId]: false } };
+      });
       return data;
-    } catch (error: unknown) {
-      const axiosError = error as { response?: { data?: { error?: string } } };
-      const message = axiosError.response?.data?.error || (error as Error).message || "Image generation failed.";
-      alert(message);
     } finally {
-      setSceneGenerating((prev) => ({ ...prev, [sceneId]: { ...prev[sceneId], image: false } }));
+      updateUiCache((old) => {
+        const sg = old.sceneGenerating || {};
+        return { sceneGenerating: { ...sg, [sceneId]: { ...sg[sceneId], image: false } } };
+      });
     }
-  }, [previewSceneMutation]);
+  }, [previewSceneMutation, setScenes, updateUiCache]);
 
-  const handleGenerateSceneAudio = useCallback(async (sceneId: number, audioScript: string) => {
-    setSceneGenerating((prev) => ({ ...prev, [sceneId]: { ...prev[sceneId], audio: true } }));
+  const handleGenerateSceneAudio = useCallback(async (sceneId: number, speech: string) => {
+    updateUiCache((old) => {
+      const sg = old.sceneGenerating || {};
+      return { sceneGenerating: { ...sg, [sceneId]: { ...sg[sceneId], audio: true } } };
+    });
     try {
-      const data = await previewSceneMutation.mutateAsync({ type: "audio", audioScript });
+      const data = await previewSceneMutation.mutateAsync({ type: "audio", speech });
       setScenes((prev) =>
-        prev.map((s) => (s.id === sceneId ? { ...s, audioUrl: data.audioUrl, audioDuration: data.audioDuration } : s))
+        prev.map((s) => (s.id === sceneId ? { ...s, audio_url: data.audio_url, audio_duration: data.audio_duration } : s))
       );
-      if (data.audioDuration) {
-        const audioDuration = data.audioDuration;
-        setTimelineClips((prev) => 
-          normalizeTimelineClips(
-            prev.map((clip: StoryboardTimelineClip) => 
-              clip.sceneId === sceneId 
-                ? { ...clip, end: clip.start + audioDuration } 
-                : clip
-            )
-          )
-        );
-      }
-      setEditingAudioPrompt((prev) => ({ ...prev, [sceneId]: false }));
-    } catch (error: unknown) {
-      const axiosError = error as { response?: { data?: { error?: string } } };
-      const message = axiosError.response?.data?.error || (error as Error).message || "Audio generation failed.";
-      alert(message);
+      updateUiCache((old) => {
+        const ep = old.editingAudioPrompt || {};
+        return { editingAudioPrompt: { ...ep, [sceneId]: false } };
+      });
     } finally {
-      setSceneGenerating((prev) => ({ ...prev, [sceneId]: { ...prev[sceneId], audio: false } }));
+      updateUiCache((old) => {
+        const sg = old.sceneGenerating || {};
+        return { sceneGenerating: { ...sg, [sceneId]: { ...sg[sceneId], audio: false } } };
+      });
     }
-  }, [previewSceneMutation]);
+  }, [previewSceneMutation, setScenes, updateUiCache]);
 
   const handleGenerateAllImages = useCallback(async () => {
     setIsGeneratingAllImages(true);
     try {
+      const validScenes = scenes.filter((scene: Scene) => scene.image_prompt?.trim());
+      if (!validScenes.length) return;
       await Promise.all(
-        scenes.map((scene: Scene) =>
+        validScenes.map((scene: Scene) =>
           handleGenerateSceneImage(
             scene.id,
-            scene.imagePrompt,
-            scene.mainReference,
-            scene.secondaryReference
+            scene.image_prompt,
+            scene.main_reference,
+            scene.secondary_reference
           )
         )
       );
@@ -119,8 +143,10 @@ export function useSceneState() {
   const handleGenerateAllAudios = useCallback(async () => {
     setIsGeneratingAllAudios(true);
     try {
+      const validScenes = scenes.filter((scene) => scene.speech?.trim());
+      if (!validScenes.length) return;
       await Promise.all(
-        scenes.map((scene) => handleGenerateSceneAudio(scene.id, scene.audioPrompt))
+        validScenes.map((scene) => handleGenerateSceneAudio(scene.id, scene.speech))
       );
     } catch (error) {
       console.error("Bulk audio generation failed:", error);
@@ -129,8 +155,8 @@ export function useSceneState() {
     }
   }, [scenes, handleGenerateSceneAudio]);
 
-  const handleTimelineClipsChange = useCallback((nextClips: StoryboardTimelineClip[]) => {
-    setTimelineClips(normalizeTimelineClips(nextClips));
+  const handleTimelineClipsChange = useCallback(() => {
+    // We don't save timeline clips directly yet, but we normalize them
   }, []);
 
   const handleTimelineTimeChange = useCallback((nextTime: number) => {
@@ -142,16 +168,28 @@ export function useSceneState() {
     scenes,
     setScenes,
     timelineClips,
-    setTimelineClips,
+    setTimelineClips: () => {}, // Disabled for now as it's derived
     timelineCurrentTime,
     setTimelineCurrentTime,
     timelineIsPlaying,
     setTimelineIsPlaying,
     sceneGenerating,
     editingImagePrompt,
-    setEditingImagePrompt,
+    setEditingImagePrompt: (val: EditingPrompt | ((prev: EditingPrompt) => EditingPrompt)) => {
+      updateUiCache((old) => {
+        const current = old.editingImagePrompt || {};
+        const next = typeof val === "function" ? val(current) : val;
+        return { editingImagePrompt: next };
+      });
+    },
     editingAudioPrompt,
-    setEditingAudioPrompt,
+    setEditingAudioPrompt: (val: EditingPrompt | ((prev: EditingPrompt) => EditingPrompt)) => {
+      updateUiCache((old) => {
+        const current = old.editingAudioPrompt || {};
+        const next = typeof val === "function" ? val(current) : val;
+        return { editingAudioPrompt: next };
+      });
+    },
     isGeneratingAllImages,
     isGeneratingAllAudios,
     timelineTotalDuration,

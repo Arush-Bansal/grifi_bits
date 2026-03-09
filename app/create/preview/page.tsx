@@ -2,42 +2,78 @@
 
 import { FinalPreviewStep } from "../_components/final-preview-step";
 import { StepNavigation } from "../_components/step-navigation";
-import { useCreatePageContext } from "../_context/CreatePageContext";
+import { useProductInfo } from "../_hooks/useProductInfo";
+import { useSceneState } from "../_hooks/useSceneState";
+import { useAiPlan } from "../_hooks/useAiPlan";
+import { useCreateMutations } from "../_hooks/useCreateMutations";
+import { useProject } from "../_hooks/useProject";
+import { useReferenceState } from "../_hooks/useReferenceState";
+import { useUIState } from "../_hooks/useUIState";
 import { TIMELINE_MIN_DURATION_SECONDS } from "../constants";
 import { formatTimelineTime } from "../_utils";
 import { Scene, ReferenceCard } from "../types";
 
 export default function PreviewPage() {
-  const state = useCreatePageContext();
+  const { product_name } = useProductInfo();
+  const {
+    scenes,
+    activeTimelineClip,
+    timelineClips,
+    timelineCurrentTime,
+    timelineIsPlaying,
+    handleTimelineTimeChange,
+    setTimelineIsPlaying,
+    handleTimelineClipsChange,
+    timelineTotalDuration,
+    setScenes,
+    handleGenerateSceneImage
+  } = useSceneState();
+  const { settings, setSettings, setSelectedPlanIndex } = useAiPlan();
+  const { references, setReferences } = useReferenceState();
+  const { projectData, saveProjectWithData, saving } = useProject();
+  const { setStep } = useUIState();
+
+  const mutations = useCreateMutations({
+    setPlans: () => {},
+    setSelectedPlanIndex,
+    setStep,
+    saveProjectWithData,
+    imageFiles: [], // imageFiles not needed for media generation
+    syncState: projectData || {},
+    setReferences,
+    setScenes,
+    setTimelineClips: () => {}, // timelineClips is derived
+    handleGenerateSceneImage
+  });
 
   return (
     <>
       <FinalPreviewStep
-        productName={state.product_name}
-        activeTimelineClip={state.activeTimelineClip}
-        scenes={state.scenes}
-        generateMediaLoading={state.generateMediaMutation.isPending}
-        generateMedia={() => state.generateMediaMutation.mutate({
-          scenes: state.scenes.map((s: Scene) => ({
+        productName={product_name}
+        activeTimelineClip={activeTimelineClip}
+        scenes={scenes}
+        generateMediaLoading={mutations.generateMediaMutation.isPending}
+        generateMedia={() => mutations.generateMediaMutation.mutate({
+          scenes: scenes.map((s: Scene) => ({
             ...s,
-            videoPrompt: s.videoScript
+            video_prompt: s.video_prompt
           })),
-          references: Object.fromEntries(state.references.map((r: ReferenceCard) => [r.id, r.tagline])),
-          voiceId: "pNInz6obpgmqS29pXv50" // Hardcoded voice ID as in original or via env
+          references: Object.fromEntries(references.map((r: ReferenceCard) => [r.id, r.tagline])),
+          voice_id: "pNInz6obpgmqS29pXv50" // Hardcoded voice ID as in original or via env
         })}
-        settings={state.settings}
-        setSettings={state.setSettings}
-        timelineClips={state.timelineClips}
-        timelineCurrentTime={state.timelineCurrentTime}
-        timelineIsPlaying={state.timelineIsPlaying}
+        settings={settings}
+        setSettings={setSettings}
+        timelineClips={timelineClips}
+        timelineCurrentTime={timelineCurrentTime}
+        timelineIsPlaying={timelineIsPlaying}
         TIMELINE_MIN_DURATION_SECONDS={TIMELINE_MIN_DURATION_SECONDS}
-        handleTimelineTimeChange={state.handleTimelineTimeChange}
-        setTimelineIsPlaying={state.setTimelineIsPlaying}
-        handleTimelineClipsChange={state.handleTimelineClipsChange}
-        saveProject={state.saveProject}
-        saving={state.saving}
+        handleTimelineTimeChange={handleTimelineTimeChange}
+        setTimelineIsPlaying={setTimelineIsPlaying}
+        handleTimelineClipsChange={handleTimelineClipsChange}
+        saveProject={() => saveProjectWithData(projectData!)}
+        saving={saving}
         formatTimelineTime={formatTimelineTime}
-        timelineTotalDuration={state.timelineTotalDuration}
+        timelineTotalDuration={timelineTotalDuration}
       />
       <StepNavigation />
     </>

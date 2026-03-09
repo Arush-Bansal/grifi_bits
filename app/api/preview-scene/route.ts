@@ -6,7 +6,7 @@ import fs from "fs";
 
 export async function POST(req: NextRequest) {
     try {
-        const { type, imagePrompt, audioScript, voiceId, mainReference, secondaryReference } = await req.json();
+    const { type, image_prompt, speech, voice_id, main_reference, secondary_reference } = await req.json();
 
         if (!type || !["image", "audio", "both"].includes(type)) {
             return NextResponse.json(
@@ -21,29 +21,29 @@ export async function POST(req: NextRequest) {
 
         // Generate image
         if (type === "image" || type === "both") {
-            if (!imagePrompt) {
-                return NextResponse.json({ error: "imagePrompt is required for image generation." }, { status: 400 });
+            if (!image_prompt) {
+                return NextResponse.json({ error: "image_prompt is required for image generation." }, { status: 400 });
             }
             console.log("[PreviewScene] Generating image…");
-            imageUrl = await generateImage(imagePrompt, mainReference, secondaryReference);
+            imageUrl = await generateImage(image_prompt, main_reference, secondary_reference);
         }
 
         // Generate audio
         if (type === "audio" || type === "both") {
-            if (!audioScript) {
-                return NextResponse.json({ error: "audioScript is required for audio generation." }, { status: 400 });
+            if (!speech) {
+                return NextResponse.json({ error: "speech is required for audio generation." }, { status: 400 });
             }
             const tempDir = path.join(os.tmpdir(), "orbit-gen", Date.now().toString());
             fs.mkdirSync(tempDir, { recursive: true });
 
-            const resolvedVoiceId = voiceId || process.env.ELEVEN_LABS_VOICE_ID;
+            const resolvedVoiceId = voice_id || process.env.ELEVEN_LABS_VOICE_ID;
             console.log("[PreviewScene] Generating audio…");
-            const audioPath = await generateAudio(audioScript, resolvedVoiceId, tempDir);
+            const audioPath = await generateAudio(speech, resolvedVoiceId, tempDir);
             audioUrl = `/api/audio?path=${encodeURIComponent(audioPath)}`;
             audioDuration = await getAudioDuration(audioPath);
         }
 
-        return NextResponse.json({ imageUrl, audioUrl, audioDuration });
+        return NextResponse.json({ image_url: imageUrl, audio_url: audioUrl, audio_duration: audioDuration });
     } catch (error: unknown) {
         const err = error as Error;
         console.error("[PreviewScene] Error:", err);

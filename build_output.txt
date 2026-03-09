@@ -1,0 +1,47 @@
+
+> ugc-orbit-ai@0.1.0 build
+> next build
+
+  ▲ Next.js 14.2.35
+  - Environments: .env
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/19) ...
+   Generating static pages (4/19) 
+   Generating static pages (9/19) 
+   Generating static pages (14/19) 
+ ✓ Generating static pages (19/19)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                              Size     First Load JS
+┌ ○ /                                    2.49 kB         140 kB
+├ ○ /_not-found                          873 B          88.2 kB
+├ ○ /api/ai-avatars                      0 B                0 B
+├ ƒ /api/audio                           0 B                0 B
+├ ƒ /api/fetch-link                      0 B                0 B
+├ ƒ /api/generate-concepts               0 B                0 B
+├ ƒ /api/generate-media                  0 B                0 B
+├ ƒ /api/orchestrate                     0 B                0 B
+├ ƒ /api/preview-scene                   0 B                0 B
+├ ƒ /api/projects                        0 B                0 B
+├ ƒ /api/projects/[id]                   0 B                0 B
+├ ○ /create                              1.32 kB        88.7 kB
+├ ○ /create/concepts                     3.38 kB         202 kB
+├ ○ /create/preview                      68.2 kB         267 kB
+├ ○ /create/references                   2.37 kB         201 kB
+├ ○ /create/scenes                       3.13 kB         202 kB
+├ ○ /create/setup                        2.55 kB         201 kB
+└ ○ /library                             3.81 kB         150 kB
++ First Load JS shared by all            87.4 kB
+  ├ chunks/117-ec5b0fe67c9dc3d0.js       31.7 kB
+  ├ chunks/fd9d1056-90e27c5daf44f13b.js  53.6 kB
+  └ other shared chunks (total)          1.99 kB
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

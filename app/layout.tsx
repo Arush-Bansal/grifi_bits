@@ -4,6 +4,8 @@ import { Plus_Jakarta_Sans, Sora } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Toaster } from "sonner";
+
 
 const bodyFont = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -49,8 +51,10 @@ export default function RootLayout({
             </header>
             <main className="pt-16">{children}</main>
           </div>
+          <Toaster position="top-right" richColors closeButton />
         </Providers>
       </body>
+
     </html>
   );
 }

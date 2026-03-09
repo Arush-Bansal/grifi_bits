@@ -6,7 +6,7 @@ import fs from "fs";
 
 export async function POST(req: NextRequest) {
   try {
-    const { scenes, references, voiceId } = await req.json();
+    const { scenes, references, voice_id } = await req.json();
 
     if (!scenes || !references) {
       return NextResponse.json({ error: "Scenes and references are required" }, { status: 400 });
@@ -27,22 +27,22 @@ export async function POST(req: NextRequest) {
     const sceneResults = [];
     for (const scene of scenes) {
       // Step A: Image
-      const imageUrl = await generateImage(scene.imagePrompt, scene.mainReference, scene.secondaryReference);
+      const imageUrl = await generateImage(scene.image_prompt, scene.main_reference, scene.secondary_reference);
       
       // Step B: Audio
-      const audioPath = await generateAudio(scene.audioPrompt, voiceId || process.env.ELEVEN_LABS_VOICE_ID, tempDir);
+      const audioPath = await generateAudio(scene.speech, voice_id || process.env.ELEVEN_LABS_VOICE_ID, tempDir);
       const audioDuration = await getAudioDuration(audioPath);
       // In a real app, upload audioPath to storage and get URL
       
       // Step C: Video (Image to Video)
-      const videoUrl = await generateVideo(imageUrl, scene.videoPrompt || "Cinematic movement");
+      const videoUrl = await generateVideo(imageUrl, scene.video_prompt || "Cinematic movement");
 
       sceneResults.push({
         id: scene.id,
-        imageUrl,
-        audioUrl: `/api/audio?path=${encodeURIComponent(audioPath)}`,
-        audioDuration,
-        videoUrl
+        image_url: imageUrl,
+        audio_url: `/api/audio?path=${encodeURIComponent(audioPath)}`,
+        audio_duration: audioDuration,
+        video_url: videoUrl
       });
     }
 

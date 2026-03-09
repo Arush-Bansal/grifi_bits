@@ -5,7 +5,8 @@ import { Loader2 } from "lucide-react";
 import { StepProgress } from "./_components/step-progress";
 import { Lightbox } from "./_components/lightbox";
 import { AiAvatarLibrary } from "./_components/ai-avatar-library";
-import { CreatePageProvider, useCreatePageContext } from "./_context/CreatePageContext";
+import { useUIState } from "./_hooks/useUIState";
+import { useReferenceState } from "./_hooks/useReferenceState";
 
 export default function CreateLayout({
   children,
@@ -21,31 +22,42 @@ export default function CreateLayout({
          </div>
        </div>
     }>
-      <CreatePageProvider>
-        <CreateLayoutContent>{children}</CreateLayoutContent>
-      </CreatePageProvider>
+      <CreateLayoutContent>{children}</CreateLayoutContent>
     </Suspense>
   );
 }
 
 function CreateLayoutContent({ children }: { children: React.ReactNode }) {
-  const state = useCreatePageContext();
+  const { 
+    step, 
+    stepTitle, 
+    lightboxImage, 
+    setLightboxImage, 
+    isAiAvatarLibraryOpen, 
+    setIsAiAvatarLibraryOpen 
+  } = useUIState();
+  
+  const {
+    loading_avatars,
+    ai_avatars,
+    addAiAvatarReference
+  } = useReferenceState();
 
   return (
     <main className="min-h-screen px-4 py-6 md:px-8 md:py-10">
       <section className="">
-        <StepProgress step={state.step} stepTitle={state.stepTitle} />
+        <StepProgress step={step} stepTitle={stepTitle} />
         {children}
       </section>
 
-      <Lightbox lightboxImage={state.lightboxImage} setLightboxImage={state.setLightboxImage} />
+      <Lightbox lightboxImage={lightboxImage} setLightboxImage={setLightboxImage} />
 
       <AiAvatarLibrary
-        isOpen={state.isAiAvatarLibraryOpen}
-        setIsOpen={state.setIsAiAvatarLibraryOpen}
-        loading={state.loadingAvatars}
-        avatars={state.aiAvatars}
-        addAiAvatarReference={state.addAiAvatarReference}
+        isOpen={isAiAvatarLibraryOpen}
+        setIsOpen={setIsAiAvatarLibraryOpen}
+        loading={loading_avatars}
+        avatars={ai_avatars}
+        addAiAvatarReference={addAiAvatarReference}
       />
     </main>
   );

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createSupabaseAdmin } from "@/lib/supabase/server";
+import { Database } from "@/lib/supabase/database.types";
 
 // Use the types directly from our new definition
 import { ProjectData } from "@/app/create/types";
@@ -23,16 +24,15 @@ export async function POST(request: Request) {
     .upsert({
       ...payload,
       updated_at: new Date().toISOString()
-    } as any)
-    .select("id")
+    } as Database['public']['Tables']['projects']['Insert'])
+    .select("*")
     .single();
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  // @ts-expect-error - data is sometimes typed as never due to complex Omit types
-  return NextResponse.json({ projectId: data.id }, { status: 200 });
+  return NextResponse.json(data);
 }
 
 export async function GET() {
