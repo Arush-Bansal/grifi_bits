@@ -40,6 +40,23 @@ export interface SceneResult {
   audioDuration: number;
 }
 
+export interface ProjectDBData {
+  id: string;
+  product_name: string;
+  product_description: string;
+  scenes?: Scene[];
+  image_names?: string[];
+  captions_enabled?: boolean;
+  music_track?: string;
+  references?: ReferenceCard[];
+  selected_reference?: string | null;
+  plans?: PlanConcept[];
+  selected_plan_index?: number;
+  settings?: VideoSettings;
+  created_at?: string;
+  updated_at?: string;
+}
+
 export interface ProjectData {
   productName: string;
   description: string;
@@ -52,6 +69,7 @@ export interface ProjectData {
   plans?: PlanConcept[];
   selectedPlanIndex?: number;
   settings?: VideoSettings;
+  createdAt?: string;
 }
 
 export type ReferenceCard = {

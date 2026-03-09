@@ -153,8 +153,9 @@ export function useCreatePageState() {
       data.REFERENCE_SPECS.forEach(async (spec) => {
         try {
           const imgData = await sceneState.handleGenerateSceneImage(0, spec.prompt); // Hack: use 0 as fake sceneId
-          if (imgData) {
-              referenceState.setReferences(prev => prev.map(r => r.id === spec.id ? { ...r, image: imgData.imageUrl } : r));
+          if (imgData && imgData.imageUrl) {
+              const imageUrl = imgData.imageUrl;
+              referenceState.setReferences(prev => prev.map(r => r.id === spec.id ? { ...r, image: imageUrl } : r));
           }
         } catch (error) {
           console.error(`Failed to generate image for ${spec.id}:`, error);

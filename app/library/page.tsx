@@ -4,21 +4,11 @@ import { useProjectsQuery } from "../create/_hooks";
 import { Plus, Video, Calendar, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-
-type Scene = {
-  id: number;
-  name: string;
-  imagePrompt: string;
-  videoScript: string;
-  audioPrompt: string;
-  imagePreview?: string;
-  videoUrl?: string;
-  audioUrl?: string;
-};
+import { ProjectData } from "../create/types";
 
 export default function LibraryPage() {
   const { data: projects, isLoading } = useProjectsQuery();
-  const projectsList = (projects || []) as any[];
+  const projectsList = (projects || []) as (ProjectData & { id: string })[];
 
   if (isLoading) {
     return (
@@ -52,7 +42,7 @@ export default function LibraryPage() {
 
       {projectsList && projectsList.length > 0 ? (
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {projectsList.map((project: any) => (
+          {projectsList.map((project) => (
             <article
               key={project.id}
               className="group relative overflow-hidden rounded-2xl border border-border bg-background/50 transition-all hover:border-primary/40 hover:shadow-xl"
@@ -64,12 +54,12 @@ export default function LibraryPage() {
                 </div>
               </div>
               <div className="p-5">
-                <h3 className="text-lg font-bold group-hover:text-primary transition-colors">{project.product_name}</h3>
-                <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{project.product_description}</p>
+                <h3 className="text-lg font-bold group-hover:text-primary transition-colors">{project.productName}</h3>
+                <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{project.description}</p>
                 <div className="mt-4 flex items-center justify-between">
                   <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                     <Calendar className="h-3.5 w-3.5" />
-                    {new Date(project.created_at).toLocaleDateString()}
+                    {project.createdAt ? new Date(project.createdAt).toLocaleDateString() : 'No date'}
                   </div>
                   <Link href={`/create?id=${project.id}`} className="text-sm font-semibold text-primary hover:underline flex items-center gap-1">
                     Edit <ArrowRight className="h-3.5 w-3.5" />
@@ -99,3 +89,4 @@ export default function LibraryPage() {
     </main>
   );
 }
+

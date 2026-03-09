@@ -93,30 +93,30 @@ export function useProjectSync(state: SyncState, setters: {
   // Initial Load
   useEffect(() => {
     if (projectData && !projectLoaded) {
-      setters.setProductName(projectData.product_name);
-      setters.setDescription(projectData.product_description || "");
+      setters.setProductName(projectData.productName);
+      setters.setDescription(projectData.description || "");
       setters.setScenes((projectData.scenes || defaultScenes).map((s: Scene) => ({
         ...s,
         videoScript: s.videoScript || ""
       })));
-      setters.setCaptions(projectData.captions_enabled ?? true);
-      setters.setMusic(projectData.music_track || "ambient-glow");
+      setters.setCaptions(projectData.captions ?? true);
+      setters.setMusic(projectData.music || "ambient-glow");
       
       if (projectData.plans && (projectData.plans as PlanConcept[]).length > 0) {
         setters.setPlans(projectData.plans as PlanConcept[]);
-        setters.setSelectedPlanIndex(projectData.selected_plan_index || 0);
+        setters.setSelectedPlanIndex(projectData.selectedPlanIndex || 0);
       }
       if (projectData.settings) {
         setters.setSettings((prev: VideoSettings) => ({ ...prev, ...projectData.settings }));
       }
-      if (projectData.scenes?.length > 0) {
+      if (projectData.scenes && projectData.scenes.length > 0) {
         setters.setTimelineClips(buildInitialTimelineClips(projectData.scenes));
       }
-      if (projectData.references?.length > 0) {
+      if (projectData.references && projectData.references.length > 0) {
         setters.setReferences(projectData.references);
         const uploadedItems = projectData.references
-          .filter((r: any) => r.image.includes("supabase") || r.image.includes("blob") || r.originalName)
-          .map((r: any) => ({ name: r.originalName || r.label, url: r.image }));
+          .filter((r: ReferenceCard) => r.image.includes("supabase") || r.image.includes("blob") || r.originalName)
+          .map((r: ReferenceCard) => ({ name: r.originalName || r.label, url: r.image }));
         if (uploadedItems.length > 0) {
           setters.setPreviewUrls(uploadedItems);
         }

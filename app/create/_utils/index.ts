@@ -2,7 +2,6 @@ import { type StoryboardTimelineClip } from "@/components/timeline/storyboard-ti
 import { Scene } from "../types";
 import {
   TIMELINE_DEFAULT_DURATION_SECONDS,
-  TIMELINE_FLOAT_TOLERANCE,
   TIMELINE_MIN_DURATION_SECONDS,
   TIMELINE_SNAP_SECONDS,
   timelineClipPalette

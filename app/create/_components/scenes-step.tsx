@@ -15,10 +15,10 @@ interface ScenesStepProps {
   setEditingImagePrompt: (val: EditingPrompt | ((prev: EditingPrompt) => EditingPrompt)) => void;
   editingAudioPrompt: EditingPrompt;
   setEditingAudioPrompt: (val: EditingPrompt | ((prev: EditingPrompt) => EditingPrompt)) => void;
-  handleGenerateSceneImage: (sceneId: number, imagePrompt: string, mainRef?: string, secondaryRef?: string) => Promise<void>;
-  handleGenerateSceneAudio: (sceneId: number, audioScript: string) => Promise<void>;
-  handleGenerateAllImages: () => Promise<void>;
-  handleGenerateAllAudios: () => Promise<void>;
+  handleGenerateSceneImage: (sceneId: number, imagePrompt: string, mainRef?: string, secondaryRef?: string) => Promise<unknown>;
+  handleGenerateSceneAudio: (sceneId: number, audioScript: string) => Promise<unknown>;
+  handleGenerateAllImages: () => Promise<unknown>;
+  handleGenerateAllAudios: () => Promise<unknown>;
   isGeneratingAllImages: boolean;
   isGeneratingAllAudios: boolean;
   setLightboxImage: (url: string | null) => void;

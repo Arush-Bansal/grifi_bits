@@ -75,11 +75,12 @@ export function useSceneState() {
         prev.map((s) => (s.id === sceneId ? { ...s, audioUrl: data.audioUrl, audioDuration: data.audioDuration } : s))
       );
       if (data.audioDuration) {
+        const audioDuration = data.audioDuration;
         setTimelineClips((prev) => 
           normalizeTimelineClips(
             prev.map((clip: StoryboardTimelineClip) => 
               clip.sceneId === sceneId 
-                ? { ...clip, end: clip.start + data.audioDuration } 
+                ? { ...clip, end: clip.start + audioDuration } 
                 : clip
             )
           )

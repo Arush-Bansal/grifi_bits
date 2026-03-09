@@ -1,13 +1,31 @@
 import { useMutation, useQuery, UseMutationOptions } from "@tanstack/react-query";
 import axios from "axios";
-import { ProjectData, OrchestrationResult } from "../types";
+import { ProjectData, OrchestrationResult, PlanConcept, VideoSettings, ProjectDBData, Scene, SceneResult } from "../types";
+
+const normalizeProject = (dbData: ProjectDBData): ProjectData & { id: string } => {
+  return {
+    id: dbData.id,
+    productName: dbData.product_name,
+    description: dbData.product_description,
+    scenes: dbData.scenes,
+    imageNames: dbData.image_names,
+    captions: dbData.captions_enabled,
+    music: dbData.music_track,
+    references: dbData.references,
+    selectedReference: dbData.selected_reference,
+    plans: dbData.plans,
+    selectedPlanIndex: dbData.selected_plan_index,
+    settings: dbData.settings,
+    createdAt: dbData.created_at,
+  };
+};
 
 export const useProjectQuery = (projectId: string | null) => {
-  return useQuery({
+  return useQuery<ProjectData & { id: string }>({
     queryKey: ["project", projectId],
     queryFn: async () => {
-      const { data } = await axios.get(`/api/projects/${projectId}`);
-      return data;
+      const { data } = await axios.get<ProjectDBData>(`/api/projects/${projectId}`);
+      return normalizeProject(data);
     },
     enabled: !!projectId,
     refetchOnWindowFocus: false,
@@ -16,7 +34,7 @@ export const useProjectQuery = (projectId: string | null) => {
 };
 
 export const useAiAvatarsQuery = (enabled: boolean) => {
-  return useQuery({
+  return useQuery<string[]>({
     queryKey: ["ai-avatars"],
     queryFn: async () => {
       const { data } = await axios.get("/api/ai-avatars");
@@ -29,11 +47,11 @@ export const useAiAvatarsQuery = (enabled: boolean) => {
 };
 
 export const useProjectsQuery = () => {
-  return useQuery<any[]>({
+  return useQuery<(ProjectData & { id: string })[]>({
     queryKey: ["projects"],
     queryFn: async () => {
-      const { data } = await axios.get("/api/projects");
-      return data;
+      const { data } = await axios.get<ProjectDBData[]>("/api/projects");
+      return data.map(normalizeProject);
     },
     refetchOnWindowFocus: false,
     staleTime: 60 * 1000,
@@ -60,7 +78,7 @@ export const useFetchLinkMutation = (options?: UseMutationOptions<{ title?: stri
   });
 };
 
-export const useGenerateConceptsMutation = (options?: UseMutationOptions<{ concepts: any[] }, Error, { productName: string; description: string }>) => {
+export const useGenerateConceptsMutation = (options?: UseMutationOptions<{ concepts: PlanConcept[] }, Error, { productName: string; description: string }>) => {
   return useMutation({
     mutationFn: async (params: { productName: string; description: string }) => {
       const { data } = await axios.post("/api/generate-concepts", params);
@@ -75,7 +93,7 @@ export const useOrchestrateMutation = (options?: UseMutationOptions<Orchestratio
   description: string;
   imageNames: string[];
   selectedPlan?: string;
-  settings: any;
+  settings: VideoSettings;
 }>) => {
   return useMutation({
     mutationFn: async (params: {
@@ -83,7 +101,7 @@ export const useOrchestrateMutation = (options?: UseMutationOptions<Orchestratio
       description: string;
       imageNames: string[];
       selectedPlan?: string;
-      settings: any;
+      settings: VideoSettings;
     }) => {
       const { data } = await axios.post("/api/orchestrate", params);
       return data;
@@ -92,9 +110,18 @@ export const useOrchestrateMutation = (options?: UseMutationOptions<Orchestratio
   });
 };
 
-export const usePreviewSceneMutation = (options?: UseMutationOptions<{ imageUrl?: string; audioUrl?: string; audioDuration?: number }, Error, any>) => {
+interface PreviewSceneParams {
+  type: "image" | "audio" | "both";
+  imagePrompt?: string;
+  audioScript?: string;
+  voiceId?: string;
+  mainReference?: string;
+  secondaryReference?: string;
+}
+
+export const usePreviewSceneMutation = (options?: UseMutationOptions<{ imageUrl?: string; audioUrl?: string; audioDuration?: number }, Error, PreviewSceneParams>) => {
   return useMutation({
-    mutationFn: async (params: any) => {
+    mutationFn: async (params: PreviewSceneParams) => {
       const { data } = await axios.post("/api/preview-scene", params);
       return data;
     },
@@ -102,12 +129,20 @@ export const usePreviewSceneMutation = (options?: UseMutationOptions<{ imageUrl?
   });
 };
 
-export const useGenerateMediaMutation = (options?: UseMutationOptions<{ sceneResults: any[] }, Error, any>) => {
+interface GenerateMediaParams {
+  scenes: Array<Scene & { videoPrompt: string }>;
+  references: Record<string, string>;
+  voiceId: string;
+}
+
+export const useGenerateMediaMutation = (options?: UseMutationOptions<{ sceneResults: SceneResult[] }, Error, GenerateMediaParams>) => {
   return useMutation({
-    mutationFn: async (params: any) => {
+    mutationFn: async (params: GenerateMediaParams) => {
       const { data } = await axios.post("/api/generate-media", params);
       return data;
     },
     ...options
   });
 };
+
+
