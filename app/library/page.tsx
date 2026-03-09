@@ -4,11 +4,10 @@ import { useProjectsQuery } from "../create/_hooks";
 import { Plus, Video, Calendar, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ProjectData } from "../create/types";
 
 export default function LibraryPage() {
   const { data: projects, isLoading } = useProjectsQuery();
-  const projectsList = (projects || []) as (ProjectData & { id: string })[];
+  const projectsList = projects || [];
 
   if (isLoading) {
     return (
@@ -54,12 +53,12 @@ export default function LibraryPage() {
                 </div>
               </div>
               <div className="p-5">
-                <h3 className="text-lg font-bold group-hover:text-primary transition-colors">{project.productName}</h3>
-                <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{project.description}</p>
+                <h3 className="text-lg font-bold group-hover:text-primary transition-colors">{project.product_name}</h3>
+                <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{project.product_description}</p>
                 <div className="mt-4 flex items-center justify-between">
                   <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                     <Calendar className="h-3.5 w-3.5" />
-                    {project.createdAt ? new Date(project.createdAt).toLocaleDateString() : 'No date'}
+                    {project.created_at ? new Date(project.created_at).toLocaleDateString() : 'No date'}
                   </div>
                   <Link href={`/create?id=${project.id}`} className="text-sm font-semibold text-primary hover:underline flex items-center gap-1">
                     Edit <ArrowRight className="h-3.5 w-3.5" />

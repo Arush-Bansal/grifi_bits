@@ -10,9 +10,9 @@ export default function SetupPage() {
   return (
     <>
       <ProductSetupStep
-        productName={state.productName}
+        productName={state.product_name}
         setProductName={state.setProductName}
-        description={state.description}
+        description={state.product_description}
         setDescription={state.setDescription}
         productLink={state.productLink}
         setProductLink={state.setProductLink}

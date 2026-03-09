@@ -14,16 +14,16 @@ export default function HomePage() {
         router.push(`/create/setup?id=${data.projectId}`);
       }
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error("Failed to create project:", error);
-      alert("Failed to create project. Please try again.");
+      const message = error.response?.data?.error || error.message || "Unknown error";
+      alert(`Failed to create project: ${message}`);
     }
   });
 
   const handleCreateNew = () => {
     createProjectMutation.mutate({
-      productName: "Untitled Project",
-      description: ""
+      product_name: "Untitled Project"
     });
   };
 

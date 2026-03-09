@@ -5,10 +5,10 @@ import { uploadImage } from "@/lib/supabase/storage";
 import { useFetchLinkMutation } from "./index";
 
 export function useProductInfo() {
-  const [productName, setProductName] = useState("");
+  const [product_name, setProductName] = useState("");
   const [productLink, setProductLink] = useState("");
   const [fetchedProductLinks, setFetchedProductLinks] = useState<string[]>([]);
-  const [description, setDescription] = useState("");
+  const [product_description, setDescription] = useState("");
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<Array<{ name: string; url: string }>>([]);
   const [linkFeedback, setLinkFeedback] = useState("Paste a website, Amazon, or product page URL, then click Fetch.");
@@ -41,7 +41,7 @@ export function useProductInfo() {
 
   const fetchLinkMutation = useFetchLinkMutation({
     onSuccess: async (data, url) => {
-      setProductName(data.title || productName);
+      setProductName(data.title || product_name);
       setDescription((prev) => (data.description ? `${prev}\n\n${data.description}` : prev));
       setFetchedProductLinks((prev) => [...new Set([...prev, url])]);
       setLinkFeedback(`Fetched info for ${data.title}.`);
@@ -117,10 +117,10 @@ export function useProductInfo() {
   }, [productLink, fetchedProductLinks, fetchLinkMutation]);
 
   return {
-    productName, setProductName,
+    product_name, setProductName,
     productLink, setProductLink,
     fetchedProductLinks,
-    description, setDescription,
+    product_description, setDescription,
     imageFiles, setImageFiles,
     previewUrls, setPreviewUrls,
     removeImage,

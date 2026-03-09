@@ -1,31 +1,13 @@
 import { useMutation, useQuery, UseMutationOptions } from "@tanstack/react-query";
 import axios from "axios";
-import { ProjectData, OrchestrationResult, PlanConcept, VideoSettings, ProjectDBData, Scene, SceneResult } from "../types";
-
-const normalizeProject = (dbData: ProjectDBData): ProjectData & { id: string } => {
-  return {
-    id: dbData.id,
-    productName: dbData.product_name,
-    description: dbData.product_description,
-    scenes: dbData.scenes,
-    imageNames: dbData.image_names,
-    captions: dbData.captions_enabled,
-    music: dbData.music_track,
-    references: dbData.references,
-    selectedReference: dbData.selected_reference,
-    plans: dbData.plans,
-    selectedPlanIndex: dbData.selected_plan_index,
-    settings: dbData.settings,
-    createdAt: dbData.created_at,
-  };
-};
+import { ProjectData, OrchestrationResult, PlanConcept, VideoSettings, Scene } from "../types";
 
 export const useProjectQuery = (projectId: string | null) => {
-  return useQuery<ProjectData & { id: string }>({
+  return useQuery<ProjectData>({
     queryKey: ["project", projectId],
     queryFn: async () => {
-      const { data } = await axios.get<ProjectDBData>(`/api/projects/${projectId}`);
-      return normalizeProject(data);
+      const { data } = await axios.get<ProjectData>(`/api/projects/${projectId}`);
+      return data;
     },
     enabled: !!projectId,
     refetchOnWindowFocus: false,
@@ -47,20 +29,21 @@ export const useAiAvatarsQuery = (enabled: boolean) => {
 };
 
 export const useProjectsQuery = () => {
-  return useQuery<(ProjectData & { id: string })[]>({
+  return useQuery<ProjectData[]>({
     queryKey: ["projects"],
     queryFn: async () => {
-      const { data } = await axios.get<ProjectDBData[]>("/api/projects");
-      return data.map(normalizeProject);
+      const { data } = await axios.get<ProjectData[]>("/api/projects");
+      return data;
     },
     refetchOnWindowFocus: false,
     staleTime: 60 * 1000,
   });
 };
 
-export const useSaveProjectMutation = (options?: UseMutationOptions<{ projectId: string }, Error, ProjectData & { id?: string }>) => {
+
+export const useSaveProjectMutation = (options?: UseMutationOptions<{ projectId: string }, Error, ProjectData>) => {
   return useMutation({
-    mutationFn: async (data: ProjectData & { id?: string }) => {
+    mutationFn: async (data: ProjectData) => {
       const { data: responseData } = await axios.post("/api/projects", data);
       return responseData;
     },
@@ -78,9 +61,9 @@ export const useFetchLinkMutation = (options?: UseMutationOptions<{ title?: stri
   });
 };
 
-export const useGenerateConceptsMutation = (options?: UseMutationOptions<{ concepts: PlanConcept[] }, Error, { productName: string; description: string }>) => {
+export const useGenerateConceptsMutation = (options?: UseMutationOptions<{ concepts: PlanConcept[] }, Error, { product_name: string; product_description: string }>) => {
   return useMutation({
-    mutationFn: async (params: { productName: string; description: string }) => {
+    mutationFn: async (params: { product_name: string; product_description: string }) => {
       const { data } = await axios.post("/api/generate-concepts", params);
       return data;
     },
@@ -89,18 +72,20 @@ export const useGenerateConceptsMutation = (options?: UseMutationOptions<{ conce
 };
 
 export const useOrchestrateMutation = (options?: UseMutationOptions<OrchestrationResult, Error, {
-  productName: string;
-  description: string;
-  imageNames: string[];
-  selectedPlan?: string;
+  product_id?: string;
+  product_name: string;
+  product_description: string;
+  image_names: string[];
+  selected_plan?: string;
   settings: VideoSettings;
 }>) => {
   return useMutation({
     mutationFn: async (params: {
-      productName: string;
-      description: string;
-      imageNames: string[];
-      selectedPlan?: string;
+      product_id?: string;
+      product_name: string;
+      product_description: string;
+      image_names: string[];
+      selected_plan?: string;
       settings: VideoSettings;
     }) => {
       const { data } = await axios.post("/api/orchestrate", params);
@@ -135,7 +120,7 @@ interface GenerateMediaParams {
   voiceId: string;
 }
 
-export const useGenerateMediaMutation = (options?: UseMutationOptions<{ sceneResults: SceneResult[] }, Error, GenerateMediaParams>) => {
+export const useGenerateMediaMutation = (options?: UseMutationOptions<{ sceneResults: Partial<Scene>[] }, Error, GenerateMediaParams>) => {
   return useMutation({
     mutationFn: async (params: GenerateMediaParams) => {
       const { data } = await axios.post("/api/generate-media", params);

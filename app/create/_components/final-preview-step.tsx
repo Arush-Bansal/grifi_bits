@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { Music2, Subtitles, Video } from "lucide-react";
-import { Scene } from "../types";
+import { Scene, VideoSettings } from "../types";
 
 interface FinalPreviewStepProps {
   productName: string;
@@ -13,10 +13,8 @@ interface FinalPreviewStepProps {
   scenes: Scene[];
   generateMediaLoading: boolean;
   generateMedia: () => void;
-  captions: boolean;
-  setCaptions: (val: boolean | ((prev: boolean) => boolean)) => void;
-  music: string;
-  setMusic: (val: string) => void;
+  settings: VideoSettings;
+  setSettings: (val: VideoSettings | ((prev: VideoSettings) => VideoSettings)) => void;
   timelineClips: StoryboardTimelineClip[];
   timelineCurrentTime: number;
   timelineIsPlaying: boolean;
@@ -36,10 +34,8 @@ export function FinalPreviewStep({
   scenes,
   generateMediaLoading,
   generateMedia,
-  captions,
-  setCaptions,
-  music,
-  setMusic,
+  settings,
+  setSettings,
   timelineClips,
   timelineCurrentTime,
   timelineIsPlaying,
@@ -71,10 +67,10 @@ export function FinalPreviewStep({
               }
               return (
                 <div className="absolute inset-0">
-                  {activeScene?.imagePreview ? (
+                  {activeScene?.imageUrl ? (
                     <div className="relative h-full w-full">
                       <img
-                        src={activeScene.imagePreview}
+                        src={activeScene.imageUrl}
                         alt="Preview"
                         className="h-full w-full object-cover opacity-40 blur-[2px]"
                       />
@@ -102,7 +98,7 @@ export function FinalPreviewStep({
             </>
           )}
           <div className="absolute bottom-4 left-4 right-4 rounded-xl bg-black/30 px-3 py-2 text-xs text-white">
-            {captions ? "Caption preview enabled" : "Captions disabled"}
+            {settings.captions ? "Caption preview enabled" : "Captions disabled"}
           </div>
           <div className="absolute left-4 top-4 rounded-full bg-white/85 px-3 py-1 text-xs font-medium text-primary">
             {productName || "Your Brand"}
@@ -135,16 +131,16 @@ export function FinalPreviewStep({
             </div>
             <button
               type="button"
-              onClick={() => setCaptions(!captions)}
+              onClick={() => setSettings(prev => ({ ...prev, captions: !prev.captions }))}
               className={cn(
                 "relative inline-flex h-7 w-12 items-center rounded-full transition-colors",
-                captions ? "bg-primary" : "bg-muted"
+                settings.captions ? "bg-primary" : "bg-muted"
               )}
             >
               <span
                 className={cn(
                   "inline-block h-5 w-5 transform rounded-full bg-white transition-transform",
-                  captions ? "translate-x-6" : "translate-x-1"
+                  settings.captions ? "translate-x-6" : "translate-x-1"
                 )}
               />
             </button>
@@ -160,8 +156,8 @@ export function FinalPreviewStep({
             <Music2 className="h-4 w-4 text-primary" />
             <select
               id="music"
-              value={music}
-              onChange={(e) => setMusic(e.target.value)}
+              value={settings.musicTrack || "ambient-glow"}
+              onChange={(e) => setSettings(prev => ({ ...prev, musicTrack: e.target.value }))}
               className="h-10 w-full rounded-md border border-input bg-white px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               <option value="ambient-glow">Ambient Glow</option>

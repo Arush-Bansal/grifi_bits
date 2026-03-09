@@ -46,25 +46,26 @@ export function StepNavigation() {
           onClick={() => {
             if (state.step === 0) {
               state.generateConceptsMutation.mutate({ 
-                productName: state.productName, 
-                description: state.description 
+                product_name: state.product_name, 
+                product_description: state.product_description 
               });
             } else if (state.step === 1) {
               state.orchestrateMutation.mutate({
-                productName: state.productName,
-                description: state.description,
-                imageNames: state.imageFiles.length > 0 
+                product_name: state.product_name,
+                product_description: state.product_description,
+                image_names: state.imageFiles.length > 0 
                   ? state.imageFiles.map((f: File) => f.name) 
                   : state.previewUrls.map((p: { name: string; url: string }) => p.name),
-                selectedPlan: state.plans[state.selectedPlanIndex]?.title,
-                settings: state.settings
+                selected_plan: state.plans[state.selected_plan_index]?.title,
+                settings: state.settings,
+                product_id: state.projectId || undefined
               });
             } else {
               handleNavigate(state.step + 1);
             }
           }}
           disabled={
-            (state.step === 0 && (!state.productName || !state.description || state.generateConceptsMutation.isPending)) || 
+            (state.step === 0 && (!state.product_name || !state.product_description || state.generateConceptsMutation.isPending)) || 
             (state.step === 1 && state.orchestrateMutation.isPending) ||
             state.step === 4
           }

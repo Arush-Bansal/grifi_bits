@@ -10,7 +10,7 @@ import { INDIAN_LANGUAGES } from "../constants";
 
 interface PlanSelectionStepProps {
   plans: PlanConcept[];
-  selectedPlanIndex: number;
+  selected_plan_index: number;
   setSelectedPlanIndex: (index: number) => void;
   settings: VideoSettings;
   setSettings: (settings: VideoSettings | ((prev: VideoSettings) => VideoSettings)) => void;
@@ -20,14 +20,14 @@ interface PlanSelectionStepProps {
 
 export function PlanSelectionStep({
   plans,
-  selectedPlanIndex,
+  selected_plan_index,
   setSelectedPlanIndex,
   settings,
   setSettings,
   onRefresh,
   isRefreshing,
 }: PlanSelectionStepProps) {
-  const selectedPlan = plans[selectedPlanIndex];
+  const selectedPlan = plans[selected_plan_index];
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
@@ -54,12 +54,12 @@ export function PlanSelectionStep({
               onClick={() => setSelectedPlanIndex(index)}
               className={cn(
                 "relative flex flex-col items-start p-4 text-left transition-all rounded-2xl border-2",
-                selectedPlanIndex === index
+                selected_plan_index === index
                   ? "border-primary bg-primary/5 shadow-md ring-1 ring-primary/20"
                   : "border-border bg-background hover:border-primary/40"
               )}
             >
-              {selectedPlanIndex === index && (
+              {selected_plan_index === index && (
                 <CheckCircle2 className="absolute top-3 right-3 h-5 w-5 text-primary" />
               )}
               <h3 className="font-bold text-sm mb-1">{plan.title}</h3>

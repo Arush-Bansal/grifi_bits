@@ -129,14 +129,14 @@ export function ScenesStep({
                       </div>
                     ) : null}
 
-                    {scene.imagePreview && !editingImagePrompt[scene.id] ? (
+                    {scene.imageUrl && !editingImagePrompt[scene.id] ? (
                       <div className="relative group h-full min-h-[142px]">
                         <Image
-                          src={scene.imagePreview}
+                          src={scene.imageUrl}
                           alt={`Scene ${scene.id} start image`}
                           fill
                           className="object-cover cursor-pointer hover:opacity-95 transition-opacity"
-                          onClick={() => setLightboxImage(scene.imagePreview!)}
+                          onClick={() => setLightboxImage(scene.imageUrl!)}
                           unoptimized
                         />
                         <button
@@ -154,7 +154,7 @@ export function ScenesStep({
                           <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
                             Start Image Prompt
                           </span>
-                          {scene.imagePreview && (
+                          {scene.imageUrl && (
                             <button
                               type="button"
                               onClick={() => setEditingImagePrompt((prev) => ({ ...prev, [scene.id]: false }))}
@@ -233,7 +233,7 @@ export function ScenesStep({
                           disabled={!scene.imagePrompt.trim()}
                         >
                           <Video className="mr-2 h-3.5 w-3.5" />
-                          {scene.imagePreview ? "Regenerate" : "Generate Image"}
+                          {scene.imageUrl ? "Regenerate" : "Generate Image"}
                         </Button>
                       </div>
                     )}

@@ -4,13 +4,13 @@ import { generateImage } from "@/lib/media-gen";
 
 export async function POST(req: NextRequest) {
   try {
-    const { productName, description } = await req.json();
+    const { product_name, product_description } = await req.json();
 
-    if (!productName || !description) {
+    if (!product_name || !product_description) {
       return NextResponse.json({ error: "Product name and description are required" }, { status: 400 });
     }
 
-    const productInfo = `Product: ${productName}\nDescription: ${description}`;
+    const productInfo = `Product: ${product_name}\nDescription: ${product_description}`;
     const concepts = await generateAdConcepts(productInfo);
 
     // Generate square preview images for each concept

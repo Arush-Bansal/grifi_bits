@@ -54,7 +54,7 @@ export function useSceneState() {
         secondaryReference: secondaryRef
       });
       setScenes((prev) =>
-        prev.map((s) => (s.id === sceneId ? { ...s, imagePreview: data.imageUrl } : s))
+        prev.map((s) => (s.id === sceneId ? { ...s, imageUrl: data.imageUrl } : s))
       );
       setEditingImagePrompt((prev) => ({ ...prev, [sceneId]: false }));
       return data;

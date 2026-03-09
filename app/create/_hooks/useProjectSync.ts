@@ -13,16 +13,14 @@ import {
 } from "./index";
 
 interface SyncState {
-  productName: string;
-  description: string;
+  product_name: string;
+  product_description: string;
   imageFiles: File[];
   scenes: Scene[];
   references: ReferenceCard[];
   plans: PlanConcept[];
-  selectedPlanIndex: number;
+  selected_plan_index: number;
   settings: VideoSettings;
-  captions: boolean;
-  music: string;
   previewUrls: { name: string; url: string }[];
 }
 
@@ -30,11 +28,9 @@ export function useProjectSync(state: SyncState, setters: {
   setProductName: (v: string) => void;
   setDescription: (v: string) => void;
   setScenes: (v: Scene[]) => void;
-  setCaptions: (v: boolean) => void;
-  setMusic: (v: string) => void;
   setPlans: (v: PlanConcept[]) => void;
   setSelectedPlanIndex: (v: number) => void;
-  setSettings: (v: (prev: VideoSettings) => VideoSettings) => void;
+  setSettings: (v: VideoSettings | ((prev: VideoSettings) => VideoSettings)) => void;
   setTimelineClips: (v: StoryboardTimelineClip[]) => void;
   setReferences: (v: ReferenceCard[]) => void;
   setPreviewUrls: (v: Array<{ name: string; url: string }>) => void;
@@ -76,38 +72,36 @@ export function useProjectSync(state: SyncState, setters: {
 
   const saveProject = useCallback(async () => {
     await saveProjectWithData({
-      productName: state.productName,
-      description: state.description,
-      imageNames: state.imageFiles.map((file) => file.name),
-      selectedReference: null,
+      product_name: state.product_name,
+      product_description: state.product_description,
+      image_names: state.imageFiles.map((file) => file.name),
+      selected_reference: null,
       scenes: state.scenes,
       references: state.references,
       plans: state.plans,
-      selectedPlanIndex: state.selectedPlanIndex,
+      selected_plan_index: state.selected_plan_index,
       settings: state.settings,
-      captions: state.captions,
-      music: state.music
+      captions_enabled: state.settings.captions,
+      music_track: state.settings.musicTrack
     });
   }, [state, saveProjectWithData]);
 
   // Initial Load
   useEffect(() => {
     if (projectData && !projectLoaded) {
-      setters.setProductName(projectData.productName);
-      setters.setDescription(projectData.description || "");
+      setters.setProductName(projectData.product_name || "");
+      setters.setDescription(projectData.product_description || "");
       setters.setScenes((projectData.scenes || defaultScenes).map((s: Scene) => ({
         ...s,
         videoScript: s.videoScript || ""
       })));
-      setters.setCaptions(projectData.captions ?? true);
-      setters.setMusic(projectData.music || "ambient-glow");
-      
-      if (projectData.plans && (projectData.plans as PlanConcept[]).length > 0) {
-        setters.setPlans(projectData.plans as PlanConcept[]);
-        setters.setSelectedPlanIndex(projectData.selectedPlanIndex || 0);
-      }
-      if (projectData.settings) {
-        setters.setSettings((prev: VideoSettings) => ({ ...prev, ...projectData.settings }));
+      if (projectData.settings || projectData.captions_enabled !== undefined || projectData.music_track) {
+        setters.setSettings((prev: VideoSettings) => ({ 
+          ...prev, 
+          ...(projectData.settings as any),
+          captions: projectData.captions_enabled ?? (projectData.settings as any)?.captions ?? true,
+          musicTrack: projectData.music_track || (projectData.settings as any)?.musicTrack || "ambient-glow"
+        }));
       }
       if (projectData.scenes && projectData.scenes.length > 0) {
         setters.setTimelineClips(buildInitialTimelineClips(projectData.scenes));

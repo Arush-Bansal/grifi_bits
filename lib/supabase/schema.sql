@@ -23,7 +23,10 @@ CREATE TABLE IF NOT EXISTS project_references (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   project_id UUID REFERENCES projects(id) ON DELETE CASCADE,
   reference_key TEXT NOT NULL,
-  image_prompt TEXT,
+  label TEXT,
+  tagline TEXT,
+  original_name TEXT,
+  ai_prompt TEXT,
   image_url TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -41,6 +44,9 @@ CREATE TABLE IF NOT EXISTS scenes (
   image_url TEXT,
   video_url TEXT,
   audio_url TEXT,
+  audio_duration FLOAT,
+  main_reference TEXT,
+  secondary_reference TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 

@@ -13,7 +13,7 @@ export default function PreviewPage() {
   return (
     <>
       <FinalPreviewStep
-        productName={state.productName}
+        productName={state.product_name}
         activeTimelineClip={state.activeTimelineClip}
         scenes={state.scenes}
         generateMediaLoading={state.generateMediaMutation.isPending}
@@ -25,10 +25,8 @@ export default function PreviewPage() {
           references: Object.fromEntries(state.references.map((r: ReferenceCard) => [r.id, r.tagline])),
           voiceId: "pNInz6obpgmqS29pXv50" // Hardcoded voice ID as in original or via env
         })}
-        captions={state.captions}
-        setCaptions={state.setCaptions}
-        music={state.music}
-        setMusic={state.setMusic}
+        settings={state.settings}
+        setSettings={state.setSettings}
         timelineClips={state.timelineClips}
         timelineCurrentTime={state.timelineCurrentTime}
         timelineIsPlaying={state.timelineIsPlaying}

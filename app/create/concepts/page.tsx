@@ -11,11 +11,11 @@ export default function ConceptsPage() {
     <>
       <PlanSelectionStep
         plans={state.plans}
-        selectedPlanIndex={state.selectedPlanIndex}
+        selectedPlanIndex={state.selected_plan_index}
         setSelectedPlanIndex={state.setSelectedPlanIndex}
         settings={state.settings}
         setSettings={state.setSettings}
-        onRefresh={() => state.generateConceptsMutation.mutate({ productName: state.productName, description: state.description })}
+        onRefresh={() => state.generateConceptsMutation.mutate({ product_name: state.product_name, product_description: state.product_description })}
         isRefreshing={state.generateConceptsMutation.isPending}
       />
       <StepNavigation />
