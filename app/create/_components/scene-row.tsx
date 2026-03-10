@@ -73,7 +73,7 @@ export function SceneRow({ projectId, sceneId, references }: SceneRowProps) {
             </div>
           ) : null}
 
-          {scene.image_url && !isEditingImagePrompt ? (
+          {scene.image_url && typeof scene.image_url === 'string' && (scene.image_url.startsWith('http') || scene.image_url.startsWith('/')) && !isEditingImagePrompt ? (
             <div className="relative group h-full min-h-[142px]">
               <Image
                 src={scene.image_url!}

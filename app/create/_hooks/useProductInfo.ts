@@ -18,7 +18,7 @@ export function useProductInfo() {
   useEffect(() => {
     if (projectData?.references && projectData.references.length > 0) {
       const uploadedItems = projectData.references
-        .filter((r) => r.image_url.includes("supabase") || r.image_url.includes("blob") || r.original_name)
+        .filter((r) => r.image_url && typeof r.image_url === 'string' && (r.image_url.includes("supabase") || r.image_url.includes("blob")) || r.original_name)
         .map((r) => ({ name: r.original_name || r.label, url: r.image_url }));
       if (uploadedItems.length > 0) {
         setPreviewUrls(uploadedItems);

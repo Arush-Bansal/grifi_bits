@@ -1,6 +1,6 @@
 "use client";
 
-import { Scene, Step, ProjectData, PlanConcept, ReferenceCard } from "../types";
+import { Scene, Step, ProjectData, PlanConcept } from "../types";
 import { normalizeTimelineClips } from "../_utils";
 import { type StoryboardTimelineClip } from "@/components/timeline/storyboard-timeline";
 import {
@@ -15,7 +15,6 @@ interface MutationDeps {
   setSelectedPlanIndex: (index: number) => void;
   setStep: (step: Step) => void;
   imageFiles: File[];
-  setReferences: (refs: ReferenceCard[] | ((prev: ReferenceCard[]) => ReferenceCard[])) => void;
   setScenes: (scenes: Scene[] | ((prev: Scene[]) => Scene[])) => void;
   setTimelineClips: (clips: StoryboardTimelineClip[] | ((prev: StoryboardTimelineClip[]) => StoryboardTimelineClip[])) => void;
   handleGenerateSceneImage: (sceneId: number, prompt: string, main_ref?: string, secondary_ref?: string, options?: { referenceId?: string }) => Promise<{ image_url?: string; audio_url?: string; audio_duration?: number }>;
@@ -34,7 +33,6 @@ export function useCreateMutations(deps: MutationDeps) {
     setSelectedPlanIndex,
     setStep,
     imageFiles,
-    setReferences,
     setScenes,
     setTimelineClips,
     handleGenerateSceneImage,
@@ -74,13 +72,9 @@ export function useCreateMutations(deps: MutationDeps) {
       // 4. Trigger image generation for references if they are placeholders
       const references = data.references || [];
       const generationPromises = references.map(async (ref) => {
-        if (ref.ai_prompt && (ref.image_url?.includes("Generating") || !ref.image_url || ref.image_url.includes("placeholder"))) {
+        if (ref.ai_prompt && (ref.image_url?.includes("Generating") || !ref.image_url || ref.image_url.includes("placeholder") || ref.image_url.includes("null"))) {
           try {
-            const imgData = await handleGenerateSceneImage(0, ref.ai_prompt, undefined, undefined, { referenceId: ref.id });
-            if (imgData && imgData.image_url) {
-                const image_url = imgData.image_url;
-                setReferences((prev: ReferenceCard[]) => prev.map(r => r.id === ref.id ? { ...r, image_url: image_url } : r));
-            }
+            await handleGenerateSceneImage(0, ref.ai_prompt, undefined, undefined, { referenceId: ref.id });
           } catch (error) {
             console.error(`Failed to generate image for ${ref.id}:`, error);
           }

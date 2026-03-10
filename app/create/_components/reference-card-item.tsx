@@ -31,13 +31,19 @@ export function ReferenceCardItem({ projectId, referenceId }: ReferenceCardItemP
     >
       <div className="group block w-full text-left">
         <div className="relative h-44 w-full">
-          <Image
-            src={reference.image_url}
-            alt={reference.label}
-            fill
-            className="object-cover transition group-hover:scale-105"
-            unoptimized
-          />
+          {reference.image_url && typeof reference.image_url === 'string' && (reference.image_url.startsWith('http') || reference.image_url.startsWith('blob:') || reference.image_url.startsWith('/')) ? (
+            <Image
+              src={reference.image_url}
+              alt={reference.label}
+              fill
+              className="object-cover transition group-hover:scale-105"
+              unoptimized
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center bg-muted">
+              <span className="text-[10px] text-muted-foreground">No image available</span>
+            </div>
+          )}
           {typeof reference?.id === "string" && reference.id.startsWith("custom-") && (
             <button
               type="button"

@@ -26,7 +26,7 @@ export const useOrchestrateMutation = (options?: AppMutationOptions<ProjectData,
   product_id?: string;
   product_name: string;
   product_description: string;
-  image_names: string[];
+  image_contexts: { name: string; url: string }[];
   selected_plan?: string;
   settings: VideoSettings;
 }>) => {
@@ -35,7 +35,7 @@ export const useOrchestrateMutation = (options?: AppMutationOptions<ProjectData,
       product_id?: string;
       product_name: string;
       product_description: string;
-      image_names: string[];
+      image_contexts: { name: string; url: string }[];
       selected_plan?: string;
       settings: VideoSettings;
     }) => {

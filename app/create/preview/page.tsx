@@ -1,12 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import { FinalPreviewStep } from "../_components/final-preview-step";
 import { StepNavigation } from "../_components/step-navigation";
 import { useSceneState } from "../_hooks/useSceneState";
 import { useAiPlan } from "../_hooks/useAiPlan";
 import { useCreateMutations } from "../_hooks/useCreateMutations";
 import { useProject } from "../_hooks/useProject";
-import { useReferenceState } from "../_hooks/useReferenceState";
 import { useUIState } from "../_hooks/useUIState";
 import { TIMELINE_MIN_DURATION_SECONDS } from "../constants";
 import { formatTimelineTime } from "../_utils";
@@ -27,7 +27,7 @@ export default function PreviewPage() {
     handleGenerateSceneImage
   } = useSceneState();
   const { settings, setSettings, setSelectedPlanIndex } = useAiPlan();
-  const { references, setReferences } = useReferenceState();
+  const [references] = useState<ReferenceCard[]>([]);
   const { projectData, saveProjectWithData, saving } = useProject();
   const { setStep } = useUIState();
 
@@ -36,7 +36,6 @@ export default function PreviewPage() {
     setSelectedPlanIndex,
     setStep,
     imageFiles: [], // imageFiles not needed for media generation
-    setReferences,
     setScenes,
     setTimelineClips: () => {}, // timelineClips is derived
     handleGenerateSceneImage

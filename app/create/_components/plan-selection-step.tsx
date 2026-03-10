@@ -101,7 +101,7 @@ export function PlanSelectionStep({
             <div className="mt-8 overflow-hidden rounded-2xl border border-border bg-secondary/20 p-6">
               <div className="flex flex-col md:flex-row gap-6">
                 <div className="relative aspect-square w-full md:w-64 flex-shrink-0 overflow-hidden rounded-xl border-2 border-primary/20 shadow-lg">
-                  {selectedPlan.image_preview ? (
+                  {selectedPlan.image_preview && typeof selectedPlan.image_preview === 'string' && selectedPlan.image_preview.startsWith('http') ? (
                     <Image
                       src={selectedPlan.image_preview}
                       alt={selectedPlan.title}

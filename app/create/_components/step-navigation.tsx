@@ -9,7 +9,6 @@ import { useProductInfo } from "../_hooks/useProductInfo";
 import { useAiPlan } from "../_hooks/useAiPlan";
 import { useCreateMutations } from "../_hooks/useCreateMutations";
 import { useSceneState } from "../_hooks/useSceneState";
-import { useReferenceState } from "../_hooks/useReferenceState";
 import { Step } from "../types";
 
 const stepToRoute: Record<Step, string> = {
@@ -27,14 +26,12 @@ export function StepNavigation() {
   const { product_name, product_description, imageFiles, previewUrls } = useProductInfo();
   const { plans, selected_plan_index, settings, setSelectedPlanIndex, custom_concept } = useAiPlan();
   const sceneState = useSceneState();
-  const referenceState = useReferenceState();
 
   const mutations = useCreateMutations({
     setPlans: () => {}, // Handled via cache in useAiPlan
     setSelectedPlanIndex,
     setStep,
     imageFiles,
-    setReferences: referenceState.setReferences,
     setScenes: sceneState.setScenes,
     setTimelineClips: sceneState.setTimelineClips,
     handleGenerateSceneImage: sceneState.handleGenerateSceneImage,
@@ -81,7 +78,7 @@ export function StepNavigation() {
               mutations.orchestrateMutation.mutate({
                 product_name,
                 product_description,
-                image_names: previewUrls.map((p) => p.name),
+                image_contexts: previewUrls,
                 selected_plan: selected_plan_text,
                 settings,
                 product_id: projectId || undefined

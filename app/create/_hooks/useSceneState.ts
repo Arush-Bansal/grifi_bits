@@ -92,6 +92,7 @@ export function useSceneState() {
         if (options?.referenceId) {
           // Update references in cache if it's a reference generation
           updateCache((old) => ({
+            ...old,
             references: (old.references || []).map((r) =>
               r.id === options.referenceId ? { ...r, image_url: data.image_url as string } : r
             ),
@@ -104,6 +105,9 @@ export function useSceneState() {
         }
       }
       return data;
+    } catch (error) {
+      console.error(`[useSceneState] handleGenerateSceneImage failed for ${options?.referenceId || sceneId}:`, error);
+      throw error;
     } finally {
       updateUiCache((old) => {
         const sg = (old.sceneGenerating || {}) as SceneGenerating;

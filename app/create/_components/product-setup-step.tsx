@@ -159,13 +159,19 @@ export function ProductSetupStep({
                   onClick={() => setLightboxImage(url)}
                   className="relative h-full w-full block cursor-pointer hover:opacity-90 transition-opacity"
                 >
-                  <Image
-                    src={url}
-                    alt={imageFiles[index]?.name ?? `upload-${index + 1}`}
-                    fill
-                    className="object-cover"
-                    unoptimized
-                  />
+                  {url && typeof url === 'string' && (url.startsWith('http') || url.startsWith('blob:') || url.startsWith('/')) ? (
+                    <Image
+                      src={url}
+                      alt={imageFiles[index]?.name ?? `upload-${index + 1}`}
+                      fill
+                      className="object-cover"
+                      unoptimized
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-muted">
+                      <span className="text-[10px] text-muted-foreground">Error</span>
+                    </div>
+                  )}
                 </button>
                 <button
                   type="button"

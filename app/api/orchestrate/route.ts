@@ -5,12 +5,13 @@ import { Database, Json } from "@/lib/supabase/database.types";
 
 export async function POST(req: NextRequest) {
   try {
-    const { product_id, product_name, product_description, image_names, selected_plan, settings } = await req.json();
+    const { product_id, product_name, product_description, image_contexts, selected_plan, settings } = await req.json();
 
     if (!product_name || !product_description) {
       return NextResponse.json({ error: "Product name and description are required" }, { status: 400 });
     }
 
+    const image_names = (image_contexts || []).map((ctx: { name: string; url: string }) => ctx.name);
     const productInfo = `Product: ${product_name}\nDescription: ${product_description}`;
     const plan = await orchestrateAdPlan(
       productInfo, 
@@ -59,14 +60,17 @@ export async function POST(req: NextRequest) {
         }));
 
         const uniqueUploadedSpecs = Array.from(new Map((plan.UPLOADED_IMAGE_SPECS || []).map(spec => [spec.original_name, spec])).values());
-        const uploadedInserts = uniqueUploadedSpecs.map(spec => ({
-          project_id: product_id,
-          reference_key: `uploaded-${spec.original_name}`,
-          label: spec.ai_name,
-          tagline: spec.ai_description,
-          original_name: spec.original_name,
-          image_url: null
-        }));
+        const uploadedInserts = uniqueUploadedSpecs.map(spec => {
+          const context = (image_contexts || []).find((ctx: { name: string; url: string }) => ctx.name === spec.original_name);
+          return {
+            project_id: product_id,
+            reference_key: `uploaded-${spec.original_name}`,
+            label: spec.ai_name,
+            tagline: spec.ai_description,
+            original_name: spec.original_name,
+            image_url: context?.url || null
+          };
+        });
 
         await supabase.from("project_references").insert([...refInserts, ...uploadedInserts] as Database['public']['Tables']['project_references']['Insert'][]);
 
