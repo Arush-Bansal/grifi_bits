@@ -10,7 +10,7 @@ import { useReferenceState } from "../_hooks/useReferenceState";
 import { useUIState } from "../_hooks/useUIState";
 
 export default function ConceptsPage() {
-  const { plans, selected_plan_index, setSelectedPlanIndex, settings, setSettings } = useAiPlan();
+  const { plans, selected_plan_index, setSelectedPlanIndex, custom_concept, setCustomConcept, settings, setSettings } = useAiPlan();
   const { product_name, product_description, imageFiles } = useProductInfo();
   const { setScenes, setTimelineClips, handleGenerateSceneImage } = useSceneState();
   const { setReferences } = useReferenceState();
@@ -33,6 +33,8 @@ export default function ConceptsPage() {
         plans={plans}
         selected_plan_index={selected_plan_index}
         setSelectedPlanIndex={setSelectedPlanIndex}
+        custom_concept={custom_concept}
+        setCustomConcept={setCustomConcept}
         settings={settings}
         setSettings={setSettings}
         onRefresh={() => mutations.generateConceptsMutation.mutate({ product_name, product_description })}

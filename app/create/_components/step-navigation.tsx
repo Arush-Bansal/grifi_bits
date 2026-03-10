@@ -25,7 +25,7 @@ export function StepNavigation() {
   const { projectId, updateUiCache } = useProject();
   const { step, setStep } = useUIState();
   const { product_name, product_description, imageFiles, previewUrls } = useProductInfo();
-  const { plans, selected_plan_index, settings, setSelectedPlanIndex } = useAiPlan();
+  const { plans, selected_plan_index, settings, setSelectedPlanIndex, custom_concept } = useAiPlan();
   const sceneState = useSceneState();
   const referenceState = useReferenceState();
 
@@ -73,11 +73,16 @@ export function StepNavigation() {
             } else if (step === 1) {
               // Suspend auto-save before orchestration
               updateUiCache({ isAutoSaveSuspended: true });
+              const isCustom = selected_plan_index === plans.length;
+              const selected_plan_text = isCustom 
+                ? `Custom Concept: ${custom_concept?.title || "Untitled"}\nDescription: ${custom_concept?.description || "No description provided."}`
+                : plans[selected_plan_index]?.title;
+
               mutations.orchestrateMutation.mutate({
                 product_name,
                 product_description,
                 image_names: previewUrls.map((p) => p.name),
-                selected_plan: plans[selected_plan_index]?.title,
+                selected_plan: selected_plan_text,
                 settings,
                 product_id: projectId || undefined
               });

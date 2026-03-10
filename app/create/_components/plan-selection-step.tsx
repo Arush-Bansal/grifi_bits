@@ -12,6 +12,8 @@ interface PlanSelectionStepProps {
   plans: PlanConcept[];
   selected_plan_index: number;
   setSelectedPlanIndex: (index: number) => void;
+  custom_concept?: PlanConcept;
+  setCustomConcept: (concept: PlanConcept) => void;
   settings: VideoSettings;
   setSettings: (settings: VideoSettings | ((prev: VideoSettings) => VideoSettings)) => void;
   onRefresh: () => void;
@@ -22,6 +24,8 @@ export function PlanSelectionStep({
   plans,
   selected_plan_index,
   setSelectedPlanIndex,
+  custom_concept,
+  setCustomConcept,
   settings,
   setSettings,
   onRefresh,
@@ -47,7 +51,7 @@ export function PlanSelectionStep({
           </Button>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-4">
           {plans.map((plan, index) => (
             <button
               key={plan.id || index}
@@ -62,15 +66,37 @@ export function PlanSelectionStep({
               {selected_plan_index === index && (
                 <CheckCircle2 className="absolute top-3 right-3 h-5 w-5 text-primary" />
               )}
-              <h3 className="font-bold text-sm mb-1">{plan.title}</h3>
-              <p className="text-xs text-muted-foreground line-clamp-3">
+              <h3 className="font-bold text-xs mb-1 line-clamp-2">{plan.title}</h3>
+              <p className="text-[10px] text-muted-foreground line-clamp-3">
                 {plan.description}
               </p>
             </button>
           ))}
+
+          {/* Custom Concept Option */}
+          <button
+            onClick={() => setSelectedPlanIndex(plans.length)}
+            className={cn(
+              "relative flex flex-col items-center justify-center p-4 text-center transition-all rounded-2xl border-2 border-dashed",
+              selected_plan_index === plans.length
+                ? "border-primary bg-primary/5 shadow-md ring-1 ring-primary/20"
+                : "border-border bg-background hover:border-primary/40"
+            )}
+          >
+            {selected_plan_index === plans.length && (
+              <CheckCircle2 className="absolute top-3 right-3 h-5 w-5 text-primary" />
+            )}
+            <div className="mb-2 rounded-full bg-primary/10 p-2">
+              <MessageSquareText className="h-4 w-4 text-primary" />
+            </div>
+            <h3 className="font-bold text-xs mb-1">Write your own</h3>
+            <p className="text-[10px] text-muted-foreground">
+              Define your own concept
+            </p>
+          </button>
         </div>
 
-        {selectedPlan && (
+        {selected_plan_index < plans.length && selectedPlan && (
           <>
             <div className="mt-8 overflow-hidden rounded-2xl border border-border bg-secondary/20 p-6">
               <div className="flex flex-col md:flex-row gap-6">
@@ -119,6 +145,45 @@ export function PlanSelectionStep({
               />
             </div>
           </>
+        )}
+
+        {selected_plan_index === plans.length && (
+          <div className="mt-8 space-y-6 animate-in fade-in slide-in-from-top-4 duration-300">
+            <div className="space-y-4 rounded-2xl border-2 border-primary/20 bg-primary/5 p-6 shadow-sm">
+              <div className="space-y-2">
+                <Label className="text-sm font-bold text-primary">Concept Title</Label>
+                <input
+                  type="text"
+                  placeholder="E.g. The Sustainable Morning Routine"
+                  value={custom_concept?.title || ""}
+                  onChange={(e) => setCustomConcept({ ...(custom_concept || { description: "" }), title: e.target.value })}
+                  className="w-full rounded-xl border border-border bg-background p-3 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all shadow-sm"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-sm font-bold text-primary">Concept Description</Label>
+                <textarea
+                  placeholder="Describe your ad concept in detail..."
+                  value={custom_concept?.description || ""}
+                  onChange={(e) => setCustomConcept({ ...(custom_concept || { title: "" }), description: e.target.value })}
+                  className="w-full min-h-[120px] rounded-xl border border-border bg-background p-3 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none shadow-sm"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-sm font-semibold text-primary/80">
+                <MessageSquareText className="h-4 w-4" />
+                <Label>Additional Instructions (Optional)</Label>
+              </div>
+              <textarea
+                placeholder="E.g. Make it more upbeat, focus on the ingredients, use a specific tone..."
+                value={settings.additional_instructions || ""}
+                onChange={(e) => setSettings({ ...settings, additional_instructions: e.target.value })}
+                className="w-full min-h-[100px] rounded-2xl border border-border bg-background p-4 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none shadow-sm placeholder:text-muted-foreground/50"
+              />
+            </div>
+          </div>
         )}
       </div>
 

@@ -21,6 +21,7 @@ export interface VideoSettings {
   captions_enabled: boolean;
   music_track?: string;
   additional_instructions?: string;
+  custom_concept?: PlanConcept;
 }
 
 export interface Scene {
@@ -57,6 +58,7 @@ export interface ProjectData extends Partial<Omit<ProjectRow, 'scenes' | 'refere
   references?: ReferenceCard[];
   plans?: PlanConcept[];
   settings?: VideoSettings;
+  selected_plan_index?: number;
 }
 
 export interface ProjectUiState {

@@ -30,6 +30,8 @@ export function useAiPlan() {
     };
   }, [projectData?.settings, projectData?.captions_enabled, projectData?.music_track]);
 
+  const custom_concept = useMemo(() => settings.custom_concept, [settings.custom_concept]);
+
   const setPlans = useCallback((newPlans: PlanConcept[]) => {
     updateCache({ plans: newPlans });
   }, [updateCache]);
@@ -47,9 +49,14 @@ export function useAiPlan() {
     });
   }, [settings, updateCache]);
 
+  const setCustomConcept = useCallback((concept: PlanConcept) => {
+    setSettings({ ...settings, custom_concept: concept });
+  }, [settings, setSettings]);
+
   return {
     plans, setPlans,
     selected_plan_index, setSelectedPlanIndex,
+    custom_concept, setCustomConcept,
     settings, setSettings
   };
 }
