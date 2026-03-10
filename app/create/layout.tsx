@@ -7,6 +7,7 @@ import { Lightbox } from "./_components/lightbox";
 import { AiAvatarLibrary } from "./_components/ai-avatar-library";
 import { useUIState } from "./_hooks/useUIState";
 import { useReferenceState } from "./_hooks/useReferenceState";
+import { ProjectAutoSaver } from "./_components/project-auto-saver";
 
 export default function CreateLayout({
   children,
@@ -48,6 +49,7 @@ function CreateLayoutContent({ children }: { children: React.ReactNode }) {
       <section className="">
         <StepProgress step={step} stepTitle={stepTitle} />
         {children}
+        <ProjectAutoSaver />
       </section>
 
       <Lightbox lightboxImage={lightboxImage} setLightboxImage={setLightboxImage} />

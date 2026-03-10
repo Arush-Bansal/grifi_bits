@@ -12,7 +12,7 @@ export async function GET(
     return NextResponse.json({ error: "Supabase not configured" }, { status: 503 });
   }
 
-  // Fetch project basic data (which now contains everything we need in its JSON columns)
+  // Fetch project basic data
   const { data: project, error: projectError } = await supabase
     .from("projects")
     .select("*")
@@ -23,7 +23,49 @@ export async function GET(
     return NextResponse.json({ error: projectError.message }, { status: 404 });
   }
 
-  return NextResponse.json(project);
+  // 1. Fetch structured scenes
+  const { data: scenes } = await supabase
+    .from("scenes")
+    .select("*")
+    .eq("project_id", id)
+    .order("scene_order", { ascending: true });
+
+  // 2. Fetch structured references
+  const { data: references } = await supabase
+    .from("project_references")
+    .select("*")
+    .eq("project_id", id);
+
+  // 5. Construct merged scenes: authoritative text from JSONB, authoritative assets from structured table
+  const jsonScenes = (project.scenes as any[] || []);
+  const mergedScenes = jsonScenes.map(js => {
+    const ts = (scenes || []).find(s => s.scene_order === js.id);
+    return {
+      ...js,
+      image_url: ts?.image_url || js.image_url,
+      audio_url: ts?.audio_url || js.audio_url,
+      audio_duration: ts?.audio_duration || js.audio_duration,
+      video_url: ts?.video_url || js.video_url,
+    };
+  });
+
+  // 6. Construct merged references: authoritative text from JSONB, authoritative assets from structured table
+  const jsonRefs = (project.references as any[] || []);
+  const mergedRefs = jsonRefs.map(jr => {
+    const tr = (references || []).find(r => r.reference_key === jr.id);
+    return {
+      ...jr,
+      image_url: tr?.image_url || jr.image_url,
+    };
+  });
+
+  const consolidatedProject = {
+    ...project,
+    scenes: mergedScenes,
+    references: mergedRefs
+  };
+
+  return NextResponse.json(consolidatedProject);
 }
 
 export async function DELETE(

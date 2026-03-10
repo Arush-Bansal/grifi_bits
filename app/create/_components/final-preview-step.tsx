@@ -102,9 +102,9 @@ export function FinalPreviewStep({
           <div className="absolute bottom-4 left-4 right-4 rounded-xl bg-black/30 px-3 py-2 text-xs text-white">
             {settings.captions_enabled ? "Caption preview enabled" : "Captions disabled"}
           </div>
-          <div className="absolute left-4 top-4 rounded-full bg-white/85 px-3 py-1 text-xs font-medium text-primary">
+          {/* <div className="absolute left-4 top-4 rounded-full bg-white/85 px-3 py-1 text-xs font-medium text-primary">
             {productName || "Your Brand"}
-          </div>
+          </div> */}
         </div>
         <div className="mt-3 rounded-xl border border-border/70 bg-secondary/40 p-3">
           <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Active Clip</p>

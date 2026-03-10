@@ -32,7 +32,39 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json(data);
+  // Authoritative merge after upsert: text from JSONB payload, assets from structured tables
+  const idResult = (data as { id?: string })?.id || payload.id;
+  const { data: scenes } = await supabase.from("scenes").select("*").eq("project_id", idResult).order("scene_order", { ascending: true });
+  const { data: references } = await supabase.from("project_references").select("*").eq("project_id", idResult);
+  
+  const jsonScenes = (payload.scenes as any[] || []);
+  const mergedScenes = jsonScenes.map(js => {
+    const ts = (scenes || []).find(s => s.scene_order === js.id);
+    return {
+      ...js,
+      image_url: ts?.image_url || js.image_url,
+      audio_url: ts?.audio_url || js.audio_url,
+      audio_duration: ts?.audio_duration || js.audio_duration,
+      video_url: ts?.video_url || js.video_url,
+    };
+  });
+
+  const jsonRefs = (payload.references as any[] || []);
+  const mergedRefs = jsonRefs.map(jr => {
+    const tr = (references || []).find(r => r.reference_key === jr.id);
+    return {
+      ...jr,
+      image_url: tr?.image_url || jr.image_url,
+    };
+  });
+
+  const mergedProject = {
+    ...data,
+    scenes: mergedScenes,
+    references: mergedRefs
+  };
+
+  return NextResponse.json(mergedProject);
 }
 
 export async function GET() {

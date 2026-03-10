@@ -12,10 +12,10 @@ export const sceneSchema = z.object({
     second_ref: z.string().optional().nullable(),
   })),
   REFERENCE_SPECS: z.array(z.object({
-    id: z.string(),
+    id: z.string().describe("A unique identifier for this reference image (e.g., 'brand_logo', 'hero_character'). MUST be unique."),
     name: z.string().describe("A short snake_case identifier for the image"),
     description: z.string().describe("A brief description of what this image represents"),
-    prompt: z.string().describe("A detailed image generation prompt")
+    prompt: z.string().describe("A detailed image generation prompt. For characters, MUST specify 'realistic' and 'Indian' style.")
   })),
   UPLOADED_IMAGE_SPECS: z.array(z.object({
     original_name: z.string(),
@@ -83,14 +83,20 @@ export async function orchestrateAdPlan(
       Video Requirements:
       - Total Duration: Approximately ${duration} seconds.
       - Language: ${language}. All speech content MUST be in ${language}.
+      - Style: High-quality, cinematic, realistic. ALL characters MUST look Indian.
       
       Requirements:
-      1. SCENES: A list of scenes with detailed image and video prompts, speech, and references.
-      2. REFERENCE_SPECS: A list of objects for each NEW reference needed (items not in uploaded images). Each object MUST include:
-         - id: A unique key (e.g., 'main_character', 'setting').
-         - name: A short, descriptive name in snake_case (e.g., 'cheerful_woman', 'modern_office').
-         - description: A one-sentence description.
-         - prompt: A highly detailed image generation prompt.
+      1. SCENES: A list of scenes with detailed image and video prompts, speech, and references. All characters in scenes MUST follow the reference specs.
+      2. REFERENCE_SPECS: A list of objects for each MANDATORY reference needed. You MUST generate separate references for:
+         - The BRAND or PRODUCT (e.g., 'product_shot', 'brand_logo').
+         - MAIN CHARACTERS from the script (e.g., 'main_host', 'customer'). 
+         - ALL characters MUST look Indian and realistic.
+         - Each object MUST include:
+            - id: A unique key (e.g., 'main_character', 'setting').
+            - name: A short, descriptive name in snake_case (e.g., 'cheerful_woman', 'modern_office').
+            - description: A one-sentence description.
+            - prompt: A highly detailed image generation prompt. Include "realistic Indian" style for all people.
+         - CRITICAL: Do NOT blend multiple characters or objects into a single reference. Keep them separate.
       3. UPLOADED_IMAGE_SPECS: For EACH image name provided in the reference context, provide a better snake_case name and description based on the filename (e.g., 'product-front.jpg' -> ai_name: 'product_hero', ai_description: 'A clear front-facing shot of the product').
       
       Ensure the plan is conversion-focused and follows UGC best practices.

@@ -64,6 +64,7 @@ export interface ProjectUiState {
   editingImagePrompt: EditingPrompt;
   editingAudioPrompt: EditingPrompt;
   editingRefId: string | null;
+  isAutoSaveSuspended?: boolean;
 }
 
 export const initialProjectUiState: ProjectUiState = {

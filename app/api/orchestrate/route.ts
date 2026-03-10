@@ -47,46 +47,62 @@ export async function POST(req: NextRequest) {
           id: scene.scene_order
         }));
 
-        // 3. Insert new references
-        const refInserts = plan.REFERENCE_SPECS.map(spec => ({
+        // 3. Insert new references (deduplicated by reference_key)
+        const uniqueRefSpecs = Array.from(new Map(plan.REFERENCE_SPECS.map(spec => [spec.id, spec])).values());
+        const refInserts = uniqueRefSpecs.map(spec => ({
           project_id: product_id,
           reference_key: spec.id,
           label: spec.name,
           tagline: spec.description,
-          ai_prompt: spec.prompt
+          ai_prompt: spec.prompt,
+          image_url: null
         }));
 
-        const uploadedInserts = (plan.UPLOADED_IMAGE_SPECS || []).map(spec => ({
+        const uniqueUploadedSpecs = Array.from(new Map((plan.UPLOADED_IMAGE_SPECS || []).map(spec => [spec.original_name, spec])).values());
+        const uploadedInserts = uniqueUploadedSpecs.map(spec => ({
           project_id: product_id,
           reference_key: `uploaded-${spec.original_name}`,
           label: spec.ai_name,
           tagline: spec.ai_description,
-          original_name: spec.original_name
+          original_name: spec.original_name,
+          image_url: null
         }));
 
         await supabase.from("project_references").insert([...refInserts, ...uploadedInserts] as Database['public']['Tables']['project_references']['Insert'][]);
 
         // 4. Update the project record itself with the new structured data
+        // Ensure 'id' is present for frontend hooks
+        const referencesJson = [
+          ...refInserts.map(r => ({ ...r, id: r.reference_key })),
+          ...uploadedInserts.map(r => ({ ...r, id: r.reference_key }))
+        ];
+
         await supabase
           .from("projects")
           .update({
             scenes: scenesJson as unknown as Json,
-            references: [
-              ...refInserts.map(r => ({ ...r, image_url: "https://via.placeholder.com/300x300?text=Generating..." })),
-              ...uploadedInserts.map(r => ({ ...r, image_url: "https://via.placeholder.com/300" }))
-            ] as unknown as Json,
+            references: referencesJson as unknown as Json,
             updated_at: new Date().toISOString()
           })
           .eq("id", product_id);
 
-        // 5. Fetch and return the "Full Project" object
-        const { data: fullProject } = await supabase
+        // 5. Fetch and return the absolute latest "Full Project" object with structured merge
+        const { data: project } = await supabase
           .from("projects")
           .select("*")
           .eq("id", product_id)
           .single();
 
-        return NextResponse.json(fullProject);
+        const { data: scenes } = await supabase.from("scenes").select("*").eq("project_id", product_id).order("scene_order", { ascending: true });
+        const { data: references } = await supabase.from("project_references").select("*").eq("project_id", product_id);
+
+        const mergedProject = {
+          ...project,
+          scenes: (scenes || []).map(s => ({ ...s, id: s.scene_order })),
+          references: (references || []).map(r => ({ ...r, id: r.reference_key }))
+        };
+
+        return NextResponse.json(mergedProject);
       }
     }
 

@@ -23,6 +23,9 @@ interface PreviewSceneParams {
   voice_id?: string;
   main_reference?: string;
   secondary_reference?: string;
+  project_id?: string;
+  reference_id?: string;
+  scene_id?: number;
 }
 
 export const usePreviewSceneMutation = (options?: AppMutationOptions<{ image_url?: string; audio_url?: string; audio_duration?: number }, Error, PreviewSceneParams>) => {

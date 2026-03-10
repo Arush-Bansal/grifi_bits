@@ -1,7 +1,8 @@
 "use client";
 
-import { Scene, Step, ProjectData, PlanConcept, ReferenceCard } from "../types";
-import { buildInitialTimelineClips, normalizeTimelineClips } from "../_utils";
+import { QueryClient } from "@tanstack/react-query";
+import { Scene, Step, ProjectData, PlanConcept, ReferenceCard, ProjectUiState } from "../types";
+import { normalizeTimelineClips } from "../_utils";
 import { type StoryboardTimelineClip } from "@/components/timeline/storyboard-timeline";
 import {
   useGenerateConceptsMutation,
@@ -19,7 +20,9 @@ interface MutationDeps {
   setReferences: (refs: ReferenceCard[] | ((prev: ReferenceCard[]) => ReferenceCard[])) => void;
   setScenes: (scenes: Scene[] | ((prev: Scene[]) => Scene[])) => void;
   setTimelineClips: (clips: StoryboardTimelineClip[] | ((prev: StoryboardTimelineClip[]) => StoryboardTimelineClip[])) => void;
-  handleGenerateSceneImage: (sceneId: number, prompt: string) => Promise<{ image_url?: string } | undefined | null>;
+  handleGenerateSceneImage: (sceneId: number, prompt: string, main_ref?: string, secondary_ref?: string, options?: { referenceId?: string }) => Promise<any>;
+  queryClient: QueryClient;
+  updateUiCache: (updater: Partial<ProjectUiState> | ((old: ProjectUiState) => Partial<ProjectUiState>)) => void;
 }
 
 export function useCreateMutations(deps: MutationDeps) {
@@ -32,8 +35,10 @@ export function useCreateMutations(deps: MutationDeps) {
     syncState,
     setReferences,
     setScenes,
-    setTimelineClips,
-    handleGenerateSceneImage
+        setTimelineClips,
+    handleGenerateSceneImage,
+    queryClient,
+    updateUiCache
   } = deps;
 
   const generateConceptsMutation = useGenerateConceptsMutation({
@@ -54,20 +59,23 @@ export function useCreateMutations(deps: MutationDeps) {
 
   const orchestrateMutation = useOrchestrateMutation({
     onSuccess: async (data: ProjectData) => {
-      if (data.references) {
-        setReferences(data.references);
+      // 1. Ensure auto-save is suspended (though it should already be from step-navigation)
+      updateUiCache({ isAutoSaveSuspended: true });
+
+      // 2. Update cache IN ONE GO with the authoritative data from orchestration
+      if (data.id) {
+        queryClient.setQueryData(["project", data.id], data);
       }
-      if (data.scenes) {
-        setScenes(data.scenes);
-        setTimelineClips(buildInitialTimelineClips(data.scenes));
-      }
+
+      // 3. Move to Step 3
       setStep(2);
 
+      // 4. Trigger image generation for references if they are placeholders
       const references = data.references || [];
-      references.forEach(async (ref) => {
-        if (ref.ai_prompt && ref.image_url.includes("Generating")) {
+      const generationPromises = references.map(async (ref) => {
+        if (ref.ai_prompt && (ref.image_url?.includes("Generating") || !ref.image_url || ref.image_url.includes("placeholder"))) {
           try {
-            const imgData = await handleGenerateSceneImage(0, ref.ai_prompt);
+            const imgData = await handleGenerateSceneImage(0, ref.ai_prompt, undefined, undefined, { referenceId: ref.id });
             if (imgData && imgData.image_url) {
                 const image_url = imgData.image_url;
                 setReferences((prev: ReferenceCard[]) => prev.map(r => r.id === ref.id ? { ...r, image_url: image_url } : r));
@@ -77,6 +85,13 @@ export function useCreateMutations(deps: MutationDeps) {
           }
         }
       });
+
+      // 5. Resume auto-save once primary state is settled
+      await Promise.all(generationPromises);
+      updateUiCache({ isAutoSaveSuspended: false });
+    },
+    onError: () => {
+      updateUiCache({ isAutoSaveSuspended: false });
     }
   });
 

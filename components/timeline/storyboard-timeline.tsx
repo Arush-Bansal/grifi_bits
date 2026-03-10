@@ -1,6 +1,7 @@
 "use client";
 
 import { Timeline, type TimelineState } from "@xzdarcy/react-timeline-editor";
+import "@xzdarcy/react-timeline-editor/dist/react-timeline-editor.css";
 import type { TimelineAction, TimelineRow } from "@xzdarcy/timeline-engine";
 import { Pause, Play } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, type MouseEvent } from "react";

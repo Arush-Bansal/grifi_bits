@@ -8,7 +8,7 @@ import { usePreviewSceneMutation } from "./index";
 import { useProject } from "./useProject";
 
 export function useSceneState() {
-  const { projectData, uiState, updateCache, updateUiCache } = useProject();
+  const { projectId, projectData, uiState, updateCache, updateUiCache } = useProject();
   
   const scenes = useMemo(() => {
     const rawScenes = projectData?.scenes || defaultScenes;
@@ -68,41 +68,67 @@ export function useSceneState() {
     setScenes((prev) => prev.map((scene) => (scene.id === sceneId ? { ...scene, [key]: value } : scene)));
   }, [setScenes]);
 
-  const handleGenerateSceneImage = useCallback(async (sceneId: number, image_prompt: string, main_ref?: string, secondary_ref?: string) => {
+  const handleGenerateSceneImage = useCallback(async (sceneId: number, image_prompt: string, main_ref?: string, secondary_ref?: string, options?: { referenceId?: string }) => {
+    if (!image_prompt) return;
+
     updateUiCache((old) => {
-      const sg = old.sceneGenerating || {};
-      return { sceneGenerating: { ...sg, [sceneId]: { ...sg[sceneId], image: true } } };
+      const sg = (old.sceneGenerating || {}) as Record<string, any>;
+      const idStr = options?.referenceId ? `ref-${options.referenceId}` : sceneId.toString();
+      return { sceneGenerating: { ...sg, [idStr]: { ...sg[idStr], image: true } } };
     });
+
     try {
       const data = await previewSceneMutation.mutateAsync({ 
         type: "image", 
         image_prompt,
         main_reference: main_ref,
-        secondary_reference: secondary_ref
+        secondary_reference: secondary_ref,
+        project_id: projectId || undefined,
+        reference_id: options?.referenceId,
+        scene_id: options?.referenceId ? undefined : (sceneId || undefined)
       });
-      setScenes((prev) =>
-        prev.map((s) => (s.id === sceneId ? { ...s, image_url: data.image_url } : s))
-      );
-      updateUiCache((old) => {
-        const ep = old.editingImagePrompt || {};
-        return { editingImagePrompt: { ...ep, [sceneId]: false } };
-      });
+
+      if (data.image_url) {
+        if (options?.referenceId) {
+          // Update references in cache if it's a reference generation
+          updateCache((old) => ({
+            references: (old.references || []).map((r) =>
+              r.id === options.referenceId ? { ...r, image_url: data.image_url as string } : r
+            ),
+          }));
+        } else {
+          // Update scenes in cache
+          setScenes((prev) =>
+            prev.map((s) => (s.id === sceneId ? { ...s, image_url: data.image_url } : s))
+          );
+        }
+      }
       return data;
     } finally {
       updateUiCache((old) => {
-        const sg = old.sceneGenerating || {};
-        return { sceneGenerating: { ...sg, [sceneId]: { ...sg[sceneId], image: false } } };
+        const sg = (old.sceneGenerating || {}) as Record<string, any>;
+        const idStr = options?.referenceId ? `ref-${options.referenceId}` : sceneId.toString();
+        const next = { ...sg };
+        if (next[idStr]) {
+          next[idStr] = { ...next[idStr], image: false };
+        }
+        return { sceneGenerating: next };
       });
     }
-  }, [previewSceneMutation, setScenes, updateUiCache]);
+  }, [previewSceneMutation, updateUiCache, setScenes, projectId, updateCache]);
 
   const handleGenerateSceneAudio = useCallback(async (sceneId: number, speech: string) => {
     updateUiCache((old) => {
-      const sg = old.sceneGenerating || {};
+      const sg = (old.sceneGenerating || {}) as Record<string, any>;
       return { sceneGenerating: { ...sg, [sceneId]: { ...sg[sceneId], audio: true } } };
     });
     try {
-      const data = await previewSceneMutation.mutateAsync({ type: "audio", speech });
+      const data = await previewSceneMutation.mutateAsync({ 
+        type: "audio", 
+        speech,
+        project_id: projectId || undefined,
+        scene_id: sceneId
+      });
       setScenes((prev) =>
         prev.map((s) => (s.id === sceneId ? { ...s, audio_url: data.audio_url, audio_duration: data.audio_duration } : s))
       );
@@ -112,11 +138,15 @@ export function useSceneState() {
       });
     } finally {
       updateUiCache((old) => {
-        const sg = old.sceneGenerating || {};
-        return { sceneGenerating: { ...sg, [sceneId]: { ...sg[sceneId], audio: false } } };
+        const sg = (old.sceneGenerating || {}) as Record<string, any>;
+        const next = { ...sg };
+        if (next[sceneId]) {
+          next[sceneId] = { ...next[sceneId], audio: false };
+        }
+        return { sceneGenerating: next };
       });
     }
-  }, [previewSceneMutation, setScenes, updateUiCache]);
+  }, [previewSceneMutation, setScenes, updateUiCache, projectId]);
 
   const handleGenerateAllImages = useCallback(async () => {
     setIsGeneratingAllImages(true);

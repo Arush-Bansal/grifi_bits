@@ -5,7 +5,6 @@ import { useSearchParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ProjectData, ProjectUiState, initialProjectUiState } from "../types";
 import { useProjectQuery, useSaveProjectMutation } from "./index";
-import { useAutoSave } from "../../_hooks/use-auto-save";
 
 export function useProject() {
   const searchParams = useSearchParams();
@@ -53,6 +52,7 @@ export function useProject() {
   // UI State Cache (transient, never sent to server)
   const { data: uiState = initialProjectUiState } = useQuery<ProjectUiState>({
     queryKey: ["project-ui", projectId],
+    queryFn: () => initialProjectUiState,
     enabled: !!projectId,
     initialData: initialProjectUiState,
     staleTime: Infinity,
@@ -69,19 +69,7 @@ export function useProject() {
     });
   }, [projectId, queryClient]);
 
-  // Strip server-assigned timestamps to prevent infinite loops on auto-save
-  const savableData = projectData ? { ...projectData } : null;
-  if (savableData) {
-    delete savableData.updated_at;
-    delete savableData.created_at;
-  }
-
-  // Centralized auto-save logic
-  useAutoSave(
-    savableData,
-    (data) => saveProjectWithData(data as ProjectData),
-    !!projectId && isProjectLoaded && !!projectData
-  );
+  // UI state is provided to the consumer, but auto-save is now handled by ProjectAutoSaver component
 
   return {
     projectId,
@@ -91,6 +79,7 @@ export function useProject() {
     updateCache,
     updateUiCache,
     saveProjectWithData,
+    queryClient,
     saving: saveProjectMutation.isPending
   };
 }

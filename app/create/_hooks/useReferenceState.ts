@@ -27,9 +27,12 @@ export function useReferenceState() {
   }, []);
 
   const setReferences = useCallback((newRefs: ReferenceCard[] | ((prev: ReferenceCard[]) => ReferenceCard[])) => {
-    const next = typeof newRefs === "function" ? newRefs(references) : newRefs;
-    updateCache({ references: next });
-  }, [references, updateCache]);
+    updateCache((old) => {
+      const currentRefs = old.references || [];
+      const next = typeof newRefs === "function" ? newRefs(currentRefs) : newRefs;
+      return { references: next };
+    });
+  }, [updateCache]);
 
   const updateReferenceLimit = useCallback((id: string, key: "label" | "tagline", value: string) => {
     setReferences((prev) =>
@@ -45,7 +48,7 @@ export function useReferenceState() {
     referenceObjectUrlsRef.current.push(nextImageUrl);
 
     setReferences((prev) =>
-      prev.map((reference) => (reference.id === referenceId ? { ...reference, image: nextImageUrl } : reference))
+      prev.map((reference) => (reference.id === referenceId ? { ...reference, image_url: nextImageUrl } : reference))
     );
   }, [setReferences]);
 

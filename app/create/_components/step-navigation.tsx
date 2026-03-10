@@ -22,7 +22,7 @@ const stepToRoute: Record<Step, string> = {
 
 export function StepNavigation() {
   const router = useRouter();
-  const { projectId, projectData, saveProjectWithData } = useProject();
+  const { projectId, projectData, saveProjectWithData, queryClient, updateUiCache } = useProject();
   const { step, setStep } = useUIState();
   const { product_name, product_description, imageFiles, previewUrls } = useProductInfo();
   const { plans, selected_plan_index, settings, setSelectedPlanIndex } = useAiPlan();
@@ -39,7 +39,9 @@ export function StepNavigation() {
     setReferences: referenceState.setReferences,
     setScenes: sceneState.setScenes,
     setTimelineClips: sceneState.setTimelineClips,
-    handleGenerateSceneImage: sceneState.handleGenerateSceneImage
+    handleGenerateSceneImage: sceneState.handleGenerateSceneImage,
+    queryClient,
+    updateUiCache
   });
 
   const handleNavigate = (nextStep: number) => {
@@ -73,6 +75,8 @@ export function StepNavigation() {
                 product_description 
               });
             } else if (step === 1) {
+              // Suspend auto-save before orchestration
+              updateUiCache({ isAutoSaveSuspended: true });
               mutations.orchestrateMutation.mutate({
                 product_name,
                 product_description,
