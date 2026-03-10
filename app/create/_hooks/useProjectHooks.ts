@@ -73,7 +73,7 @@ export const useSaveProjectMutation = (options?: AppMutationOptions<ProjectData,
         queryClient.setQueryData(["projects"], context.previousProjects);
       }
     },
-    onSettled: (data, error, variables) => {
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["projects"] });
     },
     ...options

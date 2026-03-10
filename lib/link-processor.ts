@@ -3,10 +3,9 @@ import * as cheerio from "cheerio";
 import { create } from "yt-dlp-exec";
 import path from "path";
 import fs from "fs";
-import { promisify } from "util";
-import child_process from "child_process";
-
-const execAsync = promisify(child_process.exec);
+import ffmpeg from "fluent-ffmpeg";
+import { google } from "@ai-sdk/google";
+import { generateText } from "ai";
 
 export interface ScrapedProduct {
   title: string;
@@ -125,78 +124,189 @@ export async function processAmazonLink(url: string): Promise<ScrapedProduct> {
   }
 }
 
-export async function processInstagramReel(url: string, outputDir: string): Promise<string[]> {
-  console.log(`\n[LinkProcessor] Processing Instagram Reel: ${url}`);
+export async function processInstagramReel(url: string, outputDir: string): Promise<ScrapedProduct> {
+  // Check if we should use the enhanced version
+  return processInstagramReelEnhanced(url, outputDir);
+}
+
+async function extractAudio(videoPath: string, outputDir: string): Promise<string> {
+  const audioPath = path.join(outputDir, "audio.mp3");
+  console.log(`[LinkProcessor] Extracting audio to ${audioPath}`);
+  
+  return new Promise((resolve, reject) => {
+    ffmpeg(videoPath)
+      .toFormat("mp3")
+      .on("end", () => resolve(audioPath))
+      .on("error", (err) => reject(err))
+      .save(audioPath);
+  });
+}
+
+async function extractKeyframes(videoPath: string, outputDir: string, count: number = 15): Promise<string[]> {
+  console.log(`[LinkProcessor] Extracting ${count} keyframes...`);
+  
+  return new Promise((resolve, reject) => {
+    const frames: string[] = [];
+    ffmpeg(videoPath)
+      .on("filenames", (filenames) => {
+        filenames.forEach(f => frames.push(path.join(outputDir, f)));
+      })
+      .on("end", () => resolve(frames))
+      .on("error", (err) => reject(err))
+      .screenshots({
+        count,
+        folder: outputDir,
+        filename: "frame-%i.jpg"
+      });
+  });
+}
+
+async function transcribeAudio(audioPath: string): Promise<string> {
+  console.log(`[LinkProcessor] Transcribing audio...`);
+  try {
+    const audioBuffer = await fs.promises.readFile(audioPath);
+    const { text } = await generateText({
+      model: google("gemini-2.5-flash"),
+      messages: [
+        {
+          role: "user",
+          content: [
+            { type: "text", text: "Transcribe the following audio precisely. If no speech is detected, return 'No speech detected'." },
+            { 
+              type: "file", 
+              data: new Uint8Array(audioBuffer), 
+              mimeType: "audio/mpeg" 
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            } as any
+          ]
+        }
+      ]
+    });
+    return text.trim();
+  } catch (error: unknown) {
+    const err = error as { name?: string; code?: string; message?: string };
+    if (err.name === 'ZodError' || err.code === 'AI_TypeValidationError') {
+      console.warn("[LinkProcessor] Transcription Schema Error, check multimodal part structure.");
+    } else {
+      console.warn("[LinkProcessor] Transcription failed:", err.message || error);
+    }
+    return "No speech detected or transcription failed.";
+  }
+}
+
+async function synthesizeInstagramReel(url: string, transcription: string, frames: string[]): Promise<ScrapedProduct> {
+  console.log(`[LinkProcessor] Synthesizing Instagram Reel info...`);
+  
+  try {
+    const frameData = await Promise.all(frames.map(async (f) => {
+      const buffer = await fs.promises.readFile(f);
+      return buffer;
+    }));
+
+    const { text } = await generateText({
+      model: google("gemini-2.5-flash"),
+      messages: [
+        {
+          role: "user",
+          content: [
+            { 
+              type: "text", 
+              text: `You are analyzing an Instagram Reel: ${url}.
+Transcription: ${transcription}
+
+Analyze these ${frames.length} frames and return a JSON object with:
+- "product_name": A short, catchy name for the product or brand in the video.
+- "product_description": A 3-5 sentence description of EXACTLY what happens in the video (e.g., "A user unboxing the item, showing the texture, and applying it..."). Focus on actions.
+- "chosen_image_indices": Select EXACTLY 4 indices from [0 to ${frames.length - 1}] that represent the best/clearest shots of the product or key moments.
+- "reasoning": Brief reasoning for your choice.
+
+Return ONLY valid JSON.` 
+            },
+            ...frameData.map(buffer => ({
+              type: "image" as const,
+              image: new Uint8Array(buffer),
+              mimeType: "image/jpeg"
+            }))
+          ]
+        }
+      ],
+    });
+
+    // Handle potential markdown wrapping
+    let jsonContent = text.trim();
+    if (jsonContent.startsWith("```json")) {
+      jsonContent = jsonContent.replace(/^```json\n/, "").replace(/\n```$/, "");
+    }
+
+    const synthesis = JSON.parse(jsonContent) as {
+      product_name: string;
+      product_description: string;
+      chosen_image_indices: number[];
+      reasoning: string;
+    };
+
+    const chosenFrames = synthesis.chosen_image_indices.map(idx => frames[idx] || frames[0]);
+    // Read the chosen frames as base64 for the return
+    const images = await Promise.all(chosenFrames.map(async (f) => {
+      const buf = await fs.promises.readFile(f);
+      return `data:image/jpeg;base64,${buf.toString("base64")}`;
+    }));
+
+    return {
+      title: synthesis.product_name,
+      description: synthesis.product_description,
+      imageUrls: images,
+      rawText: `Transcription: ${transcription}\nReasoning: ${synthesis.reasoning}`
+    };
+  } catch (error) {
+    console.error("[LinkProcessor] Synthesis failed:", error);
+    // Fallback to basic extraction
+    const base64Frames = await Promise.all(frames.slice(0, 4).map(async (f) => {
+      const buffer = await fs.promises.readFile(f);
+      return `data:image/jpeg;base64,${buffer.toString("base64")}`;
+    }));
+    return {
+      title: "Instagram Reel",
+      imageUrls: base64Frames,
+      description: transcription
+    };
+  }
+}
+
+export async function processInstagramReelEnhanced(url: string, outputDir: string): Promise<ScrapedProduct> {
+  console.log(`\n[LinkProcessor] Enhanced Processing of Instagram Reel: ${url}`);
 
   const tempVideo = path.join(outputDir, "temp_reel.mp4");
 
   try {
-    // 1. Find project root and binary
-    const cwd = process.cwd();
-    console.log(`[LinkProcessor] Current working directory: ${cwd}`);
-
-    // In Next.js dev, cwd is project root. In built server, it might be project_root/.next/server
-    let projectRoot = cwd;
-    if (cwd.endsWith(path.join(".next", "server"))) {
-      projectRoot = path.join(cwd, "..", "..");
-    } else if (cwd.endsWith(".next\\server")) { // Handling windows specifically
-      projectRoot = path.join(cwd, "..", "..");
-    }
-
+    // 1. Download Video
+    const projectRoot = process.cwd();
     const binaryPath = path.join(projectRoot, "node_modules", "yt-dlp-exec", "bin", "yt-dlp.exe");
-    console.log(`[LinkProcessor] Predicted binary path: ${binaryPath}`);
+    
+    // Simple download logic (reuse existing binary finding logic if possible, but let's be direct for now)
+    const { exec } = await import("yt-dlp-exec");
+    const ytdlp = fs.existsSync(binaryPath) ? create(binaryPath) : exec;
+    
+    await ytdlp(url, {
+      output: tempVideo,
+      noPlaylist: true,
+      format: "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
+    });
 
-    if (fs.existsSync(binaryPath)) {
-      console.log(`[LinkProcessor] Found binary at explicit path.`);
-      const ytdlp = create(binaryPath);
-      await ytdlp(url, {
-        output: tempVideo,
-        noPlaylist: true,
-        format: "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
-      });
-    } else {
-      console.warn(`[LinkProcessor] Binary NOT found at ${binaryPath}. Falling back to default exec.`);
-      // Check if it's in a different node_modules location
-      const fallbackPath = path.resolve(__dirname, "..", "node_modules", "yt-dlp-exec", "bin", "yt-dlp.exe");
-      console.log(`[LinkProcessor] Checking fallback path: ${fallbackPath}`);
+    // 2. Extract Media
+    const [audioPath, framePaths] = await Promise.all([
+      extractAudio(tempVideo, outputDir),
+      extractKeyframes(tempVideo, outputDir, 15)
+    ]);
 
-      if (fs.existsSync(fallbackPath)) {
-        const ytdlp = create(fallbackPath);
-        await ytdlp(url, {
-          output: tempVideo,
-          noPlaylist: true,
-          format: "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
-        });
-      } else {
-        // Absolute last resort: use the library's default logic but hope it works
-        const { exec } = await import("yt-dlp-exec");
-        await exec(url, {
-          output: tempVideo,
-          noPlaylist: true,
-          format: "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
-        });
-      }
-    }
+    // 3. AI Pipeline
+    const transcription = await transcribeAudio(audioPath);
+    const result = await synthesizeInstagramReel(url, transcription, framePaths);
 
-    console.log("[LinkProcessor] Extracting keyframes...");
-
-    // 2. Extract frames using ffmpeg
-    const framesPattern = path.join(outputDir, "reel_frame_%02d.jpg");
-    await execAsync(`ffmpeg -y -i "${tempVideo}" -vf "fps=1/2" -vframes 5 "${framesPattern}"`);
-
-    // 3. Collect frame paths
-    const frames: string[] = [];
-    for (let i = 1; i <= 5; i++) {
-      const framePath = path.join(outputDir, `reel_frame_${String(i).padStart(2, '0')}.jpg`);
-      if (fs.existsSync(framePath)) {
-        frames.push(framePath);
-      }
-    }
-
-    return frames;
+    return result;
   } catch (error) {
-    console.error("Error processing Instagram Reel:", error);
-    return [];
+    console.error("Error in enhanced Instagram Reel processing:", error);
+    throw error;
   }
 }
 

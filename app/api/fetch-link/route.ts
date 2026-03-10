@@ -30,7 +30,7 @@ async function downloadImageAsBase64(imageUrl: string, requestId: string): Promi
       },
     });
 
-    let contentType = (response.headers["content-type"] || "image/jpeg").split(';')[0].split(' ')[0].trim().toLowerCase();
+    const contentType = (response.headers["content-type"] || "image/jpeg").split(';')[0].split(' ')[0].trim().toLowerCase();
     
     // Validate it's an actual image
     if (!contentType.startsWith('image/')) {
@@ -96,15 +96,7 @@ export async function POST(req: NextRequest) {
     if (url.includes("amazon.")) {
       result = await processAmazonLink(url);
     } else if (url.includes("instagram.com/reel")) {
-      const frames = await processInstagramReel(url, tempDir);
-      const base64Frames = await Promise.all(frames.map(async (f) => {
-        const buffer = await fs.promises.readFile(f);
-        return `data:image/jpeg;base64,${buffer.toString("base64")}`;
-      }));
-      result = {
-        title: "Instagram Reel",
-        imageUrls: base64Frames,
-      };
+      result = await processInstagramReel(url, tempDir);
     } else {
       result = await processGenericLink(url);
     }
