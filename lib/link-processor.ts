@@ -12,6 +12,8 @@ export interface ScrapedProduct {
   title: string;
   imageUrls: string[];
   description?: string;
+  colors?: string[];
+  rawText?: string;
 }
 
 export async function processAmazonLink(url: string): Promise<ScrapedProduct> {
@@ -208,8 +210,39 @@ export async function processGenericLink(url: string): Promise<ScrapedProduct> {
     const { data } = await axios.get(url, { headers, timeout: 15000 });
     const $ = cheerio.load(data);
 
-    const title = $("title").text().trim() || "Unknown Page";
-    const description = $('meta[name="description"]').attr("content") || $('meta[property="og:description"]').attr("content");
+    // 1. Extract Name
+    const title = $('meta[property="og:site_name"]').attr("content")
+      || $("title").text().split("|")[0].split("-")[0].trim()
+      || "Unknown Page";
+
+    // 2. Extract Description / USP
+    const description = $('meta[name="description"]').attr("content")
+      || $('meta[property="og:description"]').attr("content")
+      || $('meta[name="twitter:description"]').attr("content")
+      || "";
+
+    // 3. Extract Colors
+    const colors: string[] = [];
+    const themeColor = $('meta[name="theme-color"]').attr("content");
+    if (themeColor && /^#[0-9a-fA-F]{3,6}$/.test(themeColor)) {
+      colors.push(themeColor);
+    }
+
+    const hexRegex = /#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})\b/g;
+    const styles = $("style")
+      .map((_, el) => $(el).text())
+      .get()
+      .join(" ");
+    const styleMatches = styles.match(hexRegex);
+    if (styleMatches) {
+      const uniqueColors = [...new Set(styleMatches)].slice(0, 5);
+      colors.push(...uniqueColors.filter(c => !colors.includes(c)));
+    }
+
+    // 4. Clean Raw Text (Remove boilerplate)
+    const $clone = $.load(data);
+    $clone("script, style, noscript, header, footer, nav").remove();
+    const rawText = $clone("body").text().replace(/\s+/g, " ").trim().slice(0, 2000);
 
     // Collect images from multiple sources
     const imageUrls: string[] = [];
@@ -227,7 +260,20 @@ export async function processGenericLink(url: string): Promise<ScrapedProduct> {
       if (!src) return;
       const resolved = resolveUrl(src);
       if (seen.has(resolved)) return;
-      if (resolved.startsWith("data:") || resolved.includes("spacer") || resolved.includes("pixel") || resolved.includes(".svg")) return;
+      
+      // Filter out common tracking pixels and garbage
+      if (resolved.startsWith("data:") || 
+          resolved.includes("spacer") || 
+          resolved.includes("pixel") || 
+          resolved.includes("cleardot") ||
+          resolved.includes("s.gif") ||
+          resolved.includes("transparent") ||
+          resolved.match(/tracking|analytics/i) ||
+          resolved.includes(".svg")) return;
+
+      // Only allow common image formats
+      if (!resolved.match(/\.(jpg|jpeg|png|webp)(\?|#|$)/i) && !resolved.startsWith("http")) return;
+
       seen.add(resolved);
       imageUrls.push(resolved);
     };
@@ -243,21 +289,35 @@ export async function processGenericLink(url: string): Promise<ScrapedProduct> {
       addImage($(el).attr("content"));
     });
 
-    // 3. Prominent page images — filter out small icons/logos/trackers
+    // 3. Prominent page images
     $("img").each((_, el) => {
-      if (imageUrls.length >= 5) return;
+      if (imageUrls.length >= 8) return;
 
-      const src = $(el).attr("src") || $(el).attr("data-src") || $(el).attr("data-lazy-src");
+      let src = $(el).attr("src") 
+                || $(el).attr("data-src") 
+                || $(el).attr("data-lazy-src") 
+                || $(el).attr("data-original")
+                || $(el).attr("data-high-res")
+                || $(el).attr("data-zoom-image");
+
+      const srcset = $(el).attr("srcset") || $(el).attr("data-srcset");
+      if (srcset) {
+        // Parse srcset and pick the largest one (e.g. "url1 100w, url2 500w")
+        const parts = srcset.split(",").map(p => p.trim());
+        const bestPart = parts[parts.length - 1]; // Usually the last one is largest
+        const urlPart = bestPart.split(/\s+/)[0];
+        if (urlPart) src = urlPart;
+      }
+
       if (!src || src.startsWith("data:")) return;
 
-      // Skip images that are explicitly tiny (icons, trackers)
       const width = parseInt($(el).attr("width") || "0", 10);
       const height = parseInt($(el).attr("height") || "0", 10);
-      if ((width > 0 && width < 100) || (height > 0 && height < 100)) return;
+      if ((width > 0 && width < 50) || (height > 0 && height < 50)) return;
 
-      // Skip common non-product images by class/id patterns
       const classAndId = `${$(el).attr("class") || ""} ${$(el).attr("id") || ""}`.toLowerCase();
-      if (classAndId.match(/logo|icon|avatar|badge|sprite|banner-ad|tracking/)) return;
+      // Only filter out truly decorative or tiny meta-images
+      if (classAndId.match(/badge|sprite|tracking|invisible|hidden|sr-only/)) return;
 
       addImage(src);
     });
@@ -266,8 +326,10 @@ export async function processGenericLink(url: string): Promise<ScrapedProduct> {
 
     return {
       title,
-      imageUrls: imageUrls.slice(0, 5),
+      imageUrls: imageUrls.slice(0, 8),
       description,
+      colors: colors.slice(0, 5),
+      rawText,
     };
   } catch (error) {
     console.error("Error fetching generic URL:", error);

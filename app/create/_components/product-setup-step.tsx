@@ -19,7 +19,7 @@ interface ProductSetupStepProps {
   linkFeedback: string;
   fetchedProductLinks: string[];
   imageFiles: File[];
-  previewUrls: string[];
+  previewUrls: Array<{ name: string; url: string }>;
   setLightboxImage: (url: string | null) => void;
   handleFileInput: (files: FileList | null) => void;
   removeImage: (index: number) => void;
@@ -156,13 +156,16 @@ export function ProductSetupStep({
               >
                 <button
                   type="button"
-                  onClick={() => setLightboxImage(url)}
+                  onClick={() => setLightboxImage(url.url)}
                   className="relative h-full w-full block cursor-pointer hover:opacity-90 transition-opacity"
                 >
-                  {url && typeof url === 'string' && (url.startsWith('http') || url.startsWith('blob:') || url.startsWith('/')) ? (
+                  <p className="absolute bottom-0 left-0 right-0 z-10 bg-black/50 py-1 text-center text-[10px] text-white backdrop-blur-sm">
+                    {url.name}
+                  </p>
+                  {url.url && typeof url.url === 'string' && (url.url.startsWith('http') || url.url.startsWith('blob:') || url.url.startsWith('/')) ? (
                     <Image
-                      src={url}
-                      alt={imageFiles[index]?.name ?? `upload-${index + 1}`}
+                      src={url.url}
+                      alt={url.name || `upload-${index + 1}`}
                       fill
                       className="object-cover"
                       unoptimized

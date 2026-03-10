@@ -38,7 +38,7 @@ export default function SetupPage() {
         fetchedProductLinks={fetchedProductLinks}
         imageFiles={imageFiles}
         removeImage={removeImage}
-        previewUrls={previewUrls.map((p) => p.url)}
+        previewUrls={previewUrls}
         setLightboxImage={setLightboxImage}
         handleFileInput={handleFileInput}
       />

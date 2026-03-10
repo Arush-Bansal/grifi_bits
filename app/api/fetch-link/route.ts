@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { processAmazonLink, processInstagramReel, processGenericLink } from "@/lib/link-processor";
+import { processAmazonLink, processInstagramReel, processGenericLink, ScrapedProduct } from "@/lib/link-processor";
 import path from "path";
 import os from "os";
 import fs from "fs";
@@ -8,22 +8,43 @@ import { google } from "@ai-sdk/google";
 import { generateText } from "ai";
 import { uploadImageFromBase64 } from "@/lib/supabase/storage";
 
-async function downloadImageAsBase64(imageUrl: string): Promise<string | null> {
+async function downloadImageAsBase64(imageUrl: string, requestId: string): Promise<{ base64: string, contentType: string } | null> {
   try {
+    const urlObj = new URL(imageUrl);
     const response = await axios.get(imageUrl, {
       responseType: "arraybuffer",
       timeout: 10000,
       headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
-        "Accept": "image/webp,image/apng,image/*,*/*;q=0.8",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36",
+        "Accept": "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Cache-Control": "no-cache",
+        "Pragma": "no-cache",
+        "Sec-Ch-Ua": '"Not(A:Brand";v="99", "Google Chrome";v="133", "Chromium";v="133"',
+        "Sec-Ch-Ua-Mobile": "?0",
+        "Sec-Ch-Ua-Platform": '"Windows"',
+        "Sec-Fetch-Dest": "image",
+        "Sec-Fetch-Mode": "no-cors",
+        "Sec-Fetch-Site": "cross-site",
+        "Referer": urlObj.origin,
       },
     });
 
-    const contentType = response.headers["content-type"] || "image/jpeg";
+    let contentType = (response.headers["content-type"] || "image/jpeg").split(';')[0].split(' ')[0].trim().toLowerCase();
+    
+    // Validate it's an actual image
+    if (!contentType.startsWith('image/')) {
+      console.warn(`[fetch-link][${requestId}] URL returned non-image content (${contentType}): ${imageUrl}`);
+      return null;
+    }
+
     const base64 = Buffer.from(response.data).toString("base64");
-    return `data:${contentType};base64,${base64}`;
+    return {
+      base64: `data:${contentType};base64,${base64}`,
+      contentType
+    };
   } catch (err) {
-    console.warn(`[fetch-link] Failed to download image: ${imageUrl}`, (err as Error).message);
+    console.warn(`[fetch-link][${requestId}] Failed to download image: ${imageUrl}`, (err as Error).message);
     return null;
   }
 }
@@ -35,19 +56,19 @@ async function cleanupDescription(rawDescription: string, productTitle: string):
     console.log(`[fetch-link] Cleaning up description with LLM (${rawDescription.length} chars)…`);
     const { text } = await generateText({
       model: google("gemini-2.5-flash"),
-      prompt: `You are a product copywriter. Clean up the following raw scraped product description. 
+      prompt: `You are a brand strategist. Clean up and synthesize the following raw scraped website data into a concise Brand Profile. 
 
 Rules:
-- Remove all filler text, navigation artifacts, repeated phrases, and irrelevant content
-- Keep ONLY the essential product information: what it is, key features, target audience, and unique selling points
-- No essential information should be missed
+- Identify the brand tone (e.g., Professional, Playful, Premium)
+- Extract the core USP (Unique Selling Proposition) and target audience
+- Remove all filler text, navigation artifacts, and irrelevant boilerplate
+- Keep the output concise and formatted as a single descriptive paragraph
 - Do NOT add any information that isn't in the original text
-- Do NOT include any headers, bullet points, or markdown formatting
-- If the text is mostly garbage/navigation, return just the product name and any useful info you can extract
+- If the text is mostly garbage, return just the product name and any useful info you can extract
 
 Product name: ${productTitle}
 
-Raw description:
+Scraped Content:
 ${rawDescription.slice(0, 3000)}`,
     });
 
@@ -70,7 +91,8 @@ export async function POST(req: NextRequest) {
     const tempDir = path.join(os.tmpdir(), "orbit-links", Date.now().toString());
     fs.mkdirSync(tempDir, { recursive: true });
 
-    let result: { title: string; imageUrls: string[]; description?: string; isReel?: boolean };
+    const requestId = Date.now().toString().slice(-6);
+    let result: ScrapedProduct;
     if (url.includes("amazon.")) {
       result = await processAmazonLink(url);
     } else if (url.includes("instagram.com/reel")) {
@@ -82,7 +104,6 @@ export async function POST(req: NextRequest) {
       result = {
         title: "Instagram Reel",
         imageUrls: base64Frames,
-        isReel: true
       };
     } else {
       result = await processGenericLink(url);
@@ -93,33 +114,33 @@ export async function POST(req: NextRequest) {
       ? (async () => {
         const isAlreadyBase64 = result.imageUrls[0]?.startsWith("data:");
         
-        console.log(`[fetch-link] Processing ${result.imageUrls.length} images…`);
+        console.log(`[fetch-link][${requestId}] Processing ${result.imageUrls.length} images…`);
         
         // 1. Download if needed
-        let base64Images: string[] = [];
+        let imageItems: Array<{ base64: string, contentType?: string }> = [];
         if (!isAlreadyBase64) {
-          console.log(`[fetch-link] Downloading images as base64…`);
-          const base64Results = await Promise.all(
-            result.imageUrls.map((imgUrl: string) => downloadImageAsBase64(imgUrl))
+          console.log(`[fetch-link][${requestId}] Downloading images as base64…`);
+          const downloadResults = await Promise.all(
+            result.imageUrls.map((imgUrl: string) => downloadImageAsBase64(imgUrl, requestId))
           );
-          base64Images = base64Results.filter((b64): b64 is string => b64 !== null);
+          imageItems = downloadResults.filter((item): item is { base64: string, contentType: string } => item !== null);
         } else {
-          base64Images = result.imageUrls;
+          imageItems = result.imageUrls.map(b64 => ({ base64: b64 }));
         }
 
         // 2. Upload to Supabase
-        console.log(`[fetch-link] Uploading ${base64Images.length} images to Supabase…`);
+        console.log(`[fetch-link][${requestId}] Uploading ${imageItems.length} images to Supabase…`);
         const uploadResults = await Promise.all(
-          base64Images.map((b64) => uploadImageFromBase64(b64))
+          imageItems.map((item) => uploadImageFromBase64(item.base64, "orbit-assets", item.contentType))
         );
         
         result.imageUrls = uploadResults.filter((url): url is string => url !== null);
-        console.log(`[fetch-link] Successfully uploaded ${result.imageUrls.length} images to Supabase.`);
+        console.log(`[fetch-link][${requestId}] Successfully uploaded ${result.imageUrls.length} images to Supabase.`);
       })()
       : Promise.resolve();
 
-    const descriptionPromise = result.description
-      ? cleanupDescription(result.description, result.title).then((cleaned) => {
+    const descriptionPromise = (result.description || result.rawText)
+      ? cleanupDescription(result.description || result.rawText || "", result.title).then((cleaned) => {
         result.description = cleaned;
       })
       : Promise.resolve();
