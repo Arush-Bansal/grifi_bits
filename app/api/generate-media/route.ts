@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { generateImage, generateAudio, generateVideo, getAudioDuration } from "@/lib/media-gen";
+import { generateImage, generateAudio, getAudioDuration } from "@/lib/media-gen";
+import { currentVideoGenerator } from "@/lib/video-gen";
 import path from "path";
 import os from "os";
 import fs from "fs";
@@ -35,7 +36,12 @@ export async function POST(req: NextRequest) {
       // In a real app, upload audioPath to storage and get URL
       
       // Step C: Video (Image to Video)
-      const videoUrl = await generateVideo(imageUrl, scene.video_prompt || "Cinematic movement");
+      const videoUrl = await currentVideoGenerator.generate({
+        imageUrl,
+        prompt: scene.video_prompt || "Cinematic movement",
+        duration: 5,
+        aspectRatio: "9:16"
+      });
 
       sceneResults.push({
         id: scene.id,

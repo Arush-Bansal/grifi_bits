@@ -1,4 +1,3 @@
-import * as fal from "@fal-ai/serverless-client";
 import { google } from "@ai-sdk/google";
 import { generateImage as aiGenerateImage } from "ai";
 import { ElevenLabsClient } from "elevenlabs";
@@ -16,7 +15,7 @@ export async function generateImage(prompt: string, mainRef?: string, secondaryR
   try {
     // Switching to gemini-2.5-flash-image (Nano Banana) by default to avoid Imagen rate limits
     const { image } = await aiGenerateImage({
-      model: google.image("gemini-2.5-flash-image"),
+      model: google.image("gemini-3.1-flash-image-preview"),
       prompt: `${prompt}${mainRef ? ` (reference: ${mainRef})` : ""}${secondaryRef ? ` (secondary reference: ${secondaryRef})` : ""}`,
       aspectRatio,
     });
@@ -34,26 +33,6 @@ export async function generateImage(prompt: string, mainRef?: string, secondaryR
     return publicUrl;
   } catch (error) {
     console.error("[MediaGen] Image Gen Error:", error);
-    throw error;
-  }
-}
-
-export async function generateVideo(image_url: string, prompt: string): Promise<string> {
-  console.log(`[MediaGen] Generating video with Fal.ai: ${prompt.slice(0, 50)}...`);
-  try {
-    const result = await fal.run("fal-ai/kling-video/v1.5/pro/image-to-video", {
-      input: {
-        image_url,
-        prompt,
-        duration: 5,
-        aspect_ratio: "9:16",
-      },
-    }) as { video: { url: string } };
-    return result.video.url;
-  } catch (error: unknown) {
-    const errorDetails = error instanceof Error ? error.message : String(error);
-    const dataDetails = (error as { data?: unknown })?.data;
-    console.error("[MediaGen] Kling Video Error details:", dataDetails || errorDetails);
     throw error;
   }
 }

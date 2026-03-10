@@ -53,7 +53,7 @@ export default function PreviewPage() {
             video_prompt: s.video_prompt
           })),
           references: Object.fromEntries(references.map((r: ReferenceCard) => [r.id, r.tagline])),
-          voice_id: "pNInz6obpgmqS29pXv50" // Hardcoded voice ID as in original or via env
+          // voice_id is intentionally omitted here to let the backend use process.env.ELEVEN_LABS_VOICE_ID 
         })}
         settings={settings}
         setSettings={setSettings}

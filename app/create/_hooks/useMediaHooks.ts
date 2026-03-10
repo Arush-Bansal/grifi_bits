@@ -41,7 +41,7 @@ export const usePreviewSceneMutation = (options?: AppMutationOptions<{ image_url
 interface GenerateMediaParams {
   scenes: Array<Scene & { video_prompt: string }>;
   references: Record<string, string>;
-  voice_id: string;
+  voice_id?: string;
 }
 
 export const useGenerateMediaMutation = (options?: AppMutationOptions<{ scene_results: Partial<Scene>[] }, Error, GenerateMediaParams>) => {
