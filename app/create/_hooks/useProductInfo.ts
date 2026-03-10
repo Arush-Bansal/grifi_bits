@@ -4,16 +4,17 @@ import { useState, useCallback, useEffect } from "react";
 import axios from "axios";
 import { useFetchLinkMutation } from "./index";
 import { useProject } from "./useProject";
+import { useUIState } from "./useUIState";
 
 export function useProductInfo() {
   const { projectData, updateCache } = useProject();
+  const { lightboxImage, setLightboxImage } = useUIState();
   
   const [productLink, setProductLink] = useState("");
   const [fetchedProductLinks, setFetchedProductLinks] = useState<string[]>([]);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<Array<{ name: string; url: string }>>([]);
   const [linkFeedback, setLinkFeedback] = useState("Paste a website, Amazon, or product page URL, then click Fetch.");
-  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
   useEffect(() => {
     if (projectData?.references && projectData.references.length > 0) {

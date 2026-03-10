@@ -6,6 +6,7 @@ import { Pencil, Trash2, UploadCloud } from "lucide-react";
 import Image from "next/image";
 import { useReference } from "../_hooks/useReference";
 import { useReferenceState } from "../_hooks/useReferenceState";
+import { useUIState } from "../_hooks/useUIState";
 
 interface ReferenceCardItemProps {
   projectId: string;
@@ -20,6 +21,7 @@ export function ReferenceCardItem({ projectId, referenceId }: ReferenceCardItemP
     updateReferenceLimit, 
     updateReferenceImage 
   } = useReferenceState();
+  const { setLightboxImage } = useUIState();
 
   if (!reference) return null;
 
@@ -36,7 +38,8 @@ export function ReferenceCardItem({ projectId, referenceId }: ReferenceCardItemP
               src={reference.image_url}
               alt={reference.label}
               fill
-              className="object-cover transition group-hover:scale-105"
+              className="object-cover transition group-hover:scale-105 cursor-pointer"
+              onClick={() => setLightboxImage(reference.image_url!)}
               unoptimized
             />
           ) : (

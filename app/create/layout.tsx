@@ -8,6 +8,7 @@ import { AiAvatarLibrary } from "./_components/ai-avatar-library";
 import { useUIState } from "./_hooks/useUIState";
 import { useReferenceState } from "./_hooks/useReferenceState";
 import { ProjectAutoSaver } from "./_components/project-auto-saver";
+import { UIStateProvider } from "./_components/ui-state-provider";
 
 export default function CreateLayout({
   children,
@@ -23,7 +24,9 @@ export default function CreateLayout({
          </div>
        </div>
     }>
-      <CreateLayoutContent>{children}</CreateLayoutContent>
+      <UIStateProvider>
+        <CreateLayoutContent>{children}</CreateLayoutContent>
+      </UIStateProvider>
     </Suspense>
   );
 }

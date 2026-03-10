@@ -1,4 +1,0 @@
-app/create/concepts/page.tsx(27,5): error TS2322: Type 'ProjectData | undefined' is not assignable to type 'Partial<ProjectData>'.
-  Type 'undefined' is not assignable to type 'Partial<ProjectData>'.
-app/create/preview/page.tsx(42,5): error TS2322: Type 'ProjectData | undefined' is not assignable to type 'Partial<ProjectData>'.
-  Type 'undefined' is not assignable to type 'Partial<ProjectData>'.

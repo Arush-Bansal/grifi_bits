@@ -1,18 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useContext } from "react";
 import { useStepState } from "./useStepState";
+import { UIStateContext } from "../_components/ui-state-provider";
 
 export function useUIState() {
-  const [isAiAvatarLibraryOpen, setIsAiAvatarLibraryOpen] = useState(false);
-  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
+  const context = useContext(UIStateContext);
+  if (!context) {
+    throw new Error("useUIState must be used within a UIStateProvider");
+  }
+
   const stepState = useStepState();
 
   return {
-    ...stepState,
-    isAiAvatarLibraryOpen,
-    setIsAiAvatarLibraryOpen,
-    lightboxImage,
-    setLightboxImage
+    ...context,
+    ...stepState
   };
 }

@@ -20,6 +20,8 @@ export interface VideoSettings {
   language: string;
   captions_enabled: boolean;
   music_track?: string;
+  music_offset?: number;
+  music_volume?: number;
   additional_instructions?: string;
   custom_concept?: PlanConcept;
 }
