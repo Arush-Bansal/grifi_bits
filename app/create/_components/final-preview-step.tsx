@@ -9,7 +9,6 @@ import Image from "next/image";
 import { Scene, VideoSettings } from "../types";
 
 interface FinalPreviewStepProps {
-  productName: string;
   activeTimelineClip: StoryboardTimelineClip | null;
   scenes: Scene[];
   generateMediaLoading: boolean;
@@ -30,7 +29,6 @@ interface FinalPreviewStepProps {
 }
 
 export function FinalPreviewStep({
-  productName,
   activeTimelineClip,
   scenes,
   generateMediaLoading,

@@ -14,7 +14,7 @@ export function ProjectAutoSaver() {
   // Strip server-assigned timestamps to prevent infinite loops on auto-save
   const savableData = projectData ? { ...projectData } : null;
   if (savableData) {
-    const data = savableData as Record<string, any>;
+    const data = savableData as Record<string, unknown>;
     delete data.updated_at;
     delete data.created_at;
   }

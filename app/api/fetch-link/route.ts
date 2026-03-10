@@ -6,6 +6,7 @@ import fs from "fs";
 import axios from "axios";
 import { google } from "@ai-sdk/google";
 import { generateText } from "ai";
+import { uploadImageFromBase64 } from "@/lib/supabase/storage";
 
 async function downloadImageAsBase64(imageUrl: string): Promise<string | null> {
   try {
@@ -88,14 +89,32 @@ export async function POST(req: NextRequest) {
     }
 
     // Run image downloading and description cleanup in parallel
-    const imagePromise = (result.imageUrls && result.imageUrls.length > 0 && !result.imageUrls[0]?.startsWith("data:"))
+    const imagePromise = (result.imageUrls && result.imageUrls.length > 0)
       ? (async () => {
-        console.log(`[fetch-link] Downloading ${result.imageUrls.length} images as base64…`);
-        const base64Results = await Promise.all(
-          result.imageUrls.map((imgUrl: string) => downloadImageAsBase64(imgUrl))
+        const isAlreadyBase64 = result.imageUrls[0]?.startsWith("data:");
+        
+        console.log(`[fetch-link] Processing ${result.imageUrls.length} images…`);
+        
+        // 1. Download if needed
+        let base64Images: string[] = [];
+        if (!isAlreadyBase64) {
+          console.log(`[fetch-link] Downloading images as base64…`);
+          const base64Results = await Promise.all(
+            result.imageUrls.map((imgUrl: string) => downloadImageAsBase64(imgUrl))
+          );
+          base64Images = base64Results.filter((b64): b64 is string => b64 !== null);
+        } else {
+          base64Images = result.imageUrls;
+        }
+
+        // 2. Upload to Supabase
+        console.log(`[fetch-link] Uploading ${base64Images.length} images to Supabase…`);
+        const uploadResults = await Promise.all(
+          base64Images.map((b64) => uploadImageFromBase64(b64))
         );
-        result.imageUrls = base64Results.filter((b64): b64 is string => b64 !== null);
-        console.log(`[fetch-link] Successfully converted ${result.imageUrls.length} images to base64.`);
+        
+        result.imageUrls = uploadResults.filter((url): url is string => url !== null);
+        console.log(`[fetch-link] Successfully uploaded ${result.imageUrls.length} images to Supabase.`);
       })()
       : Promise.resolve();
 

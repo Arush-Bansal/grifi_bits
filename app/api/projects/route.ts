@@ -33,11 +33,14 @@ export async function POST(request: Request) {
   }
 
   // Authoritative merge after upsert: text from JSONB payload, assets from structured tables
-  const idResult = (data as { id?: string })?.id || payload.id;
+  const idResult = (data as Database['public']['Tables']['projects']['Row'])?.id;
+  if (!idResult) {
+    return NextResponse.json(data);
+  }
   const { data: scenes } = await supabase.from("scenes").select("*").eq("project_id", idResult).order("scene_order", { ascending: true });
   const { data: references } = await supabase.from("project_references").select("*").eq("project_id", idResult);
   
-  const jsonScenes = (payload.scenes as any[] || []);
+  const jsonScenes = payload.scenes || [];
   const mergedScenes = jsonScenes.map(js => {
     const ts = (scenes || []).find(s => s.scene_order === js.id);
     return {
@@ -49,7 +52,7 @@ export async function POST(request: Request) {
     };
   });
 
-  const jsonRefs = (payload.references as any[] || []);
+  const jsonRefs = payload.references || [];
   const mergedRefs = jsonRefs.map(jr => {
     const tr = (references || []).find(r => r.reference_key === jr.id);
     return {

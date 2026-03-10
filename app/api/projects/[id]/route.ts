@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseAdmin } from "@/lib/supabase/server";
+import { ReferenceCard, Scene } from "@/app/create/types";
 
 export async function GET(
   request: NextRequest,
@@ -37,7 +38,7 @@ export async function GET(
     .eq("project_id", id);
 
   // 5. Construct merged scenes: authoritative text from JSONB, authoritative assets from structured table
-  const jsonScenes = (project.scenes as any[] || []);
+  const jsonScenes = (project.scenes as unknown as Scene[] || []);
   const mergedScenes = jsonScenes.map(js => {
     const ts = (scenes || []).find(s => s.scene_order === js.id);
     return {
@@ -50,7 +51,7 @@ export async function GET(
   });
 
   // 6. Construct merged references: authoritative text from JSONB, authoritative assets from structured table
-  const jsonRefs = (project.references as any[] || []);
+  const jsonRefs = (project.references as unknown as ReferenceCard[] || []);
   const mergedRefs = jsonRefs.map(jr => {
     const tr = (references || []).find(r => r.reference_key === jr.id);
     return {

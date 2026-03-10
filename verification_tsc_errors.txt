@@ -1,0 +1,1 @@
+app/create/_components/step-navigation.tsx(36,5): error TS2353: Object literal may only specify known properties, and 'saveProjectWithData' does not exist in type 'MutationDeps'.

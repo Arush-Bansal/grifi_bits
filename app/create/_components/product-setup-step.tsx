@@ -136,7 +136,7 @@ export function ProductSetupStep({
               <span className="font-semibold">Brand:</span> {productName || "Not set"}
             </p>
             <p>
-              <span className="font-semibold">Assets:</span> {imageFiles.length} uploaded
+              <span className="font-semibold">Assets:</span> {previewUrls.length} uploaded
             </p>
             <p>
               <span className="font-semibold">Tone:</span> UGC conversion focused

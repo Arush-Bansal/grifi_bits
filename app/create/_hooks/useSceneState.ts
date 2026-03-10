@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useCallback, useEffect } from "react";
-import { Scene, EditingPrompt } from "../types";
+import { Scene, EditingPrompt, SceneGenerating } from "../types";
 import { defaultScenes, TIMELINE_FLOAT_TOLERANCE } from "../constants";
 import { buildInitialTimelineClips } from "../_utils";
 import { usePreviewSceneMutation } from "./index";
@@ -69,10 +69,10 @@ export function useSceneState() {
   }, [setScenes]);
 
   const handleGenerateSceneImage = useCallback(async (sceneId: number, image_prompt: string, main_ref?: string, secondary_ref?: string, options?: { referenceId?: string }) => {
-    if (!image_prompt) return;
+    if (!image_prompt) return {};
 
     updateUiCache((old) => {
-      const sg = (old.sceneGenerating || {}) as Record<string, any>;
+      const sg = (old.sceneGenerating || {}) as SceneGenerating;
       const idStr = options?.referenceId ? `ref-${options.referenceId}` : sceneId.toString();
       return { sceneGenerating: { ...sg, [idStr]: { ...sg[idStr], image: true } } };
     });
@@ -106,7 +106,7 @@ export function useSceneState() {
       return data;
     } finally {
       updateUiCache((old) => {
-        const sg = (old.sceneGenerating || {}) as Record<string, any>;
+        const sg = (old.sceneGenerating || {}) as SceneGenerating;
         const idStr = options?.referenceId ? `ref-${options.referenceId}` : sceneId.toString();
         const next = { ...sg };
         if (next[idStr]) {
@@ -119,7 +119,7 @@ export function useSceneState() {
 
   const handleGenerateSceneAudio = useCallback(async (sceneId: number, speech: string) => {
     updateUiCache((old) => {
-      const sg = (old.sceneGenerating || {}) as Record<string, any>;
+      const sg = (old.sceneGenerating || {}) as SceneGenerating;
       return { sceneGenerating: { ...sg, [sceneId]: { ...sg[sceneId], audio: true } } };
     });
     try {
@@ -138,7 +138,7 @@ export function useSceneState() {
       });
     } finally {
       updateUiCache((old) => {
-        const sg = (old.sceneGenerating || {}) as Record<string, any>;
+        const sg = (old.sceneGenerating || {}) as SceneGenerating;
         const next = { ...sg };
         if (next[sceneId]) {
           next[sceneId] = { ...next[sceneId], audio: false };

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
-import { uploadImage } from "@/lib/supabase/storage";
+import axios from "axios";
 import { useFetchLinkMutation } from "./index";
 import { useProject } from "./useProject";
 
@@ -41,13 +41,28 @@ export function useProductInfo() {
   const handleFileInput = useCallback(async (files: FileList | null) => {
     if (!files) return;
     const newFiles = Array.from(files);
-    setImageFiles((prev) => [...prev, ...newFiles].slice(0, 8));
+    
+    // Create a FormData to send files to the server
+    const formData = new FormData();
+    newFiles.forEach((file) => formData.append("files", file));
 
-    for (const file of newFiles) {
-      const url = await uploadImage(file);
-      if (url) {
-        setPreviewUrls((prev) => [...prev, { name: file.name, url }]);
+    try {
+      setLinkFeedback("Uploading images…");
+      const { data } = await axios.post("/api/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      if (data.urls && data.urls.length > 0) {
+        const newPreviewItems = data.urls.map((url: string, i: number) => ({
+          name: newFiles[i]?.name || `upload-${i + 1}`,
+          url,
+        }));
+        setPreviewUrls((prev) => [...prev, ...newPreviewItems].slice(0, 8));
+        setLinkFeedback(`Uploaded ${data.urls.length} images.`);
       }
+    } catch (err) {
+      console.error("Upload failed:", err);
+      setLinkFeedback("Failed to upload images.");
     }
   }, []);
 
@@ -58,55 +73,49 @@ export function useProductInfo() {
         ? `${projectData?.product_description || ""}\n\n${data.description}`.trim()
         : projectData?.product_description || "";
 
-      updateCache({
-        product_name: newName,
-        product_description: newDesc
-      });
-
       setFetchedProductLinks((prev) => [...new Set([...prev, url])]);
-      setLinkFeedback(`Fetched info for ${data.title}.`);
       setProductLink("");
 
       if (data.imageUrls && data.imageUrls.length > 0) {
-        const remainingSlots = 8 - imageFiles.length;
+        const remainingSlots = 8 - previewUrls.length;
         const imagesToAdd = (data.imageUrls as string[]).slice(0, Math.min(5, remainingSlots));
 
         if (imagesToAdd.length > 0) {
-          setLinkFeedback(`Fetched info for ${data.title}. Loading ${imagesToAdd.length} product images…`);
+          const newPreviewItems = imagesToAdd.map((imgUrl, i) => ({
+            name: `product-image-${Date.now()}-${i + 1}`,
+            url: imgUrl,
+          }));
 
-          const newFiles: File[] = [];
-          for (let i = 0; i < imagesToAdd.length; i++) {
-            try {
-              const dataUri = imagesToAdd[i];
-              const match = dataUri.match(/^data:([^;]+);base64,(.+)$/);
-              if (!match) continue;
+          const updatedPreviewUrls = [...previewUrls, ...newPreviewItems].slice(0, 8);
+          setPreviewUrls(updatedPreviewUrls);
 
-              const mime = match[1];
-              const b64 = match[2];
-              const binary = atob(b64);
-              const bytes = new Uint8Array(binary.length);
-              for (let j = 0; j < binary.length; j++) {
-                bytes[j] = binary.charCodeAt(j);
-              }
-              const ext = mime.split("/")[1] || "jpg";
-              const file = new File([bytes], `product-image-${i + 1}.${ext}`, { type: mime });
-              newFiles.push(file);
-            } catch (err) {
-              console.warn(`Failed to convert image ${i + 1}:`, err);
-            }
-          }
+          // Update cache with everything including new references
+          updateCache({
+            product_name: newName,
+            product_description: newDesc,
+            references: updatedPreviewUrls.map(p => ({
+              id: p.name,
+              label: p.name,
+              tagline: "",
+              image_url: p.url,
+              original_name: p.name
+            }))
+          });
 
-          if (newFiles.length > 0) {
-            setImageFiles((prev) => [...prev, ...newFiles].slice(0, 8));
-            for (const file of newFiles) {
-              const url = await uploadImage(file);
-              if (url) {
-                setPreviewUrls((prev) => [...prev, { name: file.name, url }]);
-              }
-            }
-            setLinkFeedback(`Fetched info for ${data.title}. Added ${newFiles.length} product image${newFiles.length > 1 ? "s" : ""}.`);
-          }
+          setLinkFeedback(`[VERSION 2.1] Successfully fetched info for ${data.title} and added ${imagesToAdd.length} images.`);
+        } else {
+          updateCache({
+            product_name: newName,
+            product_description: newDesc
+          });
+          setLinkFeedback(`[VERSION 2.1] Successfully fetched info for ${data.title}. No new images added.`);
         }
+      } else {
+        updateCache({
+          product_name: newName,
+          product_description: newDesc
+        });
+        setLinkFeedback(`[VERSION 2.1] Successfully fetched info for ${data.title}.`);
       }
     },
   });

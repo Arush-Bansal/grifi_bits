@@ -1,7 +1,6 @@
 "use client";
 
-import { QueryClient } from "@tanstack/react-query";
-import { Scene, Step, ProjectData, PlanConcept, ReferenceCard, ProjectUiState } from "../types";
+import { Scene, Step, ProjectData, PlanConcept, ReferenceCard } from "../types";
 import { normalizeTimelineClips } from "../_utils";
 import { type StoryboardTimelineClip } from "@/components/timeline/storyboard-timeline";
 import {
@@ -9,37 +8,39 @@ import {
   useOrchestrateMutation,
   useGenerateMediaMutation
 } from "./index";
+import { useProject } from "./useProject";
 
 interface MutationDeps {
   setPlans: (plans: PlanConcept[]) => void;
   setSelectedPlanIndex: (index: number) => void;
   setStep: (step: Step) => void;
-  saveProjectWithData: (data: ProjectData) => Promise<void>;
   imageFiles: File[];
-  syncState: Partial<ProjectData>;
   setReferences: (refs: ReferenceCard[] | ((prev: ReferenceCard[]) => ReferenceCard[])) => void;
   setScenes: (scenes: Scene[] | ((prev: Scene[]) => Scene[])) => void;
   setTimelineClips: (clips: StoryboardTimelineClip[] | ((prev: StoryboardTimelineClip[]) => StoryboardTimelineClip[])) => void;
-  handleGenerateSceneImage: (sceneId: number, prompt: string, main_ref?: string, secondary_ref?: string, options?: { referenceId?: string }) => Promise<any>;
-  queryClient: QueryClient;
-  updateUiCache: (updater: Partial<ProjectUiState> | ((old: ProjectUiState) => Partial<ProjectUiState>)) => void;
+  handleGenerateSceneImage: (sceneId: number, prompt: string, main_ref?: string, secondary_ref?: string, options?: { referenceId?: string }) => Promise<{ image_url?: string; audio_url?: string; audio_duration?: number }>;
 }
 
 export function useCreateMutations(deps: MutationDeps) {
   const {
+    projectData,
+    queryClient,
+    updateUiCache,
+    saveProjectWithData
+  } = useProject();
+
+  const {
     setPlans,
     setSelectedPlanIndex,
     setStep,
-    saveProjectWithData,
     imageFiles,
-    syncState,
     setReferences,
     setScenes,
-        setTimelineClips,
+    setTimelineClips,
     handleGenerateSceneImage,
-    queryClient,
-    updateUiCache
   } = deps;
+
+  const syncState = (projectData || {}) as Partial<ProjectData>;
 
   const generateConceptsMutation = useGenerateConceptsMutation({
     onSuccess: (data) => {

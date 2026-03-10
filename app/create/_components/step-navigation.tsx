@@ -22,7 +22,7 @@ const stepToRoute: Record<Step, string> = {
 
 export function StepNavigation() {
   const router = useRouter();
-  const { projectId, projectData, saveProjectWithData, queryClient, updateUiCache } = useProject();
+  const { projectId, updateUiCache } = useProject();
   const { step, setStep } = useUIState();
   const { product_name, product_description, imageFiles, previewUrls } = useProductInfo();
   const { plans, selected_plan_index, settings, setSelectedPlanIndex } = useAiPlan();
@@ -33,15 +33,11 @@ export function StepNavigation() {
     setPlans: () => {}, // Handled via cache in useAiPlan
     setSelectedPlanIndex,
     setStep,
-    saveProjectWithData,
     imageFiles,
-    syncState: projectData || {},
     setReferences: referenceState.setReferences,
     setScenes: sceneState.setScenes,
     setTimelineClips: sceneState.setTimelineClips,
     handleGenerateSceneImage: sceneState.handleGenerateSceneImage,
-    queryClient,
-    updateUiCache
   });
 
   const handleNavigate = (nextStep: number) => {
@@ -80,9 +76,7 @@ export function StepNavigation() {
               mutations.orchestrateMutation.mutate({
                 product_name,
                 product_description,
-                image_names: imageFiles.length > 0 
-                  ? imageFiles.map((f: File) => f.name) 
-                  : previewUrls.map((p: { name: string; url: string }) => p.name),
+                image_names: previewUrls.map((p) => p.name),
                 selected_plan: plans[selected_plan_index]?.title,
                 settings,
                 product_id: projectId || undefined

@@ -2,7 +2,6 @@
 
 import { FinalPreviewStep } from "../_components/final-preview-step";
 import { StepNavigation } from "../_components/step-navigation";
-import { useProductInfo } from "../_hooks/useProductInfo";
 import { useSceneState } from "../_hooks/useSceneState";
 import { useAiPlan } from "../_hooks/useAiPlan";
 import { useCreateMutations } from "../_hooks/useCreateMutations";
@@ -14,7 +13,6 @@ import { formatTimelineTime } from "../_utils";
 import { Scene, ReferenceCard } from "../types";
 
 export default function PreviewPage() {
-  const { product_name } = useProductInfo();
   const {
     scenes,
     activeTimelineClip,
@@ -37,9 +35,7 @@ export default function PreviewPage() {
     setPlans: () => {},
     setSelectedPlanIndex,
     setStep,
-    saveProjectWithData,
     imageFiles: [], // imageFiles not needed for media generation
-    syncState: projectData || {},
     setReferences,
     setScenes,
     setTimelineClips: () => {}, // timelineClips is derived
@@ -49,7 +45,6 @@ export default function PreviewPage() {
   return (
     <>
       <FinalPreviewStep
-        productName={product_name}
         activeTimelineClip={activeTimelineClip}
         scenes={scenes}
         generateMediaLoading={mutations.generateMediaMutation.isPending}

@@ -74,7 +74,7 @@ export const initialProjectUiState: ProjectUiState = {
   editingRefId: null,
 };
 
-export type SceneGenerating = Record<number, { image?: boolean; audio?: boolean }>;
+export type SceneGenerating = Record<string | number, { image?: boolean; audio?: boolean }>;
 export type EditingPrompt = Record<number, boolean>;
 
 export type OrchestrationResult = {
