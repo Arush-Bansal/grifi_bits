@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { Music2, Subtitles, Video } from "lucide-react";
 import Image from "next/image";
 import { Scene, VideoSettings } from "../types";
+import { useEffect, useRef } from "react";
 
 interface FinalPreviewStepProps {
   activeTimelineClip: StoryboardTimelineClip | null;
@@ -47,11 +48,61 @@ export function FinalPreviewStep({
   formatTimelineTime,
   timelineTotalDuration
 }: FinalPreviewStepProps) {
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const lastAudioSrc = useRef<string | null>(null);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const activeScene = activeTimelineClip ? scenes.find((s) => s.id === activeTimelineClip.sceneId) : null;
+    const audioUrl = activeScene?.audio_url;
+    const hasVideo = !!activeScene?.video_url;
+
+    // We only play audio if there's no video
+    if (timelineIsPlaying && audioUrl && !hasVideo) {
+      // 1. Handle Source Changes
+      if (lastAudioSrc.current !== audioUrl) {
+        audio.src = audioUrl;
+        lastAudioSrc.current = audioUrl;
+        audio.load();
+      }
+      
+      const sceneRelativeTime = timelineCurrentTime - (activeTimelineClip?.start || 0);
+      
+      // 2. Sync Time (be lenient with threshold)
+      if (Math.abs(audio.currentTime - sceneRelativeTime) > 0.2) {
+        audio.currentTime = sceneRelativeTime;
+      }
+      
+      // 3. Ensure Playback
+      if (audio.paused) {
+        audio.play().catch(e => {
+          // Ignore interruption errors which are common when scrubbing rapidly
+          if (e.name !== "AbortError") {
+            console.error("Audio play failed:", e);
+          }
+        });
+      }
+    } else {
+      // Stop playback if not playing, or if video is available, or no audio
+      if (!audio.paused) {
+        audio.pause();
+      }
+      // If we crossed into a video scene or stopped, reset lastAudioSrc to ensure fresh start next time
+      if (!timelineIsPlaying || hasVideo || !audioUrl) {
+        // We don't necessarily want to clear lastAudioSrc every frame if just paused,
+        // but if we are not playing at all, it's safer.
+      }
+    }
+  }, [timelineIsPlaying, timelineCurrentTime, activeTimelineClip, scenes]);
+
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(280px,420px)_1fr]">
       <div className="rounded-2xl border border-border bg-white/90 p-4">
         <p className="mb-3 text-sm font-semibold text-foreground">Video Preview (Portrait)</p>
         <div className="relative mx-auto aspect-[9/16] max-h-[620px] overflow-hidden rounded-2xl bg-gradient-to-b from-[#89c9ff] to-[#3f98eb]">
+          <audio ref={audioRef} className="hidden" />
           {activeTimelineClip?.sceneId ? (
             (() => {
               const activeScene = scenes.find((s) => s.id === activeTimelineClip.sceneId);
