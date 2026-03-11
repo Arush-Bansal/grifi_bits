@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Pencil, Trash2, UploadCloud } from "lucide-react";
 import Image from "next/image";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useReference } from "../_hooks/useReference";
 import { useReferenceState } from "../_hooks/useReferenceState";
 import { useUIState } from "../_hooks/useUIState";
@@ -25,6 +26,8 @@ export function ReferenceCardItem({ projectId, referenceId }: ReferenceCardItemP
 
   if (!reference) return null;
 
+  const isGenerating = !reference.image_url && !!reference.ai_prompt;
+
   return (
     <article
       className={cn(
@@ -42,6 +45,8 @@ export function ReferenceCardItem({ projectId, referenceId }: ReferenceCardItemP
               onClick={() => setLightboxImage(reference.image_url!)}
               unoptimized
             />
+          ) : isGenerating ? (
+            <Skeleton className="h-full w-full rounded-none" />
           ) : (
             <div className="flex h-full w-full items-center justify-center bg-muted">
               <span className="text-[10px] text-muted-foreground">No image available</span>

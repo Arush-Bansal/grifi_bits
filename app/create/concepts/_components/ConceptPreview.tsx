@@ -1,8 +1,11 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Volume2, MessageSquareText } from "lucide-react";
 import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 import { PlanConcept, VideoSettings } from "../../types";
 
 interface ConceptPreviewProps {
@@ -12,19 +15,34 @@ interface ConceptPreviewProps {
 }
 
 export function ConceptPreview({ selectedPlan, settings, setSettings }: ConceptPreviewProps) {
+  const [isImageLoading, setIsImageLoading] = useState(true);
+
+  // Reset loading state when the selected plan's image changes
+  useEffect(() => {
+    setIsImageLoading(true);
+  }, [selectedPlan.image_preview]);
   return (
     <>
       <div className="mt-8 overflow-hidden rounded-2xl border border-border bg-secondary/20 p-6">
         <div className="flex flex-col md:flex-row gap-6">
           <div className="relative aspect-square w-full md:w-64 flex-shrink-0 overflow-hidden rounded-xl border-2 border-primary/20 shadow-lg">
             {selectedPlan.image_preview && typeof selectedPlan.image_preview === 'string' && selectedPlan.image_preview.startsWith('http') ? (
-              <Image
-                src={selectedPlan.image_preview}
-                alt={selectedPlan.title}
-                fill
-                className="object-cover"
-                unoptimized
-              />
+              <>
+                {isImageLoading && (
+                  <Skeleton className="absolute inset-0 h-full w-full rounded-xl z-10" />
+                )}
+                <Image
+                  src={selectedPlan.image_preview}
+                  alt={selectedPlan.title}
+                  fill
+                  className={cn(
+                    "object-cover transition-opacity duration-300",
+                    isImageLoading ? "opacity-0" : "opacity-100"
+                  )}
+                  onLoad={() => setIsImageLoading(false)}
+                  unoptimized
+                />
+              </>
             ) : (
               <div className="flex h-full w-full items-center justify-center bg-muted animate-pulse">
                 <span className="text-xs text-muted-foreground">Generating square preview...</span>

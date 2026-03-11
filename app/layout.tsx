@@ -23,6 +23,7 @@ export const metadata: Metadata = {
 };
 
 import Providers from "@/components/Providers";
+import { NavBarCreateNewButton } from "@/components/NavBarCreateNewButton";
 
 export default function RootLayout({
   children
@@ -43,9 +44,7 @@ export default function RootLayout({
                   <Button asChild variant="outline" className="border-primary/30 bg-background/65 hover:bg-accent/70">
                     <Link href="/library">Library</Link>
                   </Button>
-                  <Button asChild>
-                    <Link href="/create">Create New</Link>
-                  </Button>
+                  <NavBarCreateNewButton />
                 </div>
               </nav>
             </header>

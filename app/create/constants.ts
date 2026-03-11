@@ -3,6 +3,7 @@ import { Scene } from "./types";
 
 export const INDIAN_LANGUAGES = [
   { label: "Hindi", value: "hindi" },
+  { label: "Hindi(Hinglish)", value: "hindi(hinglish)" },
   { label: "English", value: "english" },
   { label: "Marathi", value: "marathi" },
   { label: "Bengali", value: "bengali" },

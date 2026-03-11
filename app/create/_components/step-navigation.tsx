@@ -21,7 +21,7 @@ const stepToRoute: Record<Step, string> = {
 
 export function StepNavigation() {
   const router = useRouter();
-  const { projectId, updateUiCache } = useProject();
+  const { projectId, updateUiCache, projectData } = useProject();
   const { step, setStep } = useUIState();
   const { product_name, product_description, imageFiles, previewUrls } = useProductInfo();
   const { plans, selected_plan_index, settings, setSelectedPlanIndex, custom_concept } = useAiPlan();
@@ -54,7 +54,11 @@ export function StepNavigation() {
       <div className="flex items-center gap-3">
         <Button
           variant="outline"
-          className={cn((!projectId || (step !== 0 && step !== 1)) && "hidden")}
+          className={cn(
+            (!projectId || (step !== 0 && step !== 1)) && "hidden",
+            (step === 0 && (!plans || plans.length === 0)) && "hidden",
+            (step === 1 && (!projectData?.scenes || projectData.scenes.length === 0)) && "hidden"
+          )}
           onClick={() => handleNavigate(step + 1)}
           disabled={mutations.orchestrateMutation.isPending}
         >
