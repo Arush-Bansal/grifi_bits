@@ -1,8 +1,12 @@
 "use client";
 
-import { ProductSetupStep } from "../_components/product-setup-step";
-import { StepNavigation } from "../_components/step-navigation";
 import { useProductInfo } from "../_hooks/useProductInfo";
+import { StepNavigation } from "../_components/step-navigation";
+import { ProductBasicInfo } from "./_components/ProductBasicInfo";
+import { ProductLinkFetcher } from "./_components/ProductLinkFetcher";
+import { ProductImageUpload } from "./_components/ProductImageUpload";
+import { CreativeBriefSnapshot } from "./_components/CreativeBriefSnapshot";
+import { UploadedImagesGrid } from "./_components/UploadedImagesGrid";
 
 export default function SetupPage() {
   const {
@@ -20,28 +24,45 @@ export default function SetupPage() {
     removeImage,
     previewUrls,
     setLightboxImage,
-    handleFileInput
+    handleFileInput,
   } = useProductInfo();
 
   return (
     <>
-      <ProductSetupStep
-        productName={product_name}
-        setProductName={set_product_name}
-        description={product_description}
-        setDescription={set_product_description}
-        productLink={productLink}
-        setProductLink={setProductLink}
-        handleFetchLink={handleFetchLink}
-        fetchLinkLoading={fetchLinkMutation.isPending}
-        linkFeedback={linkFeedback}
-        fetchedProductLinks={fetchedProductLinks}
-        imageFiles={imageFiles}
-        removeImage={removeImage}
+      <div className="grid gap-7 lg:grid-cols-[1fr_360px]">
+        <div className="space-y-5 min-w-0">
+          <ProductBasicInfo
+            productName={product_name}
+            setProductName={set_product_name}
+            productDescription={product_description}
+            setProductDescription={set_product_description}
+          />
+
+          <ProductLinkFetcher
+            productLink={productLink}
+            setProductLink={setProductLink}
+            handleFetchLink={handleFetchLink}
+            isPending={fetchLinkMutation.isPending}
+            linkFeedback={linkFeedback}
+            fetchedProductLinks={fetchedProductLinks}
+          />
+
+          <ProductImageUpload handleFileInput={handleFileInput} />
+        </div>
+
+        <CreativeBriefSnapshot
+          productName={product_name}
+          previewCount={previewUrls.length}
+        />
+      </div>
+
+      <UploadedImagesGrid
         previewUrls={previewUrls}
+        imageFiles={imageFiles}
         setLightboxImage={setLightboxImage}
-        handleFileInput={handleFileInput}
+        removeImage={removeImage}
       />
+
       <StepNavigation />
     </>
   );

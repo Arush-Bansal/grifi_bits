@@ -1,16 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { FinalPreviewStep } from "../_components/final-preview-step";
 import { StepNavigation } from "../_components/step-navigation";
 import { useSceneState } from "../_hooks/useSceneState";
 import { useAiPlan } from "../_hooks/useAiPlan";
 import { useCreateMutations } from "../_hooks/useCreateMutations";
 import { useProject } from "../_hooks/useProject";
 import { useUIState } from "../_hooks/useUIState";
-import { TIMELINE_MIN_DURATION_SECONDS } from "../constants";
-import { formatTimelineTime } from "../_utils";
 import { Scene, ReferenceCard } from "../types";
+import { usePreviewAudio } from "./_hooks/usePreviewAudio";
+import { VideoPreview } from "./_components/video-preview";
+import { FinalControls } from "./_components/FinalControls";
 
 export default function PreviewPage() {
   const {
@@ -24,7 +24,7 @@ export default function PreviewPage() {
     handleTimelineClipsChange,
     timelineTotalDuration,
     setScenes,
-    handleGenerateSceneImage
+    handleGenerateSceneImage,
   } = useSceneState();
   const { settings, setSettings, setSelectedPlanIndex } = useAiPlan();
   const [references] = useState<ReferenceCard[]>([]);
@@ -35,40 +35,57 @@ export default function PreviewPage() {
     setPlans: () => {},
     setSelectedPlanIndex,
     setStep,
-    imageFiles: [], // imageFiles not needed for media generation
+    imageFiles: [],
     setScenes,
-    setTimelineClips: () => {}, // timelineClips is derived
-    handleGenerateSceneImage
+    setTimelineClips: () => {},
+    handleGenerateSceneImage,
   });
+
+  const { audioRef, bgAudioRef } = usePreviewAudio({
+    timelineIsPlaying,
+    timelineCurrentTime,
+    activeTimelineClip,
+    scenes,
+    settings,
+  });
+
+  const generateMedia = () =>
+    mutations.generateMediaMutation.mutate({
+      scenes: scenes.map((s: Scene) => ({
+        ...s,
+        video_prompt: s.video_prompt,
+      })),
+      references: Object.fromEntries(references.map((r: ReferenceCard) => [r.id, r.tagline])),
+    });
 
   return (
     <>
-      <FinalPreviewStep
-        activeTimelineClip={activeTimelineClip}
-        scenes={scenes}
-        generateMediaLoading={mutations.generateMediaMutation.isPending}
-        generateMedia={() => mutations.generateMediaMutation.mutate({
-          scenes: scenes.map((s: Scene) => ({
-            ...s,
-            video_prompt: s.video_prompt
-          })),
-          references: Object.fromEntries(references.map((r: ReferenceCard) => [r.id, r.tagline])),
-          // voice_id is intentionally omitted here to let the backend use process.env.ELEVEN_LABS_VOICE_ID 
-        })}
-        settings={settings}
-        setSettings={setSettings}
-        timelineClips={timelineClips}
-        timelineCurrentTime={timelineCurrentTime}
-        timelineIsPlaying={timelineIsPlaying}
-        TIMELINE_MIN_DURATION_SECONDS={TIMELINE_MIN_DURATION_SECONDS}
-        handleTimelineTimeChange={handleTimelineTimeChange}
-        setTimelineIsPlaying={setTimelineIsPlaying}
-        handleTimelineClipsChange={handleTimelineClipsChange}
-        saveProject={() => saveProjectWithData(projectData!)}
-        saving={saving}
-        formatTimelineTime={formatTimelineTime}
-        timelineTotalDuration={timelineTotalDuration}
-      />
+      <div className="grid gap-6 lg:grid-cols-[minmax(280px,420px)_1fr]">
+        <VideoPreview
+          activeTimelineClip={activeTimelineClip}
+          scenes={scenes}
+          audioRef={audioRef}
+          bgAudioRef={bgAudioRef}
+          isPending={mutations.generateMediaMutation.isPending}
+          onGenerateMedia={generateMedia}
+          timelineCurrentTime={timelineCurrentTime}
+          timelineTotalDuration={timelineTotalDuration}
+          captionsEnabled={settings.captions_enabled}
+        />
+
+        <FinalControls
+          settings={settings}
+          setSettings={setSettings}
+          timelineClips={timelineClips}
+          timelineCurrentTime={timelineCurrentTime}
+          timelineIsPlaying={timelineIsPlaying}
+          onTimelineTimeChange={handleTimelineTimeChange}
+          onTimelineIsPlayingChange={setTimelineIsPlaying}
+          onTimelineClipsChange={handleTimelineClipsChange}
+          onSaveProject={() => saveProjectWithData(projectData!)}
+          isSaving={saving}
+        />
+      </div>
       <StepNavigation />
     </>
   );
