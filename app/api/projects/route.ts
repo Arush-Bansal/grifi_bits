@@ -32,11 +32,47 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  // Authoritative merge after upsert: text from JSONB payload, assets from structured tables
   const idResult = (data as Database['public']['Tables']['projects']['Row'])?.id;
   if (!idResult) {
     return NextResponse.json(data);
   }
+
+  // Sync structured tables with JSON data to prevent "authoritative merge" from reverting changes
+  if (payload.scenes && payload.scenes.length > 0) {
+    // Delete and re-insert for simplicity and to handle re-ordering
+    await supabase.from("scenes").delete().eq("project_id", idResult);
+    const sceneInserts = payload.scenes.map((scene, index) => ({
+      project_id: idResult,
+      scene_order: index + 1,
+      name: scene.name || `Scene ${index + 1}`,
+      image_prompt: scene.image_prompt || "",
+      video_prompt: scene.video_prompt || "",
+      speech: scene.speech || "",
+      image_url: scene.image_url || null,
+      audio_url: scene.audio_url || null,
+      audio_duration: scene.audio_duration || null,
+      video_url: scene.video_url || null,
+      main_reference: scene.main_reference || null,
+      secondary_reference: scene.secondary_reference || null
+    }));
+    await supabase.from("scenes").insert(sceneInserts);
+  }
+
+  if (payload.references && payload.references.length > 0) {
+    await supabase.from("project_references").delete().eq("project_id", idResult);
+    const refInserts = payload.references.map(ref => ({
+      project_id: idResult,
+      reference_key: ref.id,
+      label: ref.label,
+      tagline: ref.tagline,
+      image_url: ref.image_url,
+      ai_prompt: ref.ai_prompt || null,
+      original_name: ref.original_name || null
+    }));
+    await supabase.from("project_references").insert(refInserts);
+  }
+
+  // Authoritative merge after upsert: text from JSONB payload, assets from structured tables
   const { data: scenes } = await supabase.from("scenes").select("*").eq("project_id", idResult).order("scene_order", { ascending: true });
   const { data: references } = await supabase.from("project_references").select("*").eq("project_id", idResult);
   

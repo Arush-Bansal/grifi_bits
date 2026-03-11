@@ -28,6 +28,12 @@ export function useProductInfo() {
   }, [projectData?.references]);
 
   useEffect(() => {
+    if (projectData?.settings?.product_urls) {
+      setFetchedProductLinks(projectData.settings.product_urls);
+    }
+  }, [projectData?.settings?.product_urls]);
+
+  useEffect(() => {
     const nextUrls = imageFiles.map((file) => URL.createObjectURL(file));
     return () => {
       nextUrls.forEach((url) => URL.revokeObjectURL(url));
@@ -58,14 +64,27 @@ export function useProductInfo() {
           name: newFiles[i]?.name || `upload-${i + 1}`,
           url,
         }));
-        setPreviewUrls((prev) => [...prev, ...newPreviewItems].slice(0, 8));
+        const updatedPreviewUrls = [...previewUrls, ...newPreviewItems].slice(0, 8);
+        setPreviewUrls(updatedPreviewUrls);
+        
+        // Update cache so these permanent URLs are persisted
+        updateCache({
+          references: updatedPreviewUrls.map(p => ({
+            id: p.name,
+            label: p.name,
+            tagline: "",
+            image_url: p.url,
+            original_name: p.name
+          }))
+        });
+
         setLinkFeedback(`Uploaded ${data.urls.length} images.`);
       }
     } catch (err) {
       console.error("Upload failed:", err);
       setLinkFeedback("Failed to upload images.");
     }
-  }, []);
+  }, [previewUrls, updateCache]);
 
   const fetchLinkMutation = useFetchLinkMutation({
     onSuccess: async (data, url) => {
@@ -90,10 +109,17 @@ export function useProductInfo() {
           const updatedPreviewUrls = [...previewUrls, ...newPreviewItems].slice(0, 8);
           setPreviewUrls(updatedPreviewUrls);
 
-          // Update cache with everything including new references
+          const currentLinks = projectData?.settings?.product_urls || [];
+          const newLinks = [...new Set([...currentLinks, url])];
+
+          // Update cache with everything including new references and newly fetched URL
           updateCache({
             product_name: newName,
             product_description: newDesc,
+            settings: {
+              ...(projectData?.settings || { orientation: "portrait", duration: 15, logo_ending: true, language: "en", captions_enabled: true }),
+              product_urls: newLinks
+            },
             references: updatedPreviewUrls.map(p => ({
               id: p.name,
               label: p.name,
@@ -105,16 +131,30 @@ export function useProductInfo() {
 
           setLinkFeedback(`[VERSION 2.1] Successfully fetched info for ${data.title} and added ${imagesToAdd.length} images.`);
         } else {
+          const currentLinks = projectData?.settings?.product_urls || [];
+          const newLinks = [...new Set([...currentLinks, url])];
+          
           updateCache({
             product_name: newName,
-            product_description: newDesc
+            product_description: newDesc,
+            settings: {
+              ...(projectData?.settings || { orientation: "portrait", duration: 15, logo_ending: true, language: "en", captions_enabled: true }),
+              product_urls: newLinks
+            },
           });
           setLinkFeedback(`[VERSION 2.1] Successfully fetched info for ${data.title}. No new images added.`);
         }
       } else {
+        const currentLinks = projectData?.settings?.product_urls || [];
+        const newLinks = [...new Set([...currentLinks, url])];
+
         updateCache({
           product_name: newName,
-          product_description: newDesc
+          product_description: newDesc,
+          settings: {
+            ...(projectData?.settings || { orientation: "portrait", duration: 15, logo_ending: true, language: "en", captions_enabled: true }),
+            product_urls: newLinks
+          },
         });
         setLinkFeedback(`[VERSION 2.1] Successfully fetched info for ${data.title}.`);
       }

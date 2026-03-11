@@ -10,8 +10,8 @@ export function useReference(projectId: string | null, referenceId: string) {
 
   const { data: uiState = initialProjectUiState } = useQuery<ProjectUiState>({
     queryKey: ["project-ui", projectId],
+    queryFn: () => initialProjectUiState,
     enabled: !!projectId,
-    initialData: initialProjectUiState,
     staleTime: Infinity,
   });
 

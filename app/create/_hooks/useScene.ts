@@ -10,8 +10,8 @@ export function useScene(projectId: string | null, sceneId: number) {
 
   const { data: uiState = initialProjectUiState } = useQuery<ProjectUiState>({
     queryKey: ["project-ui", projectId],
+    queryFn: () => initialProjectUiState,
     enabled: !!projectId,
-    initialData: initialProjectUiState,
     staleTime: Infinity,
   });
 

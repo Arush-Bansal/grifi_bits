@@ -54,7 +54,6 @@ export function useProject() {
     queryKey: ["project-ui", projectId],
     queryFn: () => initialProjectUiState,
     enabled: !!projectId,
-    initialData: initialProjectUiState,
     staleTime: Infinity,
   });
 

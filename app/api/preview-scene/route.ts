@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateImage, generateAudio, getAudioDuration } from "@/lib/media-gen";
 import { createSupabaseAdmin } from "@/lib/supabase/server";
+import { uploadFileFromBuffer } from "@/lib/supabase/storage";
 import path from "path";
 import os from "os";
 import fs from "fs";
@@ -54,7 +55,17 @@ export async function POST(req: NextRequest) {
             console.log("[PreviewScene] Generating audio with voice:", resolvedVoiceId);
             const audioPath = await generateAudio(speech, resolvedVoiceId, tempDir);
             console.log("[PreviewScene] Audio path:", audioPath);
-            audioUrl = `/api/audio?path=${encodeURIComponent(audioPath)}`;
+            const audioBuffer = fs.readFileSync(audioPath);
+            console.log("[PreviewScene] Audio buffer size:", audioBuffer.length);
+            const fileName = `audio_${Date.now()}_${Math.random().toString(36).substring(2)}.mp3`;
+            const uploadedUrl = await uploadFileFromBuffer(audioBuffer, fileName, 'audio/mpeg');
+            console.log("[PreviewScene] Uploaded URL result:", uploadedUrl);
+            
+            if (!uploadedUrl) {
+                throw new Error("Failed to upload audio to Supabase Storage. Check server logs.");
+            }
+            audioUrl = uploadedUrl;
+            
             audioDuration = await getAudioDuration(audioPath);
             console.log("[PreviewScene] Audio duration:", audioDuration);
         }

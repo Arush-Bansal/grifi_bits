@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useRef, useCallback, useEffect, useMemo } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
+import axios from "axios";
 import { ReferenceCard } from "../types";
 import { useProject } from "./useProject";
 
@@ -10,7 +11,6 @@ export function useReferenceState() {
   const references = useMemo(() => projectData?.references || [], [projectData?.references]);
   const [customReferenceCount, setCustomReferenceCount] = useState(1);
   const editingRefId = useMemo(() => uiState.editingRefId, [uiState.editingRefId]);
-  const referenceObjectUrlsRef = useRef<string[]>([]);
 
   useEffect(() => {
     if (references.length > 0) {
@@ -18,13 +18,6 @@ export function useReferenceState() {
       setCustomReferenceCount(customCount + 1);
     }
   }, [references]);
-
-  useEffect(() => {
-    const currentRefs = referenceObjectUrlsRef.current;
-    return () => {
-      currentRefs.forEach((url) => URL.revokeObjectURL(url));
-    };
-  }, []);
 
   const setReferences = useCallback((newRefs: ReferenceCard[] | ((prev: ReferenceCard[]) => ReferenceCard[])) => {
     updateCache((old) => {
@@ -40,38 +33,62 @@ export function useReferenceState() {
     );
   }, [setReferences]);
 
-  const updateReferenceImage = useCallback((referenceId: string, files: FileList | null) => {
+  const updateReferenceImage = useCallback(async (referenceId: string, files: FileList | null) => {
     const nextFile = files?.[0];
     if (!nextFile) return;
 
-    const nextImageUrl = URL.createObjectURL(nextFile);
-    referenceObjectUrlsRef.current.push(nextImageUrl);
+    // Upload to server
+    const formData = new FormData();
+    formData.append("files", nextFile);
 
-    setReferences((prev) =>
-      prev.map((reference) => (reference.id === referenceId ? { ...reference, image_url: nextImageUrl } : reference))
-    );
+    try {
+      const { data } = await axios.post("/api/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      if (data.urls && data.urls.length > 0) {
+        const nextImageUrl = data.urls[0];
+        setReferences((prev) =>
+          prev.map((reference) => (reference.id === referenceId ? { ...reference, image_url: nextImageUrl } : reference))
+        );
+      }
+    } catch (err) {
+      console.error("Upload failed in updateReferenceImage:", err);
+    }
   }, [setReferences]);
 
-  const addReferenceCard = useCallback((files: FileList | null) => {
+  const addReferenceCard = useCallback(async (files: FileList | null) => {
     const nextFile = files?.[0];
     if (!nextFile) return;
 
-    const nextImageUrl = URL.createObjectURL(nextFile);
-    referenceObjectUrlsRef.current.push(nextImageUrl);
+    // Upload to server
+    const formData = new FormData();
+    formData.append("files", nextFile);
 
-    const nextCount = customReferenceCount;
-    const nextReferenceId = `custom-${nextCount}`;
+    try {
+      const { data } = await axios.post("/api/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
-    setCustomReferenceCount((prev) => prev + 1);
-    setReferences((prev) => [
-      ...prev,
-      {
-        id: nextReferenceId,
-        label: `Custom ${nextCount}`,
-        tagline: "Custom reference image",
-        image_url: nextImageUrl
+      if (data.urls && data.urls.length > 0) {
+        const nextImageUrl = data.urls[0];
+        const nextCount = customReferenceCount;
+        const nextReferenceId = `custom-${nextCount}`;
+
+        setCustomReferenceCount((prev) => prev + 1);
+        setReferences((prev) => [
+          ...prev,
+          {
+            id: nextReferenceId,
+            label: `Custom ${nextCount}`,
+            tagline: "Custom reference image",
+            image_url: nextImageUrl
+          }
+        ]);
       }
-    ]);
+    } catch (err) {
+      console.error("Upload failed in addReferenceCard:", err);
+    }
   }, [customReferenceCount, setReferences]);
 
   const addAiAvatarReference = useCallback((imageUrl: string) => {

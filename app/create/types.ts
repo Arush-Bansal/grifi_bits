@@ -24,6 +24,7 @@ export interface VideoSettings {
   music_volume?: number;
   additional_instructions?: string;
   custom_concept?: PlanConcept;
+  product_urls?: string[];
 }
 
 export interface Scene {

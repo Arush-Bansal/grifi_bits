@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateImage, generateAudio, getAudioDuration } from "@/lib/media-gen";
 import { currentVideoGenerator } from "@/lib/video-gen";
+import { uploadFileFromBuffer } from "@/lib/supabase/storage";
 import path from "path";
 import os from "os";
 import fs from "fs";
@@ -32,8 +33,19 @@ export async function POST(req: NextRequest) {
       
       // Step B: Audio
       const audioPath = await generateAudio(scene.speech, voice_id || process.env.ELEVEN_LABS_VOICE_ID, tempDir);
+      console.log(`[GenerateMedia] Audio path for scene ${scene.id}:`, audioPath);
       const audioDuration = await getAudioDuration(audioPath);
-      // In a real app, upload audioPath to storage and get URL
+      
+      const audioBuffer = fs.readFileSync(audioPath);
+      console.log(`[GenerateMedia] Audio buffer size for scene ${scene.id}:`, audioBuffer.length);
+      const fileName = `audio_${Date.now()}_${Math.random().toString(36).substring(2)}.mp3`;
+      const uploadedUrl = await uploadFileFromBuffer(audioBuffer, fileName, 'audio/mpeg');
+      console.log(`[GenerateMedia] Uploaded URL result for scene ${scene.id}:`, uploadedUrl);
+      
+      if (!uploadedUrl) {
+          throw new Error(`Failed to upload audio for scene ${scene.id} to Supabase Storage. Check server logs.`);
+      }
+      const finalAudioUrl = uploadedUrl;
       
       // Step C: Video (Image to Video)
       const videoUrl = await currentVideoGenerator.generate({
@@ -46,7 +58,7 @@ export async function POST(req: NextRequest) {
       sceneResults.push({
         id: scene.id,
         image_url: imageUrl,
-        audio_url: `/api/audio?path=${encodeURIComponent(audioPath)}`,
+        audio_url: finalAudioUrl,
         audio_duration: audioDuration,
         video_url: videoUrl
       });
