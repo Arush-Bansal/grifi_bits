@@ -1,14 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { StepNavigation } from "../_components/step-navigation";
-import { useSceneState } from "../_hooks/useSceneState";
-import { useAiPlan } from "../_hooks/useAiPlan";
-import { useCreateMutations } from "../_hooks/useCreateMutations";
-import { useProject } from "../_hooks/useProject";
-import { useUIState } from "../_hooks/useUIState";
-import { Scene, ReferenceCard } from "../types";
-import { usePreviewAudio } from "./_hooks/usePreviewAudio";
+import { usePreviewPage } from "./_hooks/usePreviewPage";
 import { VideoPreview } from "./_components/video-preview";
 import { FinalControls } from "./_components/FinalControls";
 
@@ -23,40 +16,15 @@ export default function PreviewPage() {
     setTimelineIsPlaying,
     handleTimelineClipsChange,
     timelineTotalDuration,
-    setScenes,
-    handleGenerateSceneImage,
-  } = useSceneState();
-  const { settings, setSettings, setSelectedPlanIndex } = useAiPlan();
-  const [references] = useState<ReferenceCard[]>([]);
-  const { projectData, saveProjectWithData, saving } = useProject();
-  const { setStep } = useUIState();
-
-  const mutations = useCreateMutations({
-    setPlans: () => {},
-    setSelectedPlanIndex,
-    setStep,
-    imageFiles: [],
-    setScenes,
-    setTimelineClips: () => {},
-    handleGenerateSceneImage,
-  });
-
-  const { audioRef, bgAudioRef } = usePreviewAudio({
-    timelineIsPlaying,
-    timelineCurrentTime,
-    activeTimelineClip,
-    scenes,
     settings,
-  });
-
-  const generateMedia = () =>
-    mutations.generateMediaMutation.mutate({
-      scenes: scenes.map((s: Scene) => ({
-        ...s,
-        video_prompt: s.video_prompt,
-      })),
-      references: Object.fromEntries(references.map((r: ReferenceCard) => [r.id, r.tagline])),
-    });
+    saving,
+    isGenerating,
+    audioRef,
+    bgAudioRef,
+    setSettings,
+    onSaveProject,
+    onGenerateMedia,
+  } = usePreviewPage();
 
   return (
     <>
@@ -66,8 +34,8 @@ export default function PreviewPage() {
           scenes={scenes}
           audioRef={audioRef}
           bgAudioRef={bgAudioRef}
-          isPending={mutations.generateMediaMutation.isPending}
-          onGenerateMedia={generateMedia}
+          isPending={isGenerating}
+          onGenerateMedia={onGenerateMedia}
           timelineCurrentTime={timelineCurrentTime}
           timelineTotalDuration={timelineTotalDuration}
           captionsEnabled={settings.captions_enabled}
@@ -82,7 +50,7 @@ export default function PreviewPage() {
           onTimelineTimeChange={handleTimelineTimeChange}
           onTimelineIsPlayingChange={setTimelineIsPlaying}
           onTimelineClipsChange={handleTimelineClipsChange}
-          onSaveProject={() => saveProjectWithData(projectData!)}
+          onSaveProject={onSaveProject}
           isSaving={saving}
         />
       </div>
