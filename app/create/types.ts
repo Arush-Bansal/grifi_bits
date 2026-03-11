@@ -1,5 +1,14 @@
 import { Database } from "@/lib/supabase/database.types";
 
+export type StoryboardTimelineClip = {
+  id: string;
+  sceneId: number;
+  title: string;
+  start: number;
+  end: number;
+  color: string;
+};
+
 export type Step = 0 | 1 | 2 | 3 | 4;
 
 export type Json = Database['public']['Tables']['projects']['Row']['scenes'];

@@ -1,4 +1,4 @@
-import { type StoryboardTimelineClip } from "@/components/timeline/storyboard-timeline";
+import { type StoryboardTimelineClip } from "../types";
 import { Scene } from "../types";
 import {
   TIMELINE_DEFAULT_DURATION_SECONDS,

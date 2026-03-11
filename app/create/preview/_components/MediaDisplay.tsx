@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { Scene } from "../../types";
-import { StoryboardTimelineClip } from "@/components/timeline/storyboard-timeline";
+import { StoryboardTimelineClip } from "../../types";
 
 interface MediaDisplayProps {
   activeTimelineClip: StoryboardTimelineClip | null;

@@ -2,7 +2,7 @@
 
 import { Scene, Step, ProjectData, PlanConcept } from "../types";
 import { normalizeTimelineClips } from "../_utils";
-import { type StoryboardTimelineClip } from "@/components/timeline/storyboard-timeline";
+import { type StoryboardTimelineClip } from "../types";
 import {
   useGenerateConceptsMutation,
   useOrchestrateMutation,

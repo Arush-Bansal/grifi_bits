@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { Scene, VideoSettings } from "@/app/create/types";
 
-import { StoryboardTimelineClip } from "@/components/timeline/storyboard-timeline";
+import { StoryboardTimelineClip } from "@/app/create/types";
 
 interface UsePreviewAudioProps {
   timelineIsPlaying: boolean;

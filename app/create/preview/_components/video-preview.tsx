@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Scene } from "../../types";
 import { formatTimelineTime } from "../../_utils";
-import { StoryboardTimelineClip } from "@/components/timeline/storyboard-timeline";
+import { StoryboardTimelineClip } from "../../types";
 import { MediaDisplay } from "./MediaDisplay";
 
 interface VideoPreviewProps {

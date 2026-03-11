@@ -1,6 +1,7 @@
 "use client";
 
-import StoryboardTimeline, { StoryboardTimelineClip } from "@/components/timeline/storyboard-timeline";
+import StoryboardTimeline from "./timeline";
+import { StoryboardTimelineClip } from "../../types";
 import { Button } from "@/components/ui/button";
 import { CaptionsControl } from "./captions-control";
 import { MusicControl } from "./music-control";
