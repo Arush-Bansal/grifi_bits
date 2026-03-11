@@ -59,7 +59,6 @@ export async function generateImage(prompt: string, mainRef?: string, secondaryR
       model: "gemini-2.5-flash-image",
       contents,
       config: {
-        // @ts-expect-error GenAI SDK typings might not be fully up-to-date
         responseModalities: ["IMAGE"],
         imageConfig: {
           aspectRatio, // Note: Python SDK uses aspect_ratio, JS SDK or underlying REST usually uses camelCase aspectRatio
