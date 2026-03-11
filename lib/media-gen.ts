@@ -1,5 +1,5 @@
-import { google } from "@ai-sdk/google";
-import { generateImage as aiGenerateImage } from "ai";
+import axios from "axios";
+import { GoogleGenAI } from "@google/genai";
 import { ElevenLabsClient } from "elevenlabs";
 import fs from "fs";
 import path from "path";
@@ -9,24 +9,72 @@ import { uploadImageFromBase64 } from "./supabase/storage";
 
 const execFileAsync = promisify(execFile);
 
+const googleAi = new GoogleGenAI({ apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY });
+
+async function downloadImageAsBase64Parts(imageUrl: string): Promise<{ data: string; mimeType: string } | null> {
+  try {
+    const response = await axios.get(imageUrl, {
+      responseType: "arraybuffer",
+      timeout: 15000,
+    });
+    const contentType = response.headers["content-type"] || "image/jpeg";
+    const base64 = Buffer.from(response.data).toString("base64");
+    return { data: base64, mimeType: contentType };
+  } catch (error) {
+    console.error(`[MediaGen] Failed to download image: ${imageUrl}`, error);
+    return null;
+  }
+}
+
 export async function generateImage(prompt: string, mainRef?: string, secondaryRef?: string, aspectRatio: "9:16" | "1:1" | "16:9" = "9:16"): Promise<string> {
-  console.log(`[MediaGen] Generating image with Gemini 2.5 Flash: ${prompt.slice(0, 50)}...`);
+  console.log(`[MediaGen] Generating image with Gemini 2.5 Flash Image: ${prompt.slice(0, 50)}...`);
+  console.log(`[MediaGen] References - Main: ${!!mainRef}, Secondary: ${!!secondaryRef}`);
   
   try {
-    // Switching to gemini-2.5-flash-image (Nano Banana) by default to avoid Imagen rate limits
-    const { image } = await aiGenerateImage({
-      model: google.image("gemini-3.1-flash-image-preview"),
-      prompt: `${prompt}${mainRef ? ` (reference: ${mainRef})` : ""}${secondaryRef ? ` (secondary reference: ${secondaryRef})` : ""}`,
-      aspectRatio,
-    });
+    // Download references if they exist
+    const [mainRefParts, secondaryRefParts] = await Promise.all([
+      mainRef ? downloadImageAsBase64Parts(mainRef) : Promise.resolve(null),
+      secondaryRef ? downloadImageAsBase64Parts(secondaryRef) : Promise.resolve(null),
+    ]);
 
-    console.log("[MediaGen] Image generated from Gemini, length:", image?.base64?.length);
-
-    if (!image.base64) {
-      throw new Error("No image data returned from Gemini");
+    const contents: Array<string | object> = [prompt];
+    if (mainRefParts) {
+      contents.push({
+        inlineData: {
+          data: mainRefParts.data,
+          mimeType: mainRefParts.mimeType
+        }
+      });
+    }
+    if (secondaryRefParts) {
+      contents.push({
+        inlineData: {
+          data: secondaryRefParts.data,
+          mimeType: secondaryRefParts.mimeType
+        }
+      });
     }
 
-    const publicUrl = await uploadImageFromBase64(image.base64);
+    const response = await googleAi.models.generateContent({
+      model: "gemini-2.5-flash-image",
+      contents,
+      config: {
+        // @ts-expect-error GenAI SDK typings might not be fully up-to-date
+        responseModalities: ["IMAGE"],
+        imageConfig: {
+          aspectRatio, // Note: Python SDK uses aspect_ratio, JS SDK or underlying REST usually uses camelCase aspectRatio
+        }
+      }
+    });
+
+    const generatedImageBase64 = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+    const generatedImageMime = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.mimeType || 'image/png';
+
+    if (!generatedImageBase64) {
+      throw new Error("No image data returned from Gemini 2.5 Flash Image");
+    }
+
+    const publicUrl = await uploadImageFromBase64(`data:${generatedImageMime};base64,${generatedImageBase64}`);
     console.log("[MediaGen] Public URL after upload:", publicUrl);
 
     if (!publicUrl) throw new Error("Failed to upload generated image to Supabase");
