@@ -17,13 +17,11 @@ export function useProductInfo() {
   const [linkFeedback, setLinkFeedback] = useState("Paste a website, Amazon, or product page URL, then click Fetch.");
 
   useEffect(() => {
-    if (projectData?.references && projectData.references.length > 0) {
+    if (projectData?.references) {
       const uploadedItems = projectData.references
         .filter((r) => r.image_url && typeof r.image_url === 'string' && (r.image_url.includes("supabase") || r.image_url.includes("blob")) || r.original_name)
         .map((r) => ({ name: r.original_name || r.label, url: r.image_url }));
-      if (uploadedItems.length > 0) {
-        setPreviewUrls(uploadedItems);
-      }
+      setPreviewUrls(uploadedItems);
     }
   }, [projectData?.references]);
 
@@ -42,8 +40,21 @@ export function useProductInfo() {
 
   const removeImage = useCallback((index: number) => {
     setImageFiles((prev) => prev.filter((_, i) => i !== index));
-    setPreviewUrls((prev) => prev.filter((_, i) => i !== index));
-  }, []);
+    setPreviewUrls((prev) => {
+      const updated = prev.filter((_, i) => i !== index);
+      // Persist the removal to the project cache
+      updateCache({
+        references: updated.map(p => ({
+          id: p.name,
+          label: p.name,
+          tagline: "",
+          image_url: p.url,
+          original_name: p.name
+        }))
+      });
+      return updated;
+    });
+  }, [updateCache]);
 
   const handleFileInput = useCallback(async (files: FileList | null) => {
     if (!files) return;
