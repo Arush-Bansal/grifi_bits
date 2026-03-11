@@ -30,16 +30,37 @@ export async function POST(req: NextRequest) {
         await supabase.from("project_references").delete().eq("project_id", product_id);
 
         // 2. Insert new scenes
-        const sceneInserts = plan.SCENES.map((scene, index) => ({
-          project_id: product_id,
-          name: scene.name,
-          image_prompt: scene.image_prompt,
-          video_prompt: scene.video_prompt,
-          speech: scene.speech,
-          scene_order: index + 1,
-          main_reference: scene.main_ref,
-          secondary_reference: scene.second_ref
-        }));
+        let sceneOrder = 1;
+        const sceneInserts = [];
+
+        // Add Logo Animation if possible (using settings or just prepend for now)
+        if (settings?.logo_url) {
+          sceneInserts.push({
+            project_id: product_id,
+            name: "Logo Animation",
+            image_prompt: "Opening logo animation",
+            video_prompt: "Logo animation",
+            speech: "Welcome to Orbit AI.",
+            scene_order: sceneOrder++,
+            main_reference: "logo",
+            secondary_reference: null,
+            // We can store the rendered video URL once it's available or trigger it here
+          });
+        }
+
+        plan.SCENES.forEach((scene) => {
+          sceneInserts.push({
+            project_id: product_id,
+            name: scene.name,
+            image_prompt: scene.image_prompt,
+            video_prompt: scene.video_prompt,
+            speech: scene.speech,
+            scene_order: sceneOrder++,
+            main_reference: scene.main_ref,
+            secondary_reference: scene.second_ref
+          });
+        });
+
         await supabase.from("scenes").insert(sceneInserts as Database['public']['Tables']['scenes']['Insert'][]);
 
         // 2.5 Add frontend `id` field based on `scene_order` for JSON representation

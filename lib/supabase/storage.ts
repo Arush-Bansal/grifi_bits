@@ -1,4 +1,80 @@
+import path from "path";
+import fs from "fs";
 import { createSupabaseAdmin } from "./server";
+
+export async function uploadVideo(filePath: string, bucket = "orbit-assets"): Promise<string | null> {
+  console.log(`[Storage] uploadVideo start: ${filePath}, initialBucket: ${bucket}`);
+  const supabase = createSupabaseAdmin();
+  if (!supabase) {
+    console.error("[Storage] Failed to create Supabase Admin client");
+    return null;
+  }
+
+  const fileName = path.basename(filePath);
+  const destinationPath = `renders/${fileName}`;
+  const fileBuffer = fs.readFileSync(filePath);
+  const binaryData = new Uint8Array(fileBuffer);
+
+  // Attempt 1: Standard video/mp4
+  let { data, error } = await supabase.storage
+    .from(bucket)
+    .upload(destinationPath, binaryData, {
+      contentType: 'video/mp4',
+      upsert: true
+    });
+
+  if (error) {
+    console.warn(`[Storage] Attempt 1 (video/mp4) failed:`, error.message);
+
+    // Attempt 2: application/octet-stream
+    console.log(`[Storage] Attempting with application/octet-stream...`);
+    const retry1 = await supabase.storage
+      .from(bucket)
+      .upload(destinationPath, binaryData, {
+        contentType: 'application/octet-stream',
+        upsert: true
+      });
+    
+    data = retry1.data;
+    error = retry1.error;
+
+    if (error) {
+      console.warn(`[Storage] Attempt 2 failed:`, error.message);
+
+      // Attempt 3: Try 'media' bucket if 'orbit-assets' rejected it
+      if (bucket === "orbit-assets") {
+        console.log(`[Storage] Attempting with 'media' bucket...`);
+        const retry2 = await supabase.storage
+          .from("media")
+          .upload(destinationPath, binaryData, {
+            contentType: 'video/mp4',
+            upsert: true
+          });
+        
+        if (!retry2.error) {
+          data = retry2.data;
+          error = null;
+          bucket = "media";
+        } else {
+          console.warn(`[Storage] Attempt 3 ('media' bucket) failed:`, retry2.error.message);
+        }
+      }
+    }
+  }
+
+  if (error || !data) {
+    console.error(`[Storage] ALL video upload attempts failed for ${fileName}:`, error);
+    return null;
+  }
+
+  console.log(`[Storage] Video upload successful to bucket '${bucket}'. Path: ${data.path}`);
+
+  const { data: { publicUrl } } = supabase.storage
+    .from(bucket)
+    .getPublicUrl(destinationPath);
+
+  return publicUrl;
+}
 
 export async function uploadImage(file: File, bucket = "orbit-assets"): Promise<string | null> {
   const supabase = createSupabaseAdmin();
