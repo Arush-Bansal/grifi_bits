@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { Scene, EditingPrompt, SceneGenerating } from "../types";
-import { defaultScenes, TIMELINE_FLOAT_TOLERANCE } from "../constants";
+import { TIMELINE_FLOAT_TOLERANCE } from "../constants";
 import { buildInitialTimelineClips } from "../_utils";
 import { usePreviewSceneMutation } from "./index";
 import { useProject } from "./useProject";
@@ -11,7 +11,7 @@ export function useSceneState() {
   const { projectId, projectData, uiState, updateCache, updateUiCache } = useProject();
   
   const scenes = useMemo(() => {
-    const rawScenes = projectData?.scenes || defaultScenes;
+    const rawScenes = projectData?.scenes || [];
     return rawScenes.map((scene, index) => ({
       ...scene,
       id: scene.id ?? index + 1
@@ -21,7 +21,7 @@ export function useSceneState() {
     if (projectData?.scenes && projectData.scenes.length > 0) {
       return buildInitialTimelineClips(projectData.scenes);
     }
-    return buildInitialTimelineClips(defaultScenes);
+    return [];
   }, [projectData?.scenes]);
 
   const [timelineCurrentTime, setTimelineCurrentTime] = useState(0);
@@ -58,7 +58,7 @@ export function useSceneState() {
 
   const setScenes = useCallback((newScenes: Scene[] | ((prev: Scene[]) => Scene[])) => {
     updateCache((old) => {
-      const currentScenes = old.scenes || defaultScenes;
+      const currentScenes = old.scenes || [];
       const next = typeof newScenes === "function" ? newScenes(currentScenes) : newScenes;
       return { scenes: next };
     });
