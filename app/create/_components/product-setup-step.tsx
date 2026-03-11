@@ -74,7 +74,7 @@ export function ProductSetupStep({
                 id="product-link"
                 value={productLink}
                 onChange={(e) => setProductLink(e.target.value)}
-                placeholder="Paste website, Amazon, or product page URL"
+                placeholder="Paste Instagram reel link, website, Amazon, or product page URL"
                 className="sm:flex-1"
               />
               <Button
