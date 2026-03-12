@@ -12,6 +12,12 @@ const execFileAsync = promisify(execFile);
 const googleAi = new GoogleGenAI({ apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY });
 
 async function downloadImageAsBase64Parts(imageUrl: string): Promise<{ data: string; mimeType: string } | null> {
+  // Safeguard: Server cannot fetch browser-only blob URLs
+  if (imageUrl.startsWith('blob:')) {
+    console.warn(`[MediaGen] Cannot fetch browser blob URL on server: ${imageUrl}. Skipping reference.`);
+    return null;
+  }
+
   try {
     const response = await axios.get(imageUrl, {
       responseType: "arraybuffer",

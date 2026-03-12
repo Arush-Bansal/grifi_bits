@@ -19,7 +19,7 @@ export function useProductInfo() {
   useEffect(() => {
     if (projectData?.references) {
       const uploadedItems = projectData.references
-        .filter((r) => r.image_url && typeof r.image_url === 'string' && (r.image_url.includes("supabase") || r.image_url.includes("blob")) || r.original_name)
+        .filter((r) => r.image_url && typeof r.image_url === 'string' && (r.image_url.includes("supabase") || r.image_url.startsWith("http")) || r.original_name)
         .map((r) => ({ name: r.original_name || r.label, url: r.image_url }));
       setPreviewUrls(uploadedItems);
     }
@@ -44,13 +44,15 @@ export function useProductInfo() {
       const updated = prev.filter((_, i) => i !== index);
       // Persist the removal to the project cache
       updateCache({
-        references: updated.map(p => ({
-          id: p.name,
-          label: p.name,
-          tagline: "",
-          image_url: p.url,
-          original_name: p.name
-        }))
+        references: updated
+          .filter(p => !p.url.startsWith("blob:")) // Safeguard
+          .map(p => ({
+            id: p.name,
+            label: p.name,
+            tagline: "",
+            image_url: p.url,
+            original_name: p.name
+          }))
       });
       return updated;
     });
@@ -80,13 +82,15 @@ export function useProductInfo() {
         
         // Update cache so these permanent URLs are persisted
         updateCache({
-          references: updatedPreviewUrls.map(p => ({
-            id: p.name,
-            label: p.name,
-            tagline: "",
-            image_url: p.url,
-            original_name: p.name
-          }))
+          references: updatedPreviewUrls
+            .filter(p => !p.url.startsWith("blob:")) // Safeguard
+            .map(p => ({
+              id: p.name,
+              label: p.name,
+              tagline: "",
+              image_url: p.url,
+              original_name: p.name
+            }))
         });
 
         setLinkFeedback(`Uploaded ${data.urls.length} images.`);
@@ -131,13 +135,15 @@ export function useProductInfo() {
               ...(projectData?.settings || { orientation: "portrait", duration: 15, logo_ending: true, language: "en", captions_enabled: true }),
               product_urls: newLinks
             },
-            references: updatedPreviewUrls.map(p => ({
-              id: p.name,
-              label: p.name,
-              tagline: "",
-              image_url: p.url,
-              original_name: p.name
-            }))
+            references: updatedPreviewUrls
+              .filter(p => !p.url.startsWith("blob:")) // Safeguard
+              .map(p => ({
+                id: p.name,
+                label: p.name,
+                tagline: "",
+                image_url: p.url,
+                original_name: p.name
+              }))
           });
 
           setLinkFeedback(`[VERSION 2.1] Successfully fetched info for ${data.title} and added ${imagesToAdd.length} images.`);

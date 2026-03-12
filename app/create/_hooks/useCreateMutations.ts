@@ -93,17 +93,20 @@ export function useCreateMutations(deps: MutationDeps) {
   const generateMediaMutation = useGenerateMediaMutation({
     successMessage: "Media generation complete!",
     onSuccess: (data: { scene_results: Partial<Scene>[] }) => {
-      setScenes((prev: Scene[]) => prev.map((scene: Scene) => {
+      // 1. Calculate the new scenes array locally first so we can save it to DB
+      const currentScenes = projectData?.scenes || [];
+      const updatedScenes = currentScenes.map((scene: Scene) => {
         const result = data.scene_results.find((r) => r.id === scene.id);
         if (result) {
-          return {
-            ...scene,
-            ...result
-          };
+          return { ...scene, ...result };
         }
         return scene;
-      }));
+      });
 
+      // 2. Update the local UI state
+      setScenes(updatedScenes);
+
+      // 3. Update timeline clips (for audio duration)
       setTimelineClips((prev: StoryboardTimelineClip[]) => {
         const nextClips = prev.map((clip: StoryboardTimelineClip) => {
           const result = data.scene_results.find(r => r.id === clip.sceneId);
@@ -114,6 +117,14 @@ export function useCreateMutations(deps: MutationDeps) {
         });
         return normalizeTimelineClips(nextClips);
       });
+
+      // 4. Force a database save to persist the new URLs
+      if (projectData) {
+        saveProjectWithData({
+          ...projectData,
+          scenes: updatedScenes
+        });
+      }
     }
   });
 

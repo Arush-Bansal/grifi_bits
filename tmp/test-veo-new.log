@@ -1,0 +1,612 @@
+Starting Veo test...
+[MediaGen] Generating video with Google Veo 3 (Long Running): A red dot pulsing gently...
+[MediaGen] Starting Veo generation...
+[MediaGen] Veo Operation started: projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Polling Veo... attempt 1
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 2
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 3
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 4
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 5
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 6
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 7
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 8
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 9
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 10
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 11
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 12
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 13
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 14
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 15
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 16
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 17
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 18
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 19
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 20
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 21
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 22
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 23
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 24
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 25
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 26
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 27
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 28
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 29
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 30
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 31
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 32
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 33
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 34
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 35
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 36
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 37
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 38
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 39
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 40
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 41
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 42
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 43
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 44
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 45
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 46
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 47
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 48
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 49
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 50
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 51
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 52
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 53
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 54
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 55
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 56
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 57
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 58
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 59
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Polling Veo... attempt 60
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (404) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1beta1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Trying poll URL: https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] Poll failed (400) for https://us-central1-aiplatform.googleapis.com/v1/projects/gen-lang-client-0601180464/locations/us-central1/operations/e16f8597-8d5c-487e-a76d-5c792360070f
+[MediaGen] All poll attempts failed. Retrying in next cycle...
+[MediaGen] Veo Video Error details: Error: Veo generation timed out after 5 minutes
+    at VeoVideoGenerator.generate (c:\InstaLink\v-15-orbit-sass\lib\video-gen\veo.ts:169:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at test (c:\InstaLink\v-15-orbit-sass\tmp\test-veo.ts:30:22)
+Test Failed: Error: Veo generation timed out after 5 minutes
+    at VeoVideoGenerator.generate (c:\InstaLink\v-15-orbit-sass\lib\video-gen\veo.ts:169:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at test (c:\InstaLink\v-15-orbit-sass\tmp\test-veo.ts:30:22)

@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { useSceneState } from "../../_hooks/useSceneState";
 import { useAiPlan } from "../../_hooks/useAiPlan";
 import { useCreateMutations } from "../../_hooks/useCreateMutations";
@@ -25,7 +24,6 @@ export function usePreviewPage() {
   } = useSceneState();
   
   const { settings, setSettings, setSelectedPlanIndex } = useAiPlan();
-  const [references] = useState<ReferenceCard[]>([]);
   const { projectData, saveProjectWithData, saving } = useProject();
   const { setStep } = useUIState();
 
@@ -53,7 +51,9 @@ export function usePreviewPage() {
         ...s,
         video_prompt: s.video_prompt,
       })),
-      references: Object.fromEntries(references.map((r: ReferenceCard) => [r.id, r.tagline])),
+      references: Object.fromEntries(
+        (projectData?.references || []).map((r: ReferenceCard) => [r.id, r.image_url])
+      ),
     });
 
   return {

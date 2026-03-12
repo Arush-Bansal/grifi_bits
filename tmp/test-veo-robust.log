@@ -1,0 +1,132 @@
+Starting Veo test...
+[MediaGen] Generating video with Google Veo 3 (Long Running): A red dot pulsing gently...
+[MediaGen] Starting Veo generation...
+[MediaGen] Veo Operation started: projects/gen-lang-client-0601180464/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/5160ab21-8efa-44ce-a0b0-17d04a006e0d
+[MediaGen] Polling Veo... attempt 1
+[MediaGen] All poll variations failed for attempt 1.
+[MediaGen] Polling Veo... attempt 2
+[MediaGen] All poll variations failed for attempt 2.
+[MediaGen] Polling Veo... attempt 3
+[MediaGen] All poll variations failed for attempt 3.
+[MediaGen] Polling Veo... attempt 4
+[MediaGen] All poll variations failed for attempt 4.
+[MediaGen] Polling Veo... attempt 5
+[MediaGen] All poll variations failed for attempt 5.
+[MediaGen] Polling Veo... attempt 6
+[MediaGen] All poll variations failed for attempt 6.
+[MediaGen] Polling Veo... attempt 7
+[MediaGen] All poll variations failed for attempt 7.
+[MediaGen] Polling Veo... attempt 8
+[MediaGen] All poll variations failed for attempt 8.
+[MediaGen] Polling Veo... attempt 9
+[MediaGen] All poll variations failed for attempt 9.
+[MediaGen] Polling Veo... attempt 10
+[MediaGen] All poll variations failed for attempt 10.
+[MediaGen] Polling Veo... attempt 11
+[MediaGen] All poll variations failed for attempt 11.
+[MediaGen] Polling Veo... attempt 12
+[MediaGen] All poll variations failed for attempt 12.
+[MediaGen] Polling Veo... attempt 13
+[MediaGen] All poll variations failed for attempt 13.
+[MediaGen] Polling Veo... attempt 14
+[MediaGen] All poll variations failed for attempt 14.
+[MediaGen] Polling Veo... attempt 15
+[MediaGen] All poll variations failed for attempt 15.
+[MediaGen] Polling Veo... attempt 16
+[MediaGen] All poll variations failed for attempt 16.
+[MediaGen] Polling Veo... attempt 17
+[MediaGen] All poll variations failed for attempt 17.
+[MediaGen] Polling Veo... attempt 18
+[MediaGen] All poll variations failed for attempt 18.
+[MediaGen] Polling Veo... attempt 19
+[MediaGen] All poll variations failed for attempt 19.
+[MediaGen] Polling Veo... attempt 20
+[MediaGen] All poll variations failed for attempt 20.
+[MediaGen] Polling Veo... attempt 21
+[MediaGen] All poll variations failed for attempt 21.
+[MediaGen] Polling Veo... attempt 22
+[MediaGen] All poll variations failed for attempt 22.
+[MediaGen] Polling Veo... attempt 23
+[MediaGen] All poll variations failed for attempt 23.
+[MediaGen] Polling Veo... attempt 24
+[MediaGen] All poll variations failed for attempt 24.
+[MediaGen] Polling Veo... attempt 25
+[MediaGen] All poll variations failed for attempt 25.
+[MediaGen] Polling Veo... attempt 26
+[MediaGen] All poll variations failed for attempt 26.
+[MediaGen] Polling Veo... attempt 27
+[MediaGen] All poll variations failed for attempt 27.
+[MediaGen] Polling Veo... attempt 28
+[MediaGen] All poll variations failed for attempt 28.
+[MediaGen] Polling Veo... attempt 29
+[MediaGen] All poll variations failed for attempt 29.
+[MediaGen] Polling Veo... attempt 30
+[MediaGen] All poll variations failed for attempt 30.
+[MediaGen] Polling Veo... attempt 31
+[MediaGen] All poll variations failed for attempt 31.
+[MediaGen] Polling Veo... attempt 32
+[MediaGen] All poll variations failed for attempt 32.
+[MediaGen] Polling Veo... attempt 33
+[MediaGen] All poll variations failed for attempt 33.
+[MediaGen] Polling Veo... attempt 34
+[MediaGen] All poll variations failed for attempt 34.
+[MediaGen] Polling Veo... attempt 35
+[MediaGen] All poll variations failed for attempt 35.
+[MediaGen] Polling Veo... attempt 36
+[MediaGen] All poll variations failed for attempt 36.
+[MediaGen] Polling Veo... attempt 37
+[MediaGen] All poll variations failed for attempt 37.
+[MediaGen] Polling Veo... attempt 38
+[MediaGen] All poll variations failed for attempt 38.
+[MediaGen] Polling Veo... attempt 39
+[MediaGen] All poll variations failed for attempt 39.
+[MediaGen] Polling Veo... attempt 40
+[MediaGen] All poll variations failed for attempt 40.
+[MediaGen] Polling Veo... attempt 41
+[MediaGen] All poll variations failed for attempt 41.
+[MediaGen] Polling Veo... attempt 42
+[MediaGen] All poll variations failed for attempt 42.
+[MediaGen] Polling Veo... attempt 43
+[MediaGen] All poll variations failed for attempt 43.
+[MediaGen] Polling Veo... attempt 44
+[MediaGen] All poll variations failed for attempt 44.
+[MediaGen] Polling Veo... attempt 45
+[MediaGen] All poll variations failed for attempt 45.
+[MediaGen] Polling Veo... attempt 46
+[MediaGen] All poll variations failed for attempt 46.
+[MediaGen] Polling Veo... attempt 47
+[MediaGen] All poll variations failed for attempt 47.
+[MediaGen] Polling Veo... attempt 48
+[MediaGen] All poll variations failed for attempt 48.
+[MediaGen] Polling Veo... attempt 49
+[MediaGen] All poll variations failed for attempt 49.
+[MediaGen] Polling Veo... attempt 50
+[MediaGen] All poll variations failed for attempt 50.
+[MediaGen] Polling Veo... attempt 51
+[MediaGen] All poll variations failed for attempt 51.
+[MediaGen] Polling Veo... attempt 52
+[MediaGen] All poll variations failed for attempt 52.
+[MediaGen] Polling Veo... attempt 53
+[MediaGen] All poll variations failed for attempt 53.
+[MediaGen] Polling Veo... attempt 54
+[MediaGen] All poll variations failed for attempt 54.
+[MediaGen] Polling Veo... attempt 55
+[MediaGen] All poll variations failed for attempt 55.
+[MediaGen] Polling Veo... attempt 56
+[MediaGen] All poll variations failed for attempt 56.
+[MediaGen] Polling Veo... attempt 57
+[MediaGen] All poll variations failed for attempt 57.
+[MediaGen] Polling Veo... attempt 58
+[MediaGen] All poll variations failed for attempt 58.
+[MediaGen] Polling Veo... attempt 59
+[MediaGen] All poll variations failed for attempt 59.
+[MediaGen] Polling Veo... attempt 60
+[MediaGen] All poll variations failed for attempt 60.
+[MediaGen] Veo Video Error details: Error: Veo generation timed out after 5 minutes
+    at VeoVideoGenerator.generate (c:\InstaLink\v-15-orbit-sass\lib\video-gen\veo.ts:171:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at test (c:\InstaLink\v-15-orbit-sass\tmp\test-veo.ts:30:22)
+Test Failed: Error: Veo generation timed out after 5 minutes
+    at VeoVideoGenerator.generate (c:\InstaLink\v-15-orbit-sass\lib\video-gen\veo.ts:171:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at test (c:\InstaLink\v-15-orbit-sass\tmp\test-veo.ts:30:22)
