@@ -45,7 +45,16 @@ export function usePreviewPage() {
     settings,
   });
 
-  const generateMedia = () =>
+  const renderVideo = () =>
+    mutations.remotionRenderMutation.mutate({
+      productDemoData: {
+        scenes,
+        productName: projectData?.product_name || "Product",
+        brandColor: "#f97316",
+      },
+    });
+
+  const onGenerateMedia = () =>
     mutations.generateMediaMutation.mutate({
       scenes: scenes.map((s: Scene) => ({
         ...s,
@@ -67,7 +76,7 @@ export function usePreviewPage() {
     settings,
     projectData,
     saving,
-    isGenerating: mutations.generateMediaMutation.isPending,
+    isGenerating: mutations.generateMediaMutation.isPending || mutations.remotionRenderMutation.isPending,
     
     // Refs
     audioRef,
@@ -79,6 +88,7 @@ export function usePreviewPage() {
     setTimelineIsPlaying,
     handleTimelineClipsChange,
     onSaveProject: () => projectData && saveProjectWithData(projectData),
-    onGenerateMedia: generateMedia,
+    onGenerateMedia,
+    onRenderVideo: renderVideo,
   };
 }

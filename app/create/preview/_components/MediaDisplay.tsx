@@ -1,78 +1,78 @@
 "use client";
 
-import Image from "next/image";
-import { Scene } from "../../types";
-import { StoryboardTimelineClip } from "../../types";
+import { Player } from "@remotion/player";
+import { ProductDemoTemplate } from "../../../../remotion/templates/ProductDemoTemplate";
+import { MinimalistTemplate } from "../../../../remotion/templates/MinimalistTemplate";
+import { DynamicSocialTemplate } from "../../../../remotion/templates/DynamicSocialTemplate";
+import { SplitScreenTemplate } from "../../../../remotion/templates/SplitScreenTemplate";
+import { Scene, VideoSettings } from "../../types";
 
-interface MediaDisplayProps {
-  activeTimelineClip: StoryboardTimelineClip | null;
-  scenes: Scene[];
-  audioRef: React.RefObject<HTMLAudioElement>;
-  bgAudioRef: React.RefObject<HTMLAudioElement>;
-  isPending: boolean;
-  captionsEnabled: boolean;
-}
+const TEMPLATE_COMPONENTS: Record<string, React.FC<any>> = {
+  ProductDemo: ProductDemoTemplate,
+  Minimalist: MinimalistTemplate,
+  DynamicSocial: DynamicSocialTemplate,
+  SplitScreen: SplitScreenTemplate,
+};
 
 export function MediaDisplay({
-  activeTimelineClip,
   scenes,
   audioRef,
   bgAudioRef,
   isPending,
-  captionsEnabled,
-}: MediaDisplayProps) {
-  const activeScene = scenes.find((s) => s.id === activeTimelineClip?.sceneId);
+  settings,
+  productName,
+}: {
+  scenes: Scene[];
+  audioRef: React.RefObject<HTMLAudioElement>;
+  bgAudioRef: React.RefObject<HTMLAudioElement>;
+  isPending: boolean;
+  settings?: VideoSettings;
+  productName?: string;
+}) {
+  const orientation = settings?.orientation || "landscape";
+  const templateId = settings?.template_id || "ProductDemo";
+  const TemplateComponent = TEMPLATE_COMPONENTS[templateId] || ProductDemoTemplate;
+  
+  // Base dimensions for the player
+  const width = orientation === "portrait" ? 1080 : 1920;
+  const height = orientation === "portrait" ? 1920 : 1080;
 
   return (
-    <div className="relative mx-auto aspect-[9/16] max-h-[620px] overflow-hidden rounded-2xl bg-gradient-to-b from-[#89c9ff] to-[#3f98eb]">
+    <div className="relative mx-auto aspect-[9/16] max-h-[620px] w-full overflow-hidden rounded-2xl bg-black shadow-xl">
       <audio ref={audioRef} className="hidden" />
       <audio ref={bgAudioRef} className="hidden" />
 
-      {activeTimelineClip?.sceneId ? (
-        <>
-          {activeScene?.video_url ? (
-            <video
-              src={activeScene.video_url}
-              controls
-              className="absolute inset-0 h-full w-full object-cover"
-            />
-          ) : (
-            <div className="absolute inset-0">
-              {activeScene?.image_url ? (
-                <div className="relative h-full w-full">
-                  <Image
-                    src={activeScene.image_url}
-                    alt="Preview"
-                    fill
-                    className="object-cover opacity-40 blur-[2px]"
-                  />
-                  <div className="absolute inset-0 bg-black/20" />
-                </div>
-              ) : (
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.45),transparent_45%)]" />
-              )}
-              <div className="absolute inset-0 flex items-center justify-center p-4 text-center text-white">
-                {isPending ? (
-                  "Generating your video masterpiece..."
-                ) : (
-                  <span className="font-medium drop-shadow-md">Generate media to see the video preview</span>
-                )}
-              </div>
-            </div>
-          )}
-        </>
+      {isPending ? (
+        <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center text-white bg-gradient-to-b from-[#89c9ff] to-[#3f98eb]">
+           <div className="h-12 w-12 animate-spin rounded-full border-4 border-white/20 border-t-white" />
+           <p className="mt-4 font-medium">Crafting your video...</p>
+        </div>
+      ) : scenes.length > 0 ? (
+        <Player
+          component={TemplateComponent as any}
+          inputProps={{
+            scenes: scenes || [],
+            productName: productName || "Product Name",
+            brandColor: "#f97316", // Default color for now
+          }}
+          durationInFrames={scenes.length * 3 * 30} // 3s per scene @ 30fps
+          fps={30}
+          compositionWidth={width}
+          compositionHeight={height}
+          style={{
+            width: "100%",
+            height: "100%",
+          }}
+          controls
+          loop
+        />
       ) : (
-        <>
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.45),transparent_45%)]" />
-          <div className="absolute inset-0 flex items-center justify-center p-4 text-center text-white">
-            {isPending ? "Generating your video masterpiece..." : "Generate media to see the video preview"}
-          </div>
-        </>
+        <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center text-white bg-gradient-to-b from-[#89c9ff] to-[#3f98eb]">
+          <p className="text-lg font-medium drop-shadow-md">
+            Add scenes to see the preview
+          </p>
+        </div>
       )}
-
-      <div className="absolute bottom-4 left-4 right-4 rounded-xl bg-black/30 px-3 py-2 text-xs text-white text-center">
-        {captionsEnabled ? "Caption preview enabled" : "Captions disabled"}
-      </div>
     </div>
   );
 }

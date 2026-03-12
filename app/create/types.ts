@@ -9,7 +9,7 @@ export type StoryboardTimelineClip = {
   color: string;
 };
 
-export type Step = 0 | 1 | 2 | 3 | 4;
+export type Step = 0 | 1 | 2; // 0: Setup, 1: Scenes, 2: Preview
 
 export type Json = Database['public']['Tables']['projects']['Row']['scenes'];
 
@@ -34,6 +34,7 @@ export interface VideoSettings {
   additional_instructions?: string;
   custom_concept?: PlanConcept;
   product_urls?: string[];
+  template_id?: string;
 }
 
 export interface Scene {
@@ -71,6 +72,7 @@ export interface ProjectData extends Partial<Omit<ProjectRow, 'scenes' | 'refere
   plans?: PlanConcept[];
   settings?: VideoSettings;
   selected_plan_index?: number;
+  final_video_url?: string;
 }
 
 export interface ProjectUiState {

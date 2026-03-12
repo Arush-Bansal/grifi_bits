@@ -1,11 +1,12 @@
 "use client";
 
 import { useProductInfo } from "../_hooks/useProductInfo";
+import { useAiPlan } from "../_hooks/useAiPlan";
 import { StepNavigation } from "../_components/step-navigation";
 import { ProductBasicInfo } from "./_components/ProductBasicInfo";
 import { ProductLinkFetcher } from "./_components/ProductLinkFetcher";
 import { ProductImageUpload } from "./_components/ProductImageUpload";
-import { CreativeBriefSnapshot } from "./_components/CreativeBriefSnapshot";
+import { VideoSettingsSidebar } from "./_components/VideoSettingsSidebar";
 import { UploadedImagesGrid } from "./_components/UploadedImagesGrid";
 
 export default function SetupPage() {
@@ -16,6 +17,8 @@ export default function SetupPage() {
     set_product_description,
     productLink,
     setProductLink,
+    pinCode,
+    setPinCode,
     handleFetchLink,
     fetchLinkMutation,
     linkFeedback,
@@ -26,6 +29,8 @@ export default function SetupPage() {
     setLightboxImage,
     handleFileInput,
   } = useProductInfo();
+
+  const { settings, setSettings } = useAiPlan();
 
   return (
     <>
@@ -41,6 +46,8 @@ export default function SetupPage() {
           <ProductLinkFetcher
             productLink={productLink}
             setProductLink={setProductLink}
+            pinCode={pinCode}
+            setPinCode={setPinCode}
             handleFetchLink={handleFetchLink}
             isPending={fetchLinkMutation.isPending}
             linkFeedback={linkFeedback}
@@ -50,9 +57,9 @@ export default function SetupPage() {
           <ProductImageUpload handleFileInput={handleFileInput} />
         </div>
 
-        <CreativeBriefSnapshot
-          productName={product_name}
-          previewCount={previewUrls.length}
+        <VideoSettingsSidebar 
+          settings={settings}
+          setSettings={setSettings}
         />
       </div>
 

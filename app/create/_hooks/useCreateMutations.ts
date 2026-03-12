@@ -6,7 +6,8 @@ import { type StoryboardTimelineClip } from "../types";
 import {
   useGenerateConceptsMutation,
   useOrchestrateMutation,
-  useGenerateMediaMutation
+  useGenerateMediaMutation,
+  useRemotionRenderMutation
 } from "./index";
 import { useProject } from "./useProject";
 
@@ -66,8 +67,8 @@ export function useCreateMutations(deps: MutationDeps) {
         queryClient.setQueryData(["project", data.id], data);
       }
 
-      // 3. Move to Step 3
-      setStep(2);
+      // 3. Move to Step 1 (Scenes Review)
+      setStep(1);
 
       // 4. Trigger image generation for references if they are placeholders
       const references = data.references || [];
@@ -127,10 +128,23 @@ export function useCreateMutations(deps: MutationDeps) {
       }
     }
   });
+  
+  const remotionRenderMutation = useRemotionRenderMutation({
+    successMessage: "Video rendering complete!",
+    onSuccess: (data: { videoUrl: string }) => {
+      if (projectData) {
+        saveProjectWithData({
+          ...projectData,
+          final_video_url: data.videoUrl
+        });
+      }
+    }
+  });
 
   return {
     generateConceptsMutation,
     orchestrateMutation,
-    generateMediaMutation
+    generateMediaMutation,
+    remotionRenderMutation
   };
 }

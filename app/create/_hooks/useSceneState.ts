@@ -29,10 +29,8 @@ export function useSceneState() {
   
   const sceneGenerating = useMemo(() => uiState.sceneGenerating, [uiState.sceneGenerating]);
   const editingImagePrompt = useMemo(() => uiState.editingImagePrompt, [uiState.editingImagePrompt]);
-  const editingAudioPrompt = useMemo(() => uiState.editingAudioPrompt, [uiState.editingAudioPrompt]);
   
   const [isGeneratingAllImages, setIsGeneratingAllImages] = useState(false);
-  const [isGeneratingAllAudios, setIsGeneratingAllAudios] = useState(false);
 
   const previewSceneMutation = usePreviewSceneMutation();
 
@@ -121,36 +119,6 @@ export function useSceneState() {
     }
   }, [previewSceneMutation, updateUiCache, setScenes, projectId, updateCache]);
 
-  const handleGenerateSceneAudio = useCallback(async (sceneId: number, speech: string) => {
-    updateUiCache((old) => {
-      const sg = (old.sceneGenerating || {}) as SceneGenerating;
-      return { sceneGenerating: { ...sg, [sceneId]: { ...sg[sceneId], audio: true } } };
-    });
-    try {
-      const data = await previewSceneMutation.mutateAsync({ 
-        type: "audio", 
-        speech,
-        project_id: projectId || undefined,
-        scene_id: sceneId
-      });
-      setScenes((prev) =>
-        prev.map((s) => (s.id === sceneId ? { ...s, audio_url: data.audio_url, audio_duration: data.audio_duration } : s))
-      );
-      updateUiCache((old) => {
-        const ep = old.editingAudioPrompt || {};
-        return { editingAudioPrompt: { ...ep, [sceneId]: false } };
-      });
-    } finally {
-      updateUiCache((old) => {
-        const sg = (old.sceneGenerating || {}) as SceneGenerating;
-        const next = { ...sg };
-        if (next[sceneId]) {
-          next[sceneId] = { ...next[sceneId], audio: false };
-        }
-        return { sceneGenerating: next };
-      });
-    }
-  }, [previewSceneMutation, setScenes, updateUiCache, projectId]);
 
   const handleGenerateAllImages = useCallback(async () => {
     setIsGeneratingAllImages(true);
@@ -173,21 +141,6 @@ export function useSceneState() {
       setIsGeneratingAllImages(false);
     }
   }, [scenes, handleGenerateSceneImage]);
-
-  const handleGenerateAllAudios = useCallback(async () => {
-    setIsGeneratingAllAudios(true);
-    try {
-      const validScenes = scenes.filter((scene) => scene.speech?.trim());
-      if (!validScenes.length) return;
-      await Promise.all(
-        validScenes.map((scene) => handleGenerateSceneAudio(scene.id, scene.speech))
-      );
-    } catch (error) {
-      console.error("Bulk audio generation failed:", error);
-    } finally {
-      setIsGeneratingAllAudios(false);
-    }
-  }, [scenes, handleGenerateSceneAudio]);
 
   const handleTimelineClipsChange = useCallback(() => {
     // We don't save timeline clips directly yet, but we normalize them
@@ -216,23 +169,12 @@ export function useSceneState() {
         return { editingImagePrompt: next };
       });
     },
-    editingAudioPrompt,
-    setEditingAudioPrompt: (val: EditingPrompt | ((prev: EditingPrompt) => EditingPrompt)) => {
-      updateUiCache((old) => {
-        const current = old.editingAudioPrompt || {};
-        const next = typeof val === "function" ? val(current) : val;
-        return { editingAudioPrompt: next };
-      });
-    },
     isGeneratingAllImages,
-    isGeneratingAllAudios,
     timelineTotalDuration,
     activeTimelineClip,
     updateScene,
     handleGenerateSceneImage,
-    handleGenerateSceneAudio,
     handleGenerateAllImages,
-    handleGenerateAllAudios,
     handleTimelineClipsChange,
     handleTimelineTimeChange
   };

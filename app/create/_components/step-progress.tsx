@@ -14,14 +14,14 @@ export function StepProgress({ step, stepTitle }: StepProgressProps) {
           <h1 className="mt-2 text-3xl font-bold">{stepTitle}</h1>
         </div>
         <div className="rounded-full border border-border bg-background/70 px-4 py-2 text-sm text-muted-foreground">
-          Step {step + 1} of 5
+          Step {step + 1} of 3
         </div>
       </div>
 
       <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-muted">
         <div
           className="h-full rounded-full bg-primary transition-all"
-          style={{ width: `${((step + 1) / 5) * 100}%` }}
+          style={{ width: `${((step + 1) / 3) * 100}%` }}
         />
       </div>
     </div>

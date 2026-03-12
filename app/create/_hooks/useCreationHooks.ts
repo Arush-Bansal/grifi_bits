@@ -2,10 +2,10 @@ import axios from "axios";
 import { ProjectData, PlanConcept, VideoSettings } from "../types";
 import { useAppMutation, AppMutationOptions } from "../../_hooks/use-app-mutation";
 
-export const useFetchLinkMutation = (options?: AppMutationOptions<{ title?: string; description?: string; imageUrls?: string[] }, Error, string>) => {
+export const useFetchLinkMutation = (options?: AppMutationOptions<{ title?: string; description?: string; imageUrls?: string[] }, Error, { url: string; pinCode?: string }>) => {
   return useAppMutation({
-    mutationFn: async (url: string) => {
-      const { data } = await axios.post("/api/fetch-link", { url });
+    mutationFn: async (params: { url: string; pinCode?: string }) => {
+      const { data } = await axios.post("/api/fetch-link", params);
       return data;
     },
     ...options

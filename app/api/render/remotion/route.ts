@@ -1,16 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
-import { renderLogoVideo } from "@/lib/remotion-renderer/render";
+import { renderLogoVideo, renderProductDemo } from "@/lib/remotion-renderer/render";
 
 export async function POST(req: NextRequest) {
   try {
-    const { logoUrl } = await req.json();
+    const body = await req.json();
+    const { logoUrl, productDemoData } = body;
 
-    if (!logoUrl) {
-      return NextResponse.json({ error: "logoUrl is required" }, { status: 400 });
+    let videoUrl = "";
+
+    if (productDemoData) {
+      console.log("[API Render] Rendering Product Demo with template:", productDemoData.templateId || "ProductDemo");
+      videoUrl = await renderProductDemo(productDemoData);
+    } else if (logoUrl) {
+      console.log("[API Render] Rendering Logo...");
+      videoUrl = await renderLogoVideo(logoUrl);
+    } else {
+      return NextResponse.json({ error: "logoUrl or productDemoData is required" }, { status: 400 });
     }
 
-    const videoUrl = await renderLogoVideo(logoUrl);
-    
     return NextResponse.json({ 
       success: true, 
       videoUrl: videoUrl

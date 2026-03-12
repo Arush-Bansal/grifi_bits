@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { processAmazonLink, processInstagramReel, processGenericLink, ScrapedProduct } from "@/lib/link-processor";
+import { processAmazonLink, processInstagramReel, processGenericLink, processBlinkitLink, processZeptoLink, ScrapedProduct } from "@/lib/link-processor";
 import path from "path";
 import os from "os";
 import fs from "fs";
@@ -82,7 +82,7 @@ ${rawDescription.slice(0, 3000)}`,
 
 export async function POST(req: NextRequest) {
   try {
-    const { url } = await req.json();
+    const { url, pinCode } = await req.json();
 
     if (!url) {
       return NextResponse.json({ error: "URL is required" }, { status: 400 });
@@ -93,8 +93,13 @@ export async function POST(req: NextRequest) {
 
     const requestId = Date.now().toString().slice(-6);
     let result: ScrapedProduct;
+    
     if (url.includes("amazon.")) {
       result = await processAmazonLink(url);
+    } else if (url.includes("blinkit.com")) {
+      result = await processBlinkitLink(url, pinCode);
+    } else if (url.includes("zepto")) {
+      result = await processZeptoLink(url, pinCode);
     } else if (url.includes("instagram.com/reel")) {
       result = await processInstagramReel(url, tempDir);
     } else {

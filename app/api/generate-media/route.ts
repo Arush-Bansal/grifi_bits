@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateImage, generateAudio, getAudioDuration } from "@/lib/media-gen";
-import { currentVideoGenerator } from "@/lib/video-gen";
+
 import { uploadFileFromBuffer } from "@/lib/supabase/storage";
 import path from "path";
 import os from "os";
@@ -68,22 +68,15 @@ export async function POST(req: NextRequest) {
         console.log(`[GenerateAPI] Skipping audio generation for scene ${scene.id}, already exists: ${finalAudioUrl}`);
       }
       
-      // Step C: Video (Image to Video)
-      // We always attempt to generate video in this flow unless specified otherwise,
-      // as "Generate Media" is usually driven by wanting the final video.
-      const videoUrl = await currentVideoGenerator.generate({
-        imageUrl,
-        prompt: scene.video_prompt || "Cinematic movement",
-        duration: 5,
-        aspectRatio: "9:16"
-      });
+      // Step C: Video (Image to Video) - REMOVED for Remotion transition
+      // We no longer generate AI video clips during media generation
+      // as the final video will be composed by Remotion on the client and server.
 
       sceneResults.push({
         id: scene.id,
         image_url: imageUrl,
         audio_url: finalAudioUrl,
         audio_duration: audioDuration,
-        video_url: videoUrl
       });
     }
 

@@ -11,6 +11,7 @@ export function useProductInfo() {
   const { lightboxImage, setLightboxImage } = useUIState();
   
   const [productLink, setProductLink] = useState("");
+  const [pinCode, setPinCode] = useState("110001");
   const [fetchedProductLinks, setFetchedProductLinks] = useState<string[]>([]);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<Array<{ name: string; url: string }>>([]);
@@ -102,7 +103,7 @@ export function useProductInfo() {
   }, [previewUrls, updateCache]);
 
   const fetchLinkMutation = useFetchLinkMutation({
-    onSuccess: async (data, url) => {
+    onSuccess: async (data, { url }) => {
       const newName = data.title || projectData?.product_name || "";
       const newDesc = data.description 
         ? `${projectData?.product_description || ""}\n\n${data.description}`.trim()
@@ -195,8 +196,8 @@ export function useProductInfo() {
       setLinkFeedback("This product URL is already fetched.");
       return;
     }
-    fetchLinkMutation.mutate(normalizedLink);
-  }, [productLink, fetchedProductLinks, fetchLinkMutation]);
+    fetchLinkMutation.mutate({ url: normalizedLink, pinCode });
+  }, [productLink, pinCode, fetchedProductLinks, fetchLinkMutation]);
 
   return {
     product_name: projectData?.product_name || "",
@@ -204,6 +205,7 @@ export function useProductInfo() {
     product_description: projectData?.product_description || "",
     set_product_description: (val: string) => updateCache({ product_description: val }),
     productLink, setProductLink,
+    pinCode, setPinCode,
     fetchedProductLinks,
     imageFiles, setImageFiles,
     previewUrls, setPreviewUrls,

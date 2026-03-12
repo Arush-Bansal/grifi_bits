@@ -11,12 +11,10 @@ import { useCreateMutations } from "../_hooks/useCreateMutations";
 import { useSceneState } from "../_hooks/useSceneState";
 import { Step } from "../types";
 
-const stepToRoute: Record<Step, string> = {
+const stepToRoute: Record<number, string> = {
   0: "/create/setup",
-  1: "/create/concepts",
-  2: "/create/references",
-  3: "/create/scenes",
-  4: "/create/preview",
+  1: "/create/scenes",
+  2: "/create/preview",
 };
 
 export function StepNavigation() {
@@ -24,7 +22,7 @@ export function StepNavigation() {
   const { projectId, updateUiCache, projectData } = useProject();
   const { step, setStep } = useUIState();
   const { product_name, product_description, imageFiles, previewUrls } = useProductInfo();
-  const { plans, selected_plan_index, settings, setSelectedPlanIndex, custom_concept } = useAiPlan();
+  const { settings, setSelectedPlanIndex } = useAiPlan();
   const sceneState = useSceneState();
 
   const mutations = useCreateMutations({
@@ -55,9 +53,8 @@ export function StepNavigation() {
         <Button
           variant="outline"
           className={cn(
-            (!projectId || (step !== 0 && step !== 1)) && "hidden",
-            (step === 0 && (!plans || plans.length === 0)) && "hidden",
-            (step === 1 && (!projectData?.scenes || projectData.scenes.length === 0)) && "hidden"
+            (!projectId || step !== 0) && "hidden",
+            (step === 0 && (!projectData?.scenes || projectData.scenes.length === 0)) && "hidden"
           )}
           onClick={() => handleNavigate(step + 1)}
           disabled={mutations.orchestrateMutation.isPending}
@@ -67,23 +64,17 @@ export function StepNavigation() {
         <Button
           onClick={() => {
             if (step === 0) {
-              mutations.generateConceptsMutation.mutate({ 
-                product_name, 
-                product_description 
-              });
-            } else if (step === 1) {
-              // Suspend auto-save before orchestration
+              // Directly orchestrate with a default concept
               updateUiCache({ isAutoSaveSuspended: true });
-              const isCustom = selected_plan_index === plans.length;
-              const selected_plan_text = isCustom 
-                ? `Custom Concept: ${custom_concept?.title || "Untitled"}\nDescription: ${custom_concept?.description || "No description provided."}`
-                : plans[selected_plan_index]?.title;
+              
+              const defaultConcept = "Standard Product Demo";
+              const defaultDescription = "Highlight the product features, benefits, and local availability in a professional and energetic way.";
 
               mutations.orchestrateMutation.mutate({
                 product_name,
                 product_description,
                 image_contexts: previewUrls,
-                selected_plan: selected_plan_text,
+                selected_plan: `${defaultConcept}: ${defaultDescription}`,
                 settings,
                 product_id: projectId || undefined
               });
@@ -92,14 +83,11 @@ export function StepNavigation() {
             }
           }}
           disabled={
-            (step === 0 && (!product_name || !product_description || mutations.generateConceptsMutation.isPending)) || 
-            (step === 1 && mutations.orchestrateMutation.isPending) ||
-            step === 4
+            (step === 0 && (!product_name || !product_description || mutations.orchestrateMutation.isPending)) || 
+            step === 2
           }
         >
-          {step === 0 ? (mutations.generateConceptsMutation.isPending ? "Generating Concepts..." : "Generate Concepts") : 
-           step === 1 ? (mutations.orchestrateMutation.isPending ? "Building Plan..." : "Generate AI Plan") : 
-           "Next"}
+          {step === 0 ? (mutations.orchestrateMutation.isPending ? "Generating Scenes..." : "Generate Scenes") : "Next"}
         </Button>
       </div>
     </div>

@@ -11,10 +11,8 @@ export function useStepState() {
 
   const step = useMemo(() => {
     if (pathname.includes("/setup")) return 0 as Step;
-    if (pathname.includes("/concepts")) return 1 as Step;
-    if (pathname.includes("/references")) return 2 as Step;
-    if (pathname.includes("/scenes")) return 3 as Step;
-    if (pathname.includes("/preview")) return 4 as Step;
+    if (pathname.includes("/scenes")) return 1 as Step;
+    if (pathname.includes("/preview")) return 2 as Step;
     return 0 as Step;
   }, [pathname]);
 
@@ -22,17 +20,15 @@ export function useStepState() {
     const nextStep = typeof targetStep === "function" ? targetStep(step) : targetStep;
     const stepToRoute: Record<number, string> = {
       0: "/create/setup",
-      1: "/create/concepts",
-      2: "/create/references",
-      3: "/create/scenes",
-      4: "/create/preview",
+      1: "/create/scenes",
+      2: "/create/preview",
     };
     const projectId = searchParams.get("id");
     const url = `${stepToRoute[nextStep]}${projectId ? `?id=${projectId}` : ""}`;
     router.push(url);
   }, [router, searchParams, step]);
 
-  const stepTitle = ["Product Setup", "Plan Selection", "Reference Style", "Scenes", "Final Preview"][step];
+  const stepTitle = ["Product Setup", "Scenes", "Final Preview"][step];
 
   return { step, setStep, stepTitle };
 }

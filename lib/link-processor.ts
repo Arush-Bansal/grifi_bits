@@ -13,6 +13,79 @@ export interface ScrapedProduct {
   description?: string;
   colors?: string[];
   rawText?: string;
+  price?: string;
+}
+
+export async function processBlinkitLink(url: string, pinCode: string = "110001"): Promise<ScrapedProduct> {
+  console.log(`\n[LinkProcessor] Fetching Blinkit product info: ${url} (PIN: ${pinCode})`);
+
+  const headers: Record<string, string> = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Cookie": `lat=28.6139; lon=77.2090; pin_code=${pinCode}; address_id=0;`, // Mimic location
+  };
+
+  try {
+    const { data } = await axios.get(url, { headers, timeout: 15000 });
+    const $ = cheerio.load(data);
+
+    const title = $(".pdp-title").text().trim() || $("h1").text().trim() || "Unknown Blinkit Product";
+    const description = $(".pdp-description-content").text().trim() || "";
+    const price = $(".pdp-price").text().trim() || "";
+
+    const imageUrls: string[] = [];
+    $(".pdp-image-container img").each((_, el) => {
+      const src = $(el).attr("src");
+      if (src && src.startsWith("http")) imageUrls.push(src);
+    });
+
+    if (imageUrls.length === 0) {
+      // Fallback to og:image
+      const ogImage = $('meta[property="og:image"]').attr("content");
+      if (ogImage) imageUrls.push(ogImage);
+    }
+
+    return {
+      title,
+      imageUrls: imageUrls.slice(0, 5),
+      description,
+      price,
+      rawText: `Price: ${price}\n${description}`,
+    };
+  } catch (error) {
+    console.error("Error fetching Blinkit URL:", error);
+    throw new Error("Failed to fetch Blinkit product info. Check the URL or PIN code.");
+  }
+}
+
+export async function processZeptoLink(url: string, pinCode: string = "110001"): Promise<ScrapedProduct> {
+  console.log(`\n[LinkProcessor] Fetching Zepto product info: ${url} (PIN: ${pinCode})`);
+  // Zepto is heavily client-side, but let's try basic scraping
+  const headers = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+  };
+
+  try {
+    const { data } = await axios.get(url, { headers, timeout: 15000 });
+    const $ = cheerio.load(data);
+
+    const title = $('meta[property="og:title"]').attr("content") || $("h1").text().trim() || "Unknown Zepto Product";
+    const description = $('meta[property="og:description"]').attr("content") || "";
+    
+    const imageUrls: string[] = [];
+    const ogImage = $('meta[property="og:image"]').attr("content");
+    if (ogImage) imageUrls.push(ogImage);
+
+    return {
+      title,
+      imageUrls,
+      description,
+    };
+  } catch (error) {
+    console.error("Error fetching Zepto URL:", error);
+    throw new Error("Failed to fetch Zepto product info.");
+  }
 }
 
 export async function processAmazonLink(url: string): Promise<ScrapedProduct> {

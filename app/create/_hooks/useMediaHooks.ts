@@ -53,3 +53,21 @@ export const useGenerateMediaMutation = (options?: AppMutationOptions<{ scene_re
     ...options
   });
 };
+
+interface RemotionRenderParams {
+  productDemoData: {
+    scenes: Scene[];
+    productName: string;
+    brandColor?: string;
+  };
+}
+
+export const useRemotionRenderMutation = (options?: AppMutationOptions<{ videoUrl: string }, Error, RemotionRenderParams>) => {
+  return useAppMutation({
+    mutationFn: async (params: RemotionRenderParams) => {
+      const { data } = await axios.post("/api/render/remotion", params);
+      return data;
+    },
+    ...options
+  });
+};

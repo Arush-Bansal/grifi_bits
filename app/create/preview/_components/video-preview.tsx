@@ -1,61 +1,50 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Scene } from "../../types";
-import { formatTimelineTime } from "../../_utils";
-import { StoryboardTimelineClip } from "../../types";
+import { Scene, VideoSettings } from "../../types";
 import { MediaDisplay } from "./MediaDisplay";
 
 interface VideoPreviewProps {
-  activeTimelineClip: StoryboardTimelineClip | null;
   scenes: Scene[];
   audioRef: React.RefObject<HTMLAudioElement>;
   bgAudioRef: React.RefObject<HTMLAudioElement>;
   isPending: boolean;
-  onGenerateMedia: () => void;
-  timelineCurrentTime: number;
-  timelineTotalDuration: number;
-  captionsEnabled: boolean;
+  onRenderVideo: () => void;
+  settings?: VideoSettings;
+  productName?: string;
 }
 
 export function VideoPreview({
-  activeTimelineClip,
   scenes,
   audioRef,
   bgAudioRef,
   isPending,
-  onGenerateMedia,
-  timelineCurrentTime,
-  timelineTotalDuration,
-  captionsEnabled,
+  onRenderVideo,
+  settings,
+  productName,
 }: VideoPreviewProps) {
   return (
-    <div className="rounded-2xl border border-border bg-white/90 p-4">
-      <p className="mb-3 text-sm font-semibold text-foreground">Video Preview (Portrait)</p>
+    <div className="rounded-2xl border border-border bg-white/90 p-4 flex flex-col h-full">
+      <div className="flex items-center justify-between mb-3">
+        <p className="text-sm font-semibold text-foreground">Video Preview</p>
+        <div className="flex items-center gap-2">
+           {/* Add a simple play/pause indicator if needed or just rely on video controls */}
+        </div>
+      </div>
       
-      <MediaDisplay
-        activeTimelineClip={activeTimelineClip}
-        scenes={scenes}
-        audioRef={audioRef}
-        bgAudioRef={bgAudioRef}
-        isPending={isPending}
-        captionsEnabled={captionsEnabled}
-      />
-
-      <div className="mt-3 rounded-xl border border-border/70 bg-secondary/40 p-3">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Active Clip</p>
-        <p className="mt-1 text-sm font-semibold text-foreground">
-          {activeTimelineClip
-            ? `Scene ${activeTimelineClip.sceneId}: ${activeTimelineClip.title}`
-            : "No clip selected"}
-        </p>
-        <p className="mt-1 text-xs text-muted-foreground">
-          Playhead {formatTimelineTime(timelineCurrentTime)} / {formatTimelineTime(timelineTotalDuration)}
-        </p>
+      <div className="flex-1 min-h-0">
+        <MediaDisplay
+          scenes={scenes}
+          audioRef={audioRef}
+          bgAudioRef={bgAudioRef}
+          isPending={isPending}
+          settings={settings}
+          productName={productName}
+        />
       </div>
 
-      <Button onClick={onGenerateMedia} disabled={isPending} className="mt-4 w-full">
-        {isPending ? "Generating Media..." : "Generate Final Media"}
+      <Button onClick={onRenderVideo} disabled={isPending} className="mt-4 w-full h-12 text-lg font-medium">
+        {isPending ? "Generating..." : "Generate Final Media"}
       </Button>
     </div>
   );

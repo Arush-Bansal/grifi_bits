@@ -25,6 +25,94 @@ function releaseLock() {
   }
 }
 
+export async function renderProductDemo({
+  scenes,
+  productName,
+  brandColor = "#f97316",
+  templateId = "ProductDemo",
+}: {
+  scenes: any[];
+  productName: string;
+  brandColor?: string;
+  templateId?: string;
+}): Promise<string> {
+  await acquireLock();
+  
+  try {
+    const { bundle } = await import("@remotion/bundler");
+    const { renderMedia, selectComposition } = await import("@remotion/renderer");
+
+    const compositionId = templateId; // Use the provided template ID
+    const entry = path.resolve("remotion/Root.tsx");
+    
+    console.log("[Remotion] Bundling...");
+    const bundleLocation = await bundle(entry);
+
+    const inputProps = {
+      scenes,
+      productName,
+      brandColor,
+    };
+
+    console.log("[Remotion] Selecting composition...");
+    const composition = await selectComposition({
+      serveUrl: bundleLocation,
+      id: compositionId,
+      inputProps,
+    });
+
+    const outputDir = path.resolve("tmp/renders");
+    if (!fs.existsSync(outputDir)) {
+      fs.mkdirSync(outputDir, { recursive: true });
+    }
+
+    const outputLocation = path.join(outputDir, `demo-${Date.now()}.mp4`);
+
+    const renderWithRetry = async (attempt = 1): Promise<void> => {
+      try {
+        console.log(`[Remotion] Rendering (Attempt ${attempt})...`);
+        await renderMedia({
+          composition,
+          serveUrl: bundleLocation,
+          codec: "h264",
+          outputLocation,
+          inputProps,
+          logLevel: "info",
+        });
+      } catch (err) {
+        if (attempt < 2) {
+          console.warn(`[Remotion] Render failed (Attempt ${attempt}), retrying...`, err);
+          return renderWithRetry(attempt + 1);
+        }
+        throw err;
+      }
+    };
+
+    await renderWithRetry();
+
+    console.log(`[Remotion] Rendered locally to ${outputLocation}`);
+    console.log("[Remotion] Uploading to Supabase...");
+    const publicUrl = await uploadVideo(outputLocation);
+
+    if (!publicUrl) {
+      throw new Error("Failed to upload video to Supabase Storage");
+    }
+
+    // Cleanup
+    try {
+      if (fs.existsSync(outputLocation)) {
+        fs.unlinkSync(outputLocation);
+      }
+    } catch (err) {
+      console.warn(`[Remotion] Failed to cleanup: ${outputLocation}`, err);
+    }
+
+    return publicUrl;
+  } finally {
+    releaseLock();
+  }
+}
+
 export async function renderLogoVideo(logoUrl: string): Promise<string> {
   await acquireLock();
   
