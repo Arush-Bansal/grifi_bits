@@ -5,7 +5,7 @@ import { useAiPlan } from "../../_hooks/useAiPlan";
 import { useCreateMutations } from "../../_hooks/useCreateMutations";
 import { useProject } from "../../_hooks/useProject";
 import { useUIState } from "../../_hooks/useUIState";
-import { Scene, ReferenceCard } from "../../types";
+
 import { usePreviewAudio } from "./usePreviewAudio";
 
 export function usePreviewPage() {
@@ -20,21 +20,15 @@ export function usePreviewPage() {
     handleTimelineClipsChange,
     timelineTotalDuration,
     setScenes,
-    handleGenerateSceneImage,
   } = useSceneState();
   
-  const { settings, setSettings, setSelectedPlanIndex } = useAiPlan();
+  const { settings, setSettings } = useAiPlan();
   const { projectData, saveProjectWithData, saving } = useProject();
   const { setStep } = useUIState();
 
   const mutations = useCreateMutations({
-    setPlans: () => {},
-    setSelectedPlanIndex,
     setStep,
-    imageFiles: [],
     setScenes,
-    setTimelineClips: () => {},
-    handleGenerateSceneImage,
   });
 
   const { audioRef, bgAudioRef } = usePreviewAudio({
@@ -50,20 +44,15 @@ export function usePreviewPage() {
       productDemoData: {
         scenes,
         productName: projectData?.product_name || "Product",
-        brandColor: "#f97316",
+        brandColor: settings?.brand_color || "#f97316",
+        templateId:
+          settings?.template_id ||
+          (settings?.template_preference && settings.template_preference !== "auto"
+            ? settings.template_preference
+            : undefined),
       },
     });
 
-  const onGenerateMedia = () =>
-    mutations.generateMediaMutation.mutate({
-      scenes: scenes.map((s: Scene) => ({
-        ...s,
-        video_prompt: s.video_prompt,
-      })),
-      references: Object.fromEntries(
-        (projectData?.references || []).map((r: ReferenceCard) => [r.id, r.image_url])
-      ),
-    });
 
   return {
     // State
@@ -75,8 +64,9 @@ export function usePreviewPage() {
     timelineTotalDuration,
     settings,
     projectData,
+    finalVideoUrl: projectData?.settings?.final_video_url,
     saving,
-    isGenerating: mutations.generateMediaMutation.isPending || mutations.remotionRenderMutation.isPending,
+    isGenerating: mutations.remotionRenderMutation.isPending,
     
     // Refs
     audioRef,
@@ -88,7 +78,6 @@ export function usePreviewPage() {
     setTimelineIsPlaying,
     handleTimelineClipsChange,
     onSaveProject: () => projectData && saveProjectWithData(projectData),
-    onGenerateMedia,
     onRenderVideo: renderVideo,
   };
 }

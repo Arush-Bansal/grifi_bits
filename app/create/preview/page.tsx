@@ -10,6 +10,7 @@ export default function PreviewPage() {
     scenes,
     settings,
     projectData,
+    finalVideoUrl,
     saving,
     isGenerating,
     audioRef,
@@ -30,6 +31,7 @@ export default function PreviewPage() {
           onRenderVideo={onRenderVideo}
           settings={settings}
           productName={projectData?.product_name}
+          finalVideoUrl={finalVideoUrl}
         />
 
         <FinalControls

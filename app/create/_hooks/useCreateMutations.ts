@@ -1,61 +1,30 @@
 "use client";
 
-import { Scene, Step, ProjectData, PlanConcept } from "../types";
-import { normalizeTimelineClips } from "../_utils";
-import { type StoryboardTimelineClip } from "../types";
+import { Scene, Step, ProjectData } from "../types";
 import {
-  useGenerateConceptsMutation,
   useOrchestrateMutation,
-  useGenerateMediaMutation,
   useRemotionRenderMutation
 } from "./index";
 import { useProject } from "./useProject";
 
 interface MutationDeps {
-  setPlans: (plans: PlanConcept[]) => void;
-  setSelectedPlanIndex: (index: number) => void;
   setStep: (step: Step) => void;
-  imageFiles: File[];
   setScenes: (scenes: Scene[] | ((prev: Scene[]) => Scene[])) => void;
-  setTimelineClips: (clips: StoryboardTimelineClip[] | ((prev: StoryboardTimelineClip[]) => StoryboardTimelineClip[])) => void;
-  handleGenerateSceneImage: (sceneId: number, prompt: string, main_ref?: string, secondary_ref?: string, options?: { referenceId?: string }) => Promise<{ image_url?: string; audio_url?: string; audio_duration?: number }>;
 }
 
 export function useCreateMutations(deps: MutationDeps) {
   const {
     projectData,
     queryClient,
+    updateCache,
     updateUiCache,
     saveProjectWithData
   } = useProject();
 
   const {
-    setPlans,
-    setSelectedPlanIndex,
     setStep,
-    imageFiles,
-    setScenes,
-    setTimelineClips,
-    handleGenerateSceneImage,
   } = deps;
 
-  const syncState = (projectData || {}) as Partial<ProjectData>;
-
-  const generateConceptsMutation = useGenerateConceptsMutation({
-    onSuccess: (data) => {
-      setPlans(data.concepts);
-      setSelectedPlanIndex(0);
-      setStep(1);
-      saveProjectWithData({
-        ...syncState,
-        product_name: syncState.product_name || "Untitled Project",
-        image_names: imageFiles.map((f: File) => f.name),
-        selected_reference: null,
-        plans: data.concepts,
-        selected_plan_index: 0
-      });
-    }
-  });
 
   const orchestrateMutation = useOrchestrateMutation({
     onSuccess: async (data: ProjectData) => {
@@ -67,23 +36,10 @@ export function useCreateMutations(deps: MutationDeps) {
         queryClient.setQueryData(["project", data.id], data);
       }
 
-      // 3. Move to Step 1 (Scenes Review)
-      setStep(1);
+      // 3. Move to Step 2 (Final Preview)
+      setStep(2);
 
-      // 4. Trigger image generation for references if they are placeholders
-      const references = data.references || [];
-      const generationPromises = references.map(async (ref) => {
-        if (ref.ai_prompt && (ref.image_url?.includes("Generating") || !ref.image_url || ref.image_url.includes("placeholder") || ref.image_url.includes("null"))) {
-          try {
-            await handleGenerateSceneImage(0, ref.ai_prompt, undefined, undefined, { referenceId: ref.id });
-          } catch (error) {
-            console.error(`Failed to generate image for ${ref.id}:`, error);
-          }
-        }
-      });
-
-      // 5. Resume auto-save once primary state is settled
-      await Promise.all(generationPromises);
+      // 4. Resume auto-save once primary state is settled
       updateUiCache({ isAutoSaveSuspended: false });
     },
     onError: () => {
@@ -91,60 +47,28 @@ export function useCreateMutations(deps: MutationDeps) {
     }
   });
 
-  const generateMediaMutation = useGenerateMediaMutation({
-    successMessage: "Media generation complete!",
-    onSuccess: (data: { scene_results: Partial<Scene>[] }) => {
-      // 1. Calculate the new scenes array locally first so we can save it to DB
-      const currentScenes = projectData?.scenes || [];
-      const updatedScenes = currentScenes.map((scene: Scene) => {
-        const result = data.scene_results.find((r) => r.id === scene.id);
-        if (result) {
-          return { ...scene, ...result };
-        }
-        return scene;
-      });
-
-      // 2. Update the local UI state
-      setScenes(updatedScenes);
-
-      // 3. Update timeline clips (for audio duration)
-      setTimelineClips((prev: StoryboardTimelineClip[]) => {
-        const nextClips = prev.map((clip: StoryboardTimelineClip) => {
-          const result = data.scene_results.find(r => r.id === clip.sceneId);
-          if (result && result.audio_duration) {
-            return { ...clip, end: clip.start + result.audio_duration };
-          }
-          return clip;
-        });
-        return normalizeTimelineClips(nextClips);
-      });
-
-      // 4. Force a database save to persist the new URLs
-      if (projectData) {
-        saveProjectWithData({
-          ...projectData,
-          scenes: updatedScenes
-        });
-      }
-    }
-  });
   
   const remotionRenderMutation = useRemotionRenderMutation({
     successMessage: "Video rendering complete!",
     onSuccess: (data: { videoUrl: string }) => {
       if (projectData) {
-        saveProjectWithData({
+        const nextData = {
           ...projectData,
-          final_video_url: data.videoUrl
-        });
+          settings: {
+            ...projectData.settings,
+            final_video_url: data.videoUrl
+          } as ProjectData["settings"]
+        };
+
+        // Reflect the generated video URL in UI immediately.
+        updateCache(nextData);
+        saveProjectWithData(nextData);
       }
     }
   });
 
   return {
-    generateConceptsMutation,
     orchestrateMutation,
-    generateMediaMutation,
     remotionRenderMutation
   };
 }

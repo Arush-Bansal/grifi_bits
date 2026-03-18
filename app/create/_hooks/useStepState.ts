@@ -11,7 +11,7 @@ export function useStepState() {
 
   const step = useMemo(() => {
     if (pathname.includes("/setup")) return 0 as Step;
-    if (pathname.includes("/scenes")) return 1 as Step;
+    if (pathname.includes("/settings")) return 1 as Step;
     if (pathname.includes("/preview")) return 2 as Step;
     return 0 as Step;
   }, [pathname]);
@@ -20,7 +20,7 @@ export function useStepState() {
     const nextStep = typeof targetStep === "function" ? targetStep(step) : targetStep;
     const stepToRoute: Record<number, string> = {
       0: "/create/setup",
-      1: "/create/scenes",
+      1: "/create/settings",
       2: "/create/preview",
     };
     const projectId = searchParams.get("id");
@@ -28,7 +28,7 @@ export function useStepState() {
     router.push(url);
   }, [router, searchParams, step]);
 
-  const stepTitle = ["Product Setup", "Scenes", "Final Preview"][step];
+  const stepTitle = ["Product Setup", "Video Settings", "Final Preview"][step];
 
   return { step, setStep, stepTitle };
 }

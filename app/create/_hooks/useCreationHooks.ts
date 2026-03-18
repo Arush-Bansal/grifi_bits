@@ -1,8 +1,8 @@
 import axios from "axios";
-import { ProjectData, PlanConcept, VideoSettings } from "../types";
+import { ProjectData, VideoSettings } from "../types";
 import { useAppMutation, AppMutationOptions } from "../../_hooks/use-app-mutation";
 
-export const useFetchLinkMutation = (options?: AppMutationOptions<{ title?: string; description?: string; imageUrls?: string[] }, Error, { url: string; pinCode?: string }>) => {
+export const useFetchLinkMutation = (options?: AppMutationOptions<{ title?: string; description?: string; imageUrls?: string[]; colors?: string[] }, Error, { url: string; pinCode?: string }>) => {
   return useAppMutation({
     mutationFn: async (params: { url: string; pinCode?: string }) => {
       const { data } = await axios.post("/api/fetch-link", params);
@@ -12,22 +12,13 @@ export const useFetchLinkMutation = (options?: AppMutationOptions<{ title?: stri
   });
 };
 
-export const useGenerateConceptsMutation = (options?: AppMutationOptions<{ concepts: PlanConcept[] }, Error, { product_name: string; product_description: string }>) => {
-  return useAppMutation({
-    mutationFn: async (params: { product_name: string; product_description: string }) => {
-      const { data } = await axios.post("/api/generate-concepts", params);
-      return data;
-    },
-    ...options
-  });
-};
+
 
 export const useOrchestrateMutation = (options?: AppMutationOptions<ProjectData, Error, {
   product_id?: string;
   product_name: string;
   product_description: string;
   image_contexts: { name: string; url: string }[];
-  selected_plan?: string;
   settings: VideoSettings;
 }>) => {
   return useAppMutation({
@@ -36,7 +27,6 @@ export const useOrchestrateMutation = (options?: AppMutationOptions<ProjectData,
       product_name: string;
       product_description: string;
       image_contexts: { name: string; url: string }[];
-      selected_plan?: string;
       settings: VideoSettings;
     }) => {
       const { data } = await axios.post("/api/orchestrate", params);

@@ -1,15 +1,3 @@
-export const INDIAN_LANGUAGES = [
-  { label: "Hindi", value: "hindi" },
-  { label: "Hindi(Hinglish)", value: "hindi(hinglish)" },
-  { label: "English", value: "english" },
-  { label: "Marathi", value: "marathi" },
-  { label: "Bengali", value: "bengali" },
-  { label: "Tamil", value: "tamil" },
-  { label: "Telugu", value: "telugu" },
-  { label: "Gujarati", value: "gujarati" }
-];
-
-
 export const TIMELINE_DEFAULT_DURATION_SECONDS = 3;
 export const TIMELINE_MIN_DURATION_SECONDS = 1;
 export const TIMELINE_SNAP_SECONDS = 0.5;

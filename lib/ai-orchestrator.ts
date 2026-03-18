@@ -1,62 +1,49 @@
 import { google } from "@ai-sdk/google";
 import { generateObject } from "ai";
 import { z } from "zod";
+import {
+  TEMPLATE_IDS,
+  TEMPLATE_METADATA,
+  TEMPLATE_PROMPT_CATALOG,
+  TemplateId,
+  TemplateOrientation,
+  getTemplateIdsForOrientation,
+} from "./template-catalog";
 
 export const sceneSchema = z.object({
+  template_id: z.enum(TEMPLATE_IDS),
   SCENES: z.array(z.object({
-    name: z.string(),
-    video_prompt: z.string(),
-  })),
-});
-
-export const conceptSchema = z.object({
-  concepts: z.array(z.object({
-    id: z.string(),
-    title: z.string(),
-    description: z.string(),
-    imagePrompt: z.string(),
-  })),
+    name: z.string().min(1),
+    video_prompt: z.string().min(1),
+    speech: z.string().min(1),
+  })).min(1),
 });
 
 export type GeneratedPlan = z.infer<typeof sceneSchema>;
-export type PlanConcept = z.infer<typeof conceptSchema>["concepts"][0];
 
-export async function generateAdConcepts(productInfo: string): Promise<PlanConcept[]> {
-  const { object } = await generateObject({
-    model: google("gemini-2.5-flash"),
-    schema: conceptSchema,
-    prompt: `
-      You are a creative director for a top e-commerce ad agency (Bits by Grifi).
-      Generate 3 distinct creative concepts for a "Product Demo" video ad based on the following product:
-      ${productInfo}
-      
-      Focus on these styles:
-      1. **UGC Style**: Highly relatable, person-focused, "I tried this product" feel.
-      2. **Cinematic Hero**: Sleek, high-production value, focusing on aesthetics and premium feel.
-      3. **Problem-Solution**: Directly addresses a pain point and shows how the product solves it.
-
-      Each concept should have:
-      1. A catchy title.
-      2. A short, compelling description of the ad's hook and flow.
-      3. A detailed image prompt for a square (1:1) preview image that represents the visual style.
-    `,
-  });
-
-  return object.concepts;
-}
 
 export async function orchestrateAdPlan(
   productInfo: string, 
   imageContext?: string[],
-  selectedConcept?: string,
   duration: number = 20,
-  language: string = "english"
+  orientation: TemplateOrientation = "portrait",
+  preferredTemplateId?: TemplateId
 ): Promise<GeneratedPlan> {
+  const templateListText = TEMPLATE_IDS.map((id) => {
+    const template = TEMPLATE_METADATA[id];
+    return `- "${id}" (${template.orientation}, ${template.tempo}, ${template.sceneDurationSeconds}s/scene): ${TEMPLATE_PROMPT_CATALOG[id]} Hint: ${template.orchestrationHint}`;
+  }).join("\n");
+
+  const orientationTemplateIds = getTemplateIdsForOrientation(orientation);
+  const portraitTemplateIds = getTemplateIdsForOrientation("portrait");
+  const landscapeTemplateIds = getTemplateIdsForOrientation("landscape");
+  const preferredTemplateText = preferredTemplateId
+    ? `\nTemplate preference from user: "${preferredTemplateId}". You MUST return this as template_id and write scenes for this style.`
+    : "\nNo fixed template preference provided. Pick the best template that matches orientation and product context.";
+
   const imageContextText = imageContext && imageContext.length > 0 
     ? `\nReference Images Context:\n${imageContext.join("\n")}`
     : "";
-
-  const conceptText = selectedConcept ? `\nFollow this Creative Concept: ${selectedConcept}` : "";
 
   const { object } = await generateObject({
     model: google("gemini-2.5-flash"), 
@@ -68,20 +55,43 @@ export async function orchestrateAdPlan(
       Product Info:
       ${productInfo}
       ${imageContextText}
-      ${conceptText}
+      ${preferredTemplateText}
       
       Video Requirements:
       - Total Duration: Approximately ${duration} seconds.
-      - Language: ${language}. All content MUST be in ${language}.
-      - Style: High-quality, cinematic, realistic. 
+      - Orientation: ${orientation}.
+      - Style: Distinctive, premium, modern. Avoid generic slideshow feel.
       - **Focus**: The product should be the star. Highlight features, benefits, and local availability (Blinkit/Zepto context).
       
       Requirements:
-      1. SCENES: A list of scenes with a clear name and a detailed video description (video_prompt).
+      1. SCENES: A list of scenes with:
+         - name (clear scene title)
+         - video_prompt (detailed visual direction)
+         - speech (short on-screen spoken line/caption for the scene; 6-14 words, punchy, no filler)
+      2. template_id: Choose the most appropriate template from this list:
+         ${templateListText}
       
+      Template orientation rules:
+      - If orientation is portrait, choose ONLY from: ${portraitTemplateIds.map((id) => `"${id}"`).join(", ")}.
+      - If orientation is landscape, choose ONLY from: ${landscapeTemplateIds.map((id) => `"${id}"`).join(", ")}.
+      - For this request specifically, orientation is ${orientation}; bias strongly to ${orientationTemplateIds.map((id) => `"${id}"`).join(", ")}.
+
+      Creative quality rules (important):
+      - Each scene should have a clear visual action, not just "show product".
+      - Vary camera language across scenes (macro/detail, medium, wide, angle shifts, motion cues).
+      - Keep copy specific and benefit-led; avoid generic adjectives like "amazing" without proof.
+      - End with a decisive CTA tailored for fast-commerce purchase intent.
+
       Ensure the plan highlights the product clearly and ends with a strong CTA.
     `,
   });
+
+  if (preferredTemplateId) {
+    return {
+      ...object,
+      template_id: preferredTemplateId,
+    };
+  }
 
   return object;
 }

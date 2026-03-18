@@ -18,7 +18,7 @@ const headingFont = Sora({
 });
 
 export const metadata: Metadata = {
-  title: "ORBIT",
+  title: "BITS",
   description: "AI SaaS for UGC and ad creation"
 };
 
@@ -37,8 +37,8 @@ export default function RootLayout({
           <div className="min-h-screen">
             <header className="fixed inset-x-0 top-0 z-50 border-b border-primary/20 bg-secondary/65 backdrop-blur">
               <nav className="flex h-16 w-full items-center justify-between px-3 sm:px-5 md:px-7">
-                <Button asChild variant="ghost" className="px-2 text-base font-bold tracking-tight text-foreground">
-                  <Link href="/">ORBIT</Link>
+                <Button asChild variant="ghost" className="px-2 text-xl font-extrabold tracking-tighter text-foreground hover:bg-transparent">
+                  <Link href="/">BITS</Link>
                 </Button>
                 <div className="flex items-center gap-2">
                   <Button asChild variant="outline" className="border-primary/30 bg-background/65 hover:bg-accent/70">

@@ -39,16 +39,29 @@ export async function GET(
 
   // 5. Construct merged scenes: authoritative text from JSONB, authoritative assets from structured table
   const jsonScenes = (project.scenes as unknown as Scene[] || []);
-  const mergedScenes = jsonScenes.map(js => {
-    const ts = (scenes || []).find(s => s.scene_order === js.id);
-    return {
-      ...js,
-      image_url: ts?.image_url || js.image_url,
-      audio_url: ts?.audio_url || js.audio_url,
-      audio_duration: ts?.audio_duration || js.audio_duration,
-      video_url: ts?.video_url || js.video_url,
-    };
-  });
+  const mergedScenes = jsonScenes.length > 0
+    ? jsonScenes.map(js => {
+        const ts = (scenes || []).find(s => s.scene_order === js.id);
+        return {
+          ...js,
+          image_url: ts?.image_url || js.image_url,
+          audio_url: ts?.audio_url || js.audio_url,
+          audio_duration: ts?.audio_duration || js.audio_duration,
+          video_url: ts?.video_url || js.video_url,
+        };
+      })
+    : (scenes || []).map((s) => ({
+        id: s.scene_order,
+        name: s.name || `Scene ${s.scene_order}`,
+        video_prompt: s.video_prompt || s.name || "",
+        speech: s.speech || s.video_prompt || "",
+        image_url: s.image_url,
+        audio_url: s.audio_url,
+        audio_duration: s.audio_duration,
+        video_url: s.video_url,
+        main_reference: s.main_reference,
+        secondary_reference: s.secondary_reference,
+      }));
 
   // 6. Construct merged references: authoritative text from JSONB, authoritative assets from structured table
   const jsonRefs = (project.references as unknown as ReferenceCard[] || []);

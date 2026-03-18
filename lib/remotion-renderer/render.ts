@@ -1,6 +1,7 @@
 import path from "path";
 import fs from "fs";
 import { uploadVideo } from "@/lib/supabase/storage";
+import { DEFAULT_TEMPLATE_ID, isTemplateId, TemplateId } from "@/lib/template-catalog";
 
 // Simple mutual exclusion lock for rendering to prevent resource exhaustion on Vercel
 let isRendering = false;
@@ -29,20 +30,28 @@ export async function renderProductDemo({
   scenes,
   productName,
   brandColor = "#f97316",
-  templateId = "ProductDemo",
+  templateId = DEFAULT_TEMPLATE_ID,
 }: {
-  scenes: any[];
+  scenes: unknown[];
   productName: string;
   brandColor?: string;
-  templateId?: string;
+  templateId?: TemplateId;
 }): Promise<string> {
+  if (!Array.isArray(scenes) || scenes.length === 0) {
+    throw new Error("Cannot render without scenes. Generate scenes first.");
+  }
+
+  if (!isTemplateId(templateId)) {
+    throw new Error(`Unsupported template_id: ${String(templateId)}`);
+  }
+
   await acquireLock();
   
   try {
     const { bundle } = await import("@remotion/bundler");
     const { renderMedia, selectComposition } = await import("@remotion/renderer");
 
-    const compositionId = templateId; // Use the provided template ID
+    const compositionId = templateId;
     const entry = path.resolve("remotion/Root.tsx");
     
     console.log("[Remotion] Bundling...");

@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Scene, VideoSettings } from "../../types";
 import { MediaDisplay } from "./MediaDisplay";
+import { toast } from "sonner";
 
 interface VideoPreviewProps {
   scenes: Scene[];
@@ -12,6 +13,7 @@ interface VideoPreviewProps {
   onRenderVideo: () => void;
   settings?: VideoSettings;
   productName?: string;
+  finalVideoUrl?: string;
 }
 
 export function VideoPreview({
@@ -22,7 +24,18 @@ export function VideoPreview({
   onRenderVideo,
   settings,
   productName,
+  finalVideoUrl,
 }: VideoPreviewProps) {
+  const hasScenes = scenes.length > 0;
+
+  const handleRenderClick = () => {
+    if (!hasScenes) {
+      toast.error("No scenes available. Go to Video Settings and click Generate Video first.");
+      return;
+    }
+    onRenderVideo();
+  };
+
   return (
     <div className="rounded-2xl border border-border bg-white/90 p-4 flex flex-col h-full">
       <div className="flex items-center justify-between mb-3">
@@ -40,12 +53,18 @@ export function VideoPreview({
           isPending={isPending}
           settings={settings}
           productName={productName}
+          finalVideoUrl={finalVideoUrl}
         />
       </div>
 
-      <Button onClick={onRenderVideo} disabled={isPending} className="mt-4 w-full h-12 text-lg font-medium">
+      <Button onClick={handleRenderClick} disabled={isPending} className="mt-4 w-full h-12 text-lg font-medium">
         {isPending ? "Generating..." : "Generate Final Media"}
       </Button>
+      {!hasScenes ? (
+        <p className="mt-2 text-xs text-muted-foreground">
+          Generate scenes first from the settings step before rendering final media.
+        </p>
+      ) : null}
     </div>
   );
 }

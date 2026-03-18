@@ -1,15 +1,16 @@
-import { AbsoluteFill, Sequence, useVideoConfig, useCurrentFrame, interpolate, spring, Easing } from "remotion";
+import { AbsoluteFill, Easing, OffthreadVideo, Sequence, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import React from "react";
 
 interface Scene {
-  image_url: string;
-  speech: string;
+  image_url?: string | null;
+  video_url?: string | null;
+  speech?: string;
   id: number;
 }
 
 interface DynamicSocialProps {
-  scenes: Scene[];
-  productName: string;
+  scenes?: Scene[];
+  productName?: string;
   brandColor?: string;
 }
 
@@ -19,10 +20,10 @@ export const DynamicSocialTemplate: React.FC<DynamicSocialProps> = ({
   brandColor = "#f97316",
 }) => {
   const { fps } = useVideoConfig();
-  const sceneDuration = 3 * fps;
+  const sceneDuration = Math.round(2.8 * fps);
 
   return (
-    <AbsoluteFill style={{ backgroundColor: "#000", color: "white", fontFamily: "system-ui, sans-serif" }}>
+    <AbsoluteFill style={{ backgroundColor: "#03040a", color: "white", fontFamily: "Arial Black, Arial, sans-serif" }}>
       {scenes.map((scene, index) => {
         const startFrame = index * sceneDuration;
         return (
@@ -31,7 +32,6 @@ export const DynamicSocialTemplate: React.FC<DynamicSocialProps> = ({
               scene={scene} 
               productName={productName} 
               brandColor={brandColor} 
-              index={index}
             />
           </Sequence>
         );
@@ -43,64 +43,121 @@ export const DynamicSocialTemplate: React.FC<DynamicSocialProps> = ({
   );
 };
 
-const DynamicScene: React.FC<{ scene: Scene; productName: string; brandColor: string; index: number }> = ({
+const DynamicScene: React.FC<{ scene: Scene; productName: string; brandColor: string }> = ({
   scene,
   productName,
   brandColor,
-  index,
 }) => {
   const frame = useCurrentFrame();
   const { width, height, fps } = useVideoConfig();
-  
-  const springConfig = { damping: 12 };
-  const entrance = spring({ frame, fps, config: springConfig });
-  
-  const scale = interpolate(frame, [0, 90], [1.1, 1], { easing: Easing.out(Easing.quad) });
-  const textX = interpolate(entrance, [0, 1], [-100, 0]);
-  const opacity = interpolate(frame, [0, 5, 85, 90], [0, 1, 1, 0]);
+  const sceneDuration = Math.round(2.8 * fps);
+  const copy = scene.speech?.trim() || "Fast. Fresh. Delivered now.";
+
+  const entrance = spring({ frame, fps, config: { damping: 13, mass: 0.8 } });
+  const textY = interpolate(entrance, [0, 1], [40, 0]);
+  const textScale = interpolate(entrance, [0, 1], [0.95, 1]);
+  const bgScale = interpolate(frame, [0, sceneDuration], [1.06, 1], { easing: Easing.out(Easing.cubic) });
+  const bgRotate = interpolate(frame, [0, sceneDuration], [-1.6, 1.1]);
+  const opacity = interpolate(frame, [0, 5, sceneDuration - 10, sceneDuration], [0, 1, 1, 0]);
+  const stickerTwist = interpolate(Math.sin(frame / 10), [-1, 1], [-4, 4]);
 
   return (
     <AbsoluteFill style={{ opacity }}>
-      {/* Background with Zoom Out */}
-      <AbsoluteFill style={{ transform: `scale(${scale})` }}>
-        <img 
-          src={scene.image_url} 
-          style={{ width: "100%", height: "100%", objectFit: "cover" }} 
-          alt="Product"
-          crossOrigin="anonymous"
-        />
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 60%)" }} />
+      <AbsoluteFill style={{ transform: `scale(${bgScale}) rotate(${bgRotate}deg)` }}>
+        {scene.video_url ? (
+          <OffthreadVideo
+            src={scene.video_url}
+            muted
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          />
+        ) : scene.image_url ? (
+          <img
+            src={scene.image_url}
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            alt="Product"
+            crossOrigin="anonymous"
+          />
+        ) : (
+          <AbsoluteFill
+            style={{
+              background: `linear-gradient(135deg, ${brandColor} 0%, #1b2149 45%, #03040a 100%)`,
+            }}
+          />
+        )}
       </AbsoluteFill>
 
-      {/* Dynamic Text Overlay */}
-      <div style={{ 
-        position: "absolute",
-        bottom: "10%",
-        left: "5%",
-        right: "5%",
-        transform: `translateX(${textX}px)`,
-      }}>
-        <div style={{
-          display: "inline-block",
+      <AbsoluteFill
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(2,6,23,0.14) 0%, rgba(2,6,23,0.6) 52%, rgba(2,6,23,0.86) 100%)",
+        }}
+      />
+
+      <AbsoluteFill
+        style={{
+          background: `radial-gradient(circle at 82% 18%, ${brandColor}40 0%, transparent 30%)`,
+        }}
+      />
+
+      <div
+        style={{
+          position: "absolute",
+          top: "8%",
+          right: "6%",
           backgroundColor: brandColor,
-          color: "white",
-          padding: "5px 15px",
-          fontSize: "20px",
-          fontWeight: "bold",
-          textTransform: "uppercase",
-          marginBottom: "10px",
-          borderRadius: "4px"
-        }}>
+          color: "#ffffff",
+          padding: width > height ? "8px 14px" : "10px 18px",
+          borderRadius: 14,
+          fontWeight: 900,
+          fontSize: width > height ? 18 : 22,
+          transform: `rotate(${stickerTwist}deg)`,
+          letterSpacing: "0.04em",
+          boxShadow: "0 10px 22px rgba(0,0,0,0.3)",
+        }}
+      >
+        TRENDING
+      </div>
+
+      <div
+        style={{
+          position: "absolute",
+          bottom: "9%",
+          left: "6%",
+          right: "6%",
+          transform: `translateY(${textY}px) scale(${textScale})`,
+        }}
+      >
+        <div
+          style={{
+            display: "inline-block",
+            backgroundColor: "rgba(0, 0, 0, 0.45)",
+            border: `2px solid ${brandColor}`,
+            color: "#f4f7ff",
+            padding: width > height ? "8px 16px" : "10px 18px",
+            fontSize: width > height ? 18 : 21,
+            fontWeight: 900,
+            textTransform: "uppercase",
+            marginBottom: 14,
+            letterSpacing: "0.08em",
+            borderRadius: 12,
+            backdropFilter: "blur(8px)",
+          }}
+        >
           {productName}
         </div>
-        <h2 style={{ 
-          fontSize: width > height ? "48px" : "64px", 
-          lineHeight: 1.1,
-          fontWeight: "900",
-          margin: 0,
-          textShadow: "0 4px 10px rgba(0,0,0,0.5)"
-        }}>
-          {scene.speech}
+
+        <h2
+          style={{
+            fontSize: width > height ? 56 : 72,
+            lineHeight: 1.02,
+            fontWeight: 900,
+            margin: 0,
+            color: "#ffffff",
+            textShadow: "0 8px 24px rgba(0,0,0,0.45)",
+            letterSpacing: "-0.01em",
+          }}
+        >
+          {copy}
         </h2>
       </div>
     </AbsoluteFill>
@@ -109,7 +166,7 @@ const DynamicScene: React.FC<{ scene: Scene; productName: string; brandColor: st
 
 const ProgressBar: React.FC<{ brandColor: string; totalScenes: number; sceneDuration: number }> = ({ brandColor, totalScenes, sceneDuration }) => {
   const frame = useCurrentFrame();
-  const totalDuration = totalScenes * sceneDuration;
+  const totalDuration = Math.max(1, totalScenes * sceneDuration);
   const progress = (frame / totalDuration) * 100;
 
   return (
@@ -125,7 +182,7 @@ const ProgressBar: React.FC<{ brandColor: string; totalScenes: number; sceneDura
         height: "100%",
         width: `${progress}%`,
         backgroundColor: brandColor,
-        transition: "width 0.1s linear"
+        transition: "width 0.1s linear",
       }} />
     </div>
   );

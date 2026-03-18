@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { Loader2 } from "lucide-react";
 import { useProject } from "../_hooks/useProject";
 import { useUIState } from "../_hooks/useUIState";
 import { useProductInfo } from "../_hooks/useProductInfo";
@@ -13,26 +13,21 @@ import { Step } from "../types";
 
 const stepToRoute: Record<number, string> = {
   0: "/create/setup",
-  1: "/create/scenes",
+  1: "/create/settings",
   2: "/create/preview",
 };
 
 export function StepNavigation() {
   const router = useRouter();
-  const { projectId, updateUiCache, projectData } = useProject();
+  const { projectId, updateUiCache } = useProject();
   const { step, setStep } = useUIState();
-  const { product_name, product_description, imageFiles, previewUrls } = useProductInfo();
-  const { settings, setSelectedPlanIndex } = useAiPlan();
+  const { product_name, product_description, previewUrls } = useProductInfo();
+  const { settings } = useAiPlan();
   const sceneState = useSceneState();
 
   const mutations = useCreateMutations({
-    setPlans: () => {}, // Handled via cache in useAiPlan
-    setSelectedPlanIndex,
     setStep,
-    imageFiles,
     setScenes: sceneState.setScenes,
-    setTimelineClips: sceneState.setTimelineClips,
-    handleGenerateSceneImage: sceneState.handleGenerateSceneImage,
   });
 
   const handleNavigate = (nextStep: number) => {
@@ -41,40 +36,27 @@ export function StepNavigation() {
   };
 
   return (
-    <div className="mt-8 flex items-center justify-between gap-4">
+    <div className="mt-12 flex items-center justify-between gap-6">
       <Button 
-        variant="outline" 
+        variant="ghost" 
         onClick={() => handleNavigate(step - 1)} 
         disabled={step === 0}
+        className="h-12 px-8 font-bold text-muted-foreground transition-all hover:bg-muted/50 hover:text-foreground active:scale-95 disabled:opacity-0"
       >
         Back
       </Button>
-      <div className="flex items-center gap-3">
+      
+      <div className="flex items-center gap-4">
         <Button
-          variant="outline"
-          className={cn(
-            (!projectId || step !== 0) && "hidden",
-            (step === 0 && (!projectData?.scenes || projectData.scenes.length === 0)) && "hidden"
-          )}
-          onClick={() => handleNavigate(step + 1)}
-          disabled={mutations.orchestrateMutation.isPending}
-        >
-          Next
-        </Button>
-        <Button
+          size="lg"
+          className="group relative h-14 min-w-[200px] overflow-hidden rounded-full font-black tracking-tight shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95 disabled:scale-100"
           onClick={() => {
-            if (step === 0) {
-              // Directly orchestrate with a default concept
+            if (step === 1) {
               updateUiCache({ isAutoSaveSuspended: true });
-              
-              const defaultConcept = "Standard Product Demo";
-              const defaultDescription = "Highlight the product features, benefits, and local availability in a professional and energetic way.";
-
               mutations.orchestrateMutation.mutate({
                 product_name,
                 product_description,
                 image_contexts: previewUrls,
-                selected_plan: `${defaultConcept}: ${defaultDescription}`,
                 settings,
                 product_id: projectId || undefined
               });
@@ -83,11 +65,29 @@ export function StepNavigation() {
             }
           }}
           disabled={
-            (step === 0 && (!product_name || !product_description || mutations.orchestrateMutation.isPending)) || 
+            (step === 0 && (!product_name || !product_description)) ||
+            (step === 1 && mutations.orchestrateMutation.isPending) ||
             step === 2
           }
         >
-          {step === 0 ? (mutations.orchestrateMutation.isPending ? "Generating Scenes..." : "Generate Scenes") : "Next"}
+          <div className="relative z-10 flex items-center gap-2">
+            {step === 1 ? (
+              mutations.orchestrateMutation.isPending ? (
+                <>
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                  <span>Curating Concept...</span>
+                </>
+              ) : (
+                <>
+                  <span>Generate Video</span>
+                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20">
+                    <svg className="h-3 w-3 fill-white" viewBox="0 0 24 24"><path d="M5.59 7.41L10.18 12l-4.59 4.59L7 18l6-6-6-6zM16 6h2v12h-2z"/></svg>
+                  </div>
+                </>
+              )
+            ) : "Next Step"}
+          </div>
+          <div className="absolute inset-0 -z-0 bg-gradient-to-r from-primary to-blue-400 opacity-100 transition-opacity group-hover:from-blue-500 group-hover:to-primary" />
         </Button>
       </div>
     </div>

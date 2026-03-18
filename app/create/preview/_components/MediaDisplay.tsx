@@ -1,18 +1,8 @@
 "use client";
 
 import { Player } from "@remotion/player";
-import { ProductDemoTemplate } from "../../../../remotion/templates/ProductDemoTemplate";
-import { MinimalistTemplate } from "../../../../remotion/templates/MinimalistTemplate";
-import { DynamicSocialTemplate } from "../../../../remotion/templates/DynamicSocialTemplate";
-import { SplitScreenTemplate } from "../../../../remotion/templates/SplitScreenTemplate";
 import { Scene, VideoSettings } from "../../types";
-
-const TEMPLATE_COMPONENTS: Record<string, React.FC<any>> = {
-  ProductDemo: ProductDemoTemplate,
-  Minimalist: MinimalistTemplate,
-  DynamicSocial: DynamicSocialTemplate,
-  SplitScreen: SplitScreenTemplate,
-};
+import { getTemplateDurationInFrames, resolveTemplateConfig } from "../../../../remotion/template-registry";
 
 export function MediaDisplay({
   scenes,
@@ -21,6 +11,7 @@ export function MediaDisplay({
   isPending,
   settings,
   productName,
+  finalVideoUrl,
 }: {
   scenes: Scene[];
   audioRef: React.RefObject<HTMLAudioElement>;
@@ -28,17 +19,27 @@ export function MediaDisplay({
   isPending: boolean;
   settings?: VideoSettings;
   productName?: string;
+  finalVideoUrl?: string;
 }) {
-  const orientation = settings?.orientation || "landscape";
-  const templateId = settings?.template_id || "ProductDemo";
-  const TemplateComponent = TEMPLATE_COMPONENTS[templateId] || ProductDemoTemplate;
-  
-  // Base dimensions for the player
-  const width = orientation === "portrait" ? 1080 : 1920;
-  const height = orientation === "portrait" ? 1920 : 1080;
+  const resolvedTemplateId =
+    settings?.template_id ||
+    (settings?.template_preference && settings.template_preference !== "auto"
+      ? settings.template_preference
+      : undefined);
+
+  const templateConfig = resolveTemplateConfig(resolvedTemplateId);
+  const TemplateComponent = templateConfig.component;
+  const width = templateConfig.width;
+  const height = templateConfig.height;
+  const durationInFrames = getTemplateDurationInFrames(resolvedTemplateId, scenes.length, 30);
+  const isPortrait = height >= width;
 
   return (
-    <div className="relative mx-auto aspect-[9/16] max-h-[620px] w-full overflow-hidden rounded-2xl bg-black shadow-xl">
+    <div
+      className={`relative mx-auto w-full overflow-hidden rounded-2xl bg-black shadow-xl ${
+        isPortrait ? "aspect-[9/16] max-h-[620px]" : "aspect-video max-h-[460px]"
+      }`}
+    >
       <audio ref={audioRef} className="hidden" />
       <audio ref={bgAudioRef} className="hidden" />
 
@@ -47,15 +48,21 @@ export function MediaDisplay({
            <div className="h-12 w-12 animate-spin rounded-full border-4 border-white/20 border-t-white" />
            <p className="mt-4 font-medium">Crafting your video...</p>
         </div>
+      ) : finalVideoUrl ? (
+        <video
+          src={finalVideoUrl}
+          controls
+          className="h-full w-full object-contain bg-black"
+        />
       ) : scenes.length > 0 ? (
         <Player
-          component={TemplateComponent as any}
+          component={TemplateComponent}
           inputProps={{
             scenes: scenes || [],
             productName: productName || "Product Name",
-            brandColor: "#f97316", // Default color for now
+            brandColor: settings?.brand_color || "#f97316",
           }}
-          durationInFrames={scenes.length * 3 * 30} // 3s per scene @ 30fps
+          durationInFrames={durationInFrames}
           fps={30}
           compositionWidth={width}
           compositionHeight={height}

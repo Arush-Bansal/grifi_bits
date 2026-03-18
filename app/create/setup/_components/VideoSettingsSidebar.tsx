@@ -1,10 +1,10 @@
 "use client";
 
 import { Label } from "@/components/ui/label";
-import { Smartphone, Monitor, ChevronDown } from "lucide-react";
+import { Smartphone, Monitor } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { VideoSettings } from "../../types";
-import { INDIAN_LANGUAGES } from "../../constants";
+import { TemplateId, TEMPLATE_IDS, TEMPLATE_METADATA } from "@/lib/template-catalog";
 
 interface VideoSettingsSidebarProps {
   settings: VideoSettings;
@@ -12,140 +12,184 @@ interface VideoSettingsSidebarProps {
 }
 
 export function VideoSettingsSidebar({ settings, setSettings }: VideoSettingsSidebarProps) {
+  const compatibleTemplates = TEMPLATE_IDS.filter(
+    (templateId) => TEMPLATE_METADATA[templateId].orientation === settings.orientation
+  );
+
+  const selectTemplate = (templateId: TemplateId | "auto") => {
+    if (templateId === "auto") {
+      setSettings({
+        ...settings,
+        template_preference: "auto",
+        template_id: undefined,
+      });
+      return;
+    }
+
+    setSettings({
+      ...settings,
+      template_preference: templateId,
+      template_id: templateId,
+    });
+  };
+
+  const updateOrientation = (orientation: "portrait" | "landscape") => {
+    const currentPreference = settings.template_preference;
+    const preferenceIsCompatible =
+      currentPreference &&
+      currentPreference !== "auto" &&
+      TEMPLATE_METADATA[currentPreference].orientation === orientation;
+
+    setSettings({
+      ...settings,
+      orientation,
+      template_preference: preferenceIsCompatible ? currentPreference : "auto",
+      template_id: preferenceIsCompatible ? currentPreference : undefined,
+    });
+  };
+
   return (
-    <div className="space-y-6 rounded-2xl border border-border bg-gradient-to-b from-muted/50 to-muted/20 p-6">
-      <h2 className="text-lg font-bold">Video Settings</h2>
+    <div className="space-y-6 rounded-[2rem] border border-border/50 bg-card/50 p-7 shadow-lg shadow-black/5 backdrop-blur-xl">
+      <h2 className="text-xl font-extrabold tracking-tight text-foreground/90">Video Settings</h2>
       
-      <div className="space-y-6">
+      <div className="space-y-7">
         {/* Orientation */}
-        <div className="space-y-3">
-          <Label className="text-sm font-semibold">Orientation</Label>
-          <div className="flex gap-2">
+        <div className="space-y-4">
+          <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Screen Orientation</Label>
+          <div className="flex gap-3">
             <button
-              onClick={() => setSettings({ ...settings, orientation: "portrait" })}
+              onClick={() => updateOrientation("portrait")}
               className={cn(
-                "flex flex-1 flex-col items-center justify-center gap-2 rounded-xl border p-3 transition-all",
+                "group flex flex-1 flex-col items-center justify-center gap-3 rounded-2xl border-2 p-4 transition-all duration-300",
                 settings.orientation === "portrait"
-                  ? "border-primary bg-primary/10 text-primary"
-                  : "border-border bg-background hover:bg-muted"
+                  ? "border-primary bg-primary/10 shadow-lg shadow-primary/10"
+                  : "border-border/50 bg-background/50 hover:border-primary/30 hover:bg-primary/5"
               )}
             >
-              <Smartphone className="h-5 w-5" />
-              <span className="text-xs font-medium">Portrait (9:16)</span>
+              <div className={cn(
+                "rounded-lg p-2 transition-colors",
+                settings.orientation === "portrait" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground group-hover:bg-primary/20 group-hover:text-primary"
+              )}>
+                <Smartphone className="h-5 w-5" />
+              </div>
+              <span className={cn(
+                "text-xs font-bold tracking-tight",
+                settings.orientation === "portrait" ? "text-primary" : "text-muted-foreground"
+              )}>Portrait (9:16)</span>
             </button>
             <button
-              onClick={() => setSettings({ ...settings, orientation: "landscape" })}
+              onClick={() => updateOrientation("landscape")}
               className={cn(
-                "flex flex-1 flex-col items-center justify-center gap-2 rounded-xl border p-3 transition-all",
+                "group flex flex-1 flex-col items-center justify-center gap-3 rounded-2xl border-2 p-4 transition-all duration-300",
                 settings.orientation === "landscape"
-                  ? "border-primary bg-primary/10 text-primary"
-                  : "border-border bg-background hover:bg-muted"
+                  ? "border-primary bg-primary/10 shadow-lg shadow-primary/10"
+                  : "border-border/50 bg-background/50 hover:border-primary/30 hover:bg-primary/5"
               )}
             >
-              <Monitor className="h-5 w-5" />
-              <span className="text-xs font-medium">Landscape (16:9)</span>
+              <div className={cn(
+                "rounded-lg p-2 transition-colors",
+                settings.orientation === "landscape" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground group-hover:bg-primary/20 group-hover:text-primary"
+              )}>
+                <Monitor className="h-5 w-5" />
+              </div>
+              <span className={cn(
+                "text-xs font-bold tracking-tight",
+                settings.orientation === "landscape" ? "text-primary" : "text-muted-foreground"
+              )}>Landscape (16:9)</span>
             </button>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Template Style</Label>
+          <div className="grid grid-cols-1 gap-2">
+            <button
+              onClick={() => selectTemplate("auto")}
+              className={cn(
+                "rounded-xl border px-4 py-3 text-left transition-all",
+                settings.template_preference === "auto" || !settings.template_preference
+                  ? "border-primary bg-primary/10"
+                  : "border-border/60 bg-background/60 hover:border-primary/40 hover:bg-primary/5"
+              )}
+            >
+              <p className="text-sm font-bold text-foreground">Auto (AI Pick)</p>
+              <p className="text-xs text-muted-foreground">AI chooses the best template for your product and orientation.</p>
+            </button>
+
+            {compatibleTemplates.map((templateId) => {
+              const template = TEMPLATE_METADATA[templateId];
+              const isSelected = settings.template_preference === templateId;
+              return (
+                <button
+                  key={templateId}
+                  onClick={() => selectTemplate(templateId)}
+                  className={cn(
+                    "rounded-xl border px-4 py-3 text-left transition-all",
+                    isSelected
+                      ? "border-primary bg-primary/10 shadow-sm shadow-primary/10"
+                      : "border-border/60 bg-background/60 hover:border-primary/40 hover:bg-primary/5"
+                  )}
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-sm font-bold text-foreground">{template.label}</p>
+                    <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                      {template.tempo}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-xs text-muted-foreground">{template.description}</p>
+                </button>
+              );
+            })}
           </div>
         </div>
 
         {/* Duration */}
-        <div className="space-y-3">
+        <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <Label className="text-sm font-semibold">Estimated Duration</Label>
-            <span className="text-sm font-bold text-primary">{settings.duration}s</span>
+            <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Video Duration</Label>
+            <div className="rounded-full bg-primary/10 px-3 py-1 text-sm font-black text-primary">
+              {settings.duration}s
+            </div>
           </div>
-          <input
-            type="range"
-            min="20"
-            max="60"
-            step="5"
-            value={settings.duration}
-            onChange={(e) => setSettings({ ...settings, duration: parseInt(e.target.value) })}
-            className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-muted accent-primary"
-          />
-          <div className="flex justify-between text-[10px] text-muted-foreground font-medium px-1">
-            <span>20s</span>
-            <span>40s</span>
-            <span>60s</span>
-          </div>
-        </div>
-
-        {/* Logo Scene Toggle */}
-        <div className="flex items-center justify-between rounded-xl border border-border bg-background p-4 shadow-sm">
-          <div className="space-y-0.5">
-            <Label className="text-sm font-semibold">Logo Ending Scene</Label>
-            <p className="text-xs text-muted-foreground">Add your brand logo scene at the end of the video</p>
-          </div>
-          <button
-            onClick={() => setSettings({ ...settings, logo_ending: !settings.logo_ending })}
-            className={cn(
-              "relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-offset-background",
-              settings.logo_ending ? "bg-primary" : "bg-muted"
-            )}
-          >
-            <span
-              className={cn(
-                "inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
-                settings.logo_ending ? "translate-x-5" : "translate-x-0"
-              )}
+          <div className="relative pt-2">
+            <input
+              type="range"
+              min="20"
+              max="60"
+              step="5"
+              value={settings.duration}
+              onChange={(e) => setSettings({ ...settings, duration: parseInt(e.target.value) })}
+              className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-muted accent-primary transition-all hover:bg-muted/80"
             />
-          </button>
-        </div>
-
-        {/* Captions Toggle */}
-        <div className="flex items-center justify-between rounded-xl border border-border bg-background p-4 shadow-sm">
-          <div className="space-y-0.5">
-            <Label className="text-sm font-semibold">Captions</Label>
-            <p className="text-xs text-muted-foreground">Show text overlays during the video</p>
-          </div>
-          <button
-            onClick={() => setSettings({ ...settings, captions_enabled: !settings.captions_enabled })}
-            className={cn(
-              "relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ring-offset-background",
-              settings.captions_enabled ? "bg-primary" : "bg-muted"
-            )}
-          >
-            <span
-              className={cn(
-                "inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
-                settings.captions_enabled ? "translate-x-5" : "translate-x-0"
-              )}
-            />
-          </button>
-        </div>
-
-        {/* Language selection */}
-        <div className="space-y-3">
-          <Label className="text-sm font-semibold">Language</Label>
-          <div className="relative">
-            <select
-              value={settings.language}
-              onChange={(e) => setSettings({ ...settings, language: e.target.value })}
-              className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 appearance-none transition-all shadow-sm pr-10"
-            >
-              {INDIAN_LANGUAGES.map((lang) => (
-                <option key={lang.value} value={lang.value}>
-                  {lang.label}
-                </option>
-              ))}
-            </select>
-            <ChevronDown className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+            <div className="mt-3 flex justify-between text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest px-1">
+              <span>Short</span>
+              <span>Medium</span>
+              <span>Long</span>
+            </div>
           </div>
         </div>
+
       </div>
 
-      <div className="rounded-xl bg-primary/5 p-4 border border-primary/10">
-        <p className="text-[11px] text-primary/80 font-medium uppercase tracking-wider mb-2">Estimated Flow</p>
-        <div className="space-y-1.5">
-           <div className="flex justify-between text-xs">
-              <span className="text-muted-foreground">Base duration</span>
-              <span className="font-semibold">{settings.duration}s</span>
-           </div>
-           <div className="flex justify-between text-xs">
-              <span className="text-muted-foreground">Scenes</span>
-              <span className="font-semibold">~{Math.ceil(settings.duration / 5)} scenes</span>
-           </div>
+      <div className="relative overflow-hidden rounded-2xl bg-primary p-5 shadow-lg shadow-primary/20">
+        <div className="relative z-10 flex flex-col gap-3">
+          <div className="flex items-center justify-between">
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary-foreground/60">Estimated Workflow</p>
+            <div className="h-1 w-8 rounded-full bg-primary-foreground/30" />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-primary-foreground/50">Total Length</p>
+              <p className="text-xl font-black text-primary-foreground">{settings.duration}s</p>
+            </div>
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-primary-foreground/50">Scene Count</p>
+              <p className="text-xl font-black text-primary-foreground">~{Math.ceil(settings.duration / 5)}</p>
+            </div>
+          </div>
         </div>
+        {/* Decorative background element */}
+        <div className="absolute -right-4 -top-8 h-32 w-32 rounded-full bg-white/10 blur-2xl" />
       </div>
     </div>
   );

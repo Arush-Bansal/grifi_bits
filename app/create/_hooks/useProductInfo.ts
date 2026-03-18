@@ -5,10 +5,13 @@ import axios from "axios";
 import { useFetchLinkMutation } from "./index";
 import { useProject } from "./useProject";
 import { useUIState } from "./useUIState";
+import { useSearchParams } from "next/navigation";
 
 export function useProductInfo() {
   const { projectData, updateCache } = useProject();
   const { lightboxImage, setLightboxImage } = useUIState();
+  const searchParams = useSearchParams();
+  const initialUrl = searchParams.get("url");
   
   const [productLink, setProductLink] = useState("");
   const [pinCode, setPinCode] = useState("110001");
@@ -108,6 +111,10 @@ export function useProductInfo() {
       const newDesc = data.description 
         ? `${projectData?.product_description || ""}\n\n${data.description}`.trim()
         : projectData?.product_description || "";
+      const extractedBrandColor = Array.isArray(data.colors)
+        ? data.colors.find((color: string) => /^#[0-9a-fA-F]{3,8}$/.test(color))
+        : undefined;
+      const brandColor = extractedBrandColor || projectData?.settings?.brand_color || "#f97316";
 
       setFetchedProductLinks((prev) => [...new Set([...prev, url])]);
       setProductLink("");
@@ -134,7 +141,8 @@ export function useProductInfo() {
             product_description: newDesc,
             settings: {
               ...(projectData?.settings || { orientation: "portrait", duration: 15, logo_ending: true, language: "en", captions_enabled: true }),
-              product_urls: newLinks
+              product_urls: newLinks,
+              brand_color: brandColor,
             },
             references: updatedPreviewUrls
               .filter(p => !p.url.startsWith("blob:")) // Safeguard
@@ -147,7 +155,7 @@ export function useProductInfo() {
               }))
           });
 
-          setLinkFeedback(`[VERSION 2.1] Successfully fetched info for ${data.title} and added ${imagesToAdd.length} images.`);
+          setLinkFeedback(`Successfully fetched info for ${data.title} and added ${imagesToAdd.length} images.`);
         } else {
           const currentLinks = projectData?.settings?.product_urls || [];
           const newLinks = [...new Set([...currentLinks, url])];
@@ -157,10 +165,11 @@ export function useProductInfo() {
             product_description: newDesc,
             settings: {
               ...(projectData?.settings || { orientation: "portrait", duration: 15, logo_ending: true, language: "en", captions_enabled: true }),
-              product_urls: newLinks
+              product_urls: newLinks,
+              brand_color: brandColor,
             },
           });
-          setLinkFeedback(`[VERSION 2.1] Successfully fetched info for ${data.title}. No new images added.`);
+          setLinkFeedback(`Successfully fetched info for ${data.title}. No new images added.`);
         }
       } else {
         const currentLinks = projectData?.settings?.product_urls || [];
@@ -171,10 +180,11 @@ export function useProductInfo() {
           product_description: newDesc,
           settings: {
             ...(projectData?.settings || { orientation: "portrait", duration: 15, logo_ending: true, language: "en", captions_enabled: true }),
-            product_urls: newLinks
+            product_urls: newLinks,
+            brand_color: brandColor,
           },
         });
-        setLinkFeedback(`[VERSION 2.1] Successfully fetched info for ${data.title}.`);
+        setLinkFeedback(`Successfully fetched info for ${data.title}.`);
       }
     },
   });
@@ -198,6 +208,22 @@ export function useProductInfo() {
     }
     fetchLinkMutation.mutate({ url: normalizedLink, pinCode });
   }, [productLink, pinCode, fetchedProductLinks, fetchLinkMutation]);
+
+  // Auto-fetch logic when initialUrl is provided via query params
+  const [hasAutoFetched, setHasAutoFetched] = useState(false);
+
+  useEffect(() => {
+    if (initialUrl && !hasAutoFetched && fetchedProductLinks.length === 0) {
+      const normalizedLink = initialUrl.startsWith("http://") || initialUrl.startsWith("https://") ? initialUrl : `https://${initialUrl}`;
+      try {
+        new URL(normalizedLink);
+        fetchLinkMutation.mutate({ url: normalizedLink, pinCode });
+        setHasAutoFetched(true);
+      } catch {
+        console.error("Invalid initial URL:", initialUrl);
+      }
+    }
+  }, [initialUrl, hasAutoFetched, fetchedProductLinks, fetchLinkMutation, pinCode]);
 
   return {
     product_name: projectData?.product_name || "",

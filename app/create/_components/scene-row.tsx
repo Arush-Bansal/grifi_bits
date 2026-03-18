@@ -19,8 +19,7 @@ export function SceneRow({ projectId, sceneId }: { projectId: string; sceneId: n
   return (
     <article className="grid gap-4 border-b border-border/60 bg-white/75 p-4 last:border-b-0 md:grid-cols-[140px_1fr] md:gap-0 md:p-0">
       <div className="md:border-r md:border-border/60 md:px-4 md:py-4">
-        <p className="text-xs uppercase tracking-[0.16em] text-primary">Scene {scene.id}</p>
-        <h3 className="mt-1 text-lg font-semibold">{scene.name}</h3>
+        <p className="text-xs uppercase tracking-[0.16em] text-primary font-bold">Scene {scene.id}</p>
       </div>
 
       <div className="space-y-2 md:px-4 md:py-4">

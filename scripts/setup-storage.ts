@@ -16,7 +16,7 @@ async function setupStorage() {
 
   const supabase = createClient(supabaseUrl, serviceRoleKey);
 
-  const buckets = ["orbit-assets", "media"];
+  const buckets = ["orbit-assets"];
 
   for (const bucketName of buckets) {
     console.log(`Checking bucket: ${bucketName}...`);

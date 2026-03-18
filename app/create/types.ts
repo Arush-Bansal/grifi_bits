@@ -1,4 +1,5 @@
 import { Database } from "@/lib/supabase/database.types";
+import { TemplateId } from "@/lib/template-catalog";
 
 export type StoryboardTimelineClip = {
   id: string;
@@ -9,46 +10,38 @@ export type StoryboardTimelineClip = {
   color: string;
 };
 
-export type Step = 0 | 1 | 2; // 0: Setup, 1: Scenes, 2: Preview
+export type Step = 0 | 1 | 2; // 0: Setup, 1: Settings, 2: Preview
 
 export type Json = Database['public']['Tables']['projects']['Row']['scenes'];
 
 export type ProjectRow = Database['public']['Tables']['projects']['Row'];
 
-export interface PlanConcept {
-  id?: string;
-  title: string;
-  description: string;
-  image_preview?: string;
-}
 
 export interface VideoSettings {
   orientation: "landscape" | "portrait";
   duration: number;
-  logo_ending: boolean;
-  language: string;
-  captions_enabled: boolean;
-  music_track?: string;
-  music_offset?: number;
-  music_volume?: number;
-  additional_instructions?: string;
-  custom_concept?: PlanConcept;
   product_urls?: string[];
-  template_id?: string;
+  template_id?: TemplateId;
+  template_preference?: TemplateId | "auto";
+  brand_color?: string;
+  music_track?: string;
+  music_volume?: number;
+  music_offset?: number;
+  final_video_url?: string;
 }
 
 export interface Scene {
   id: number;
-  name: string;
+  name?: string;
+  image_prompt?: string;
   video_prompt: string;
-  image_prompt: string;
-  speech: string;
-  image_url?: string;
-  audio_url?: string;
-  audio_duration?: number;
-  video_url?: string;
-  main_reference?: string;
-  secondary_reference?: string;
+  speech?: string;
+  image_url?: string | null;
+  audio_url?: string | null;
+  audio_duration?: number | null;
+  video_url?: string | null;
+  main_reference?: string | null;
+  secondary_reference?: string | null;
 }
 
 export interface ReferenceCard {
@@ -69,29 +62,17 @@ export interface ProjectData extends Partial<Omit<ProjectRow, 'scenes' | 'refere
   product_name: string; // Ensure name is always required
   scenes?: Scene[];
   references?: ReferenceCard[];
-  plans?: PlanConcept[];
   settings?: VideoSettings;
-  selected_plan_index?: number;
-  final_video_url?: string;
 }
 
 export interface ProjectUiState {
-  sceneGenerating: SceneGenerating;
-  editingImagePrompt: EditingPrompt;
-  editingAudioPrompt: EditingPrompt;
   editingRefId: string | null;
   isAutoSaveSuspended?: boolean;
 }
 
 export const initialProjectUiState: ProjectUiState = {
-  sceneGenerating: {},
-  editingImagePrompt: {},
-  editingAudioPrompt: {},
   editingRefId: null,
 };
-
-export type SceneGenerating = Record<string | number, { image?: boolean; audio?: boolean }>;
-export type EditingPrompt = Record<number, boolean>;
 
 export type OrchestrationResult = {
   scenes: Scene[];

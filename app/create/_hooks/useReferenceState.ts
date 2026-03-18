@@ -91,22 +91,6 @@ export function useReferenceState() {
     }
   }, [customReferenceCount, setReferences]);
 
-  const addAiAvatarReference = useCallback((imageUrl: string) => {
-    const nextCount = customReferenceCount;
-    const nextReferenceId = `custom-${nextCount}`;
-
-    setCustomReferenceCount((prev) => prev + 1);
-    setReferences((prev) => [
-      ...prev,
-      {
-        id: nextReferenceId,
-        label: `AI Avatar ${nextCount}`,
-        tagline: "AI Generated Avatar",
-        image_url: imageUrl
-      }
-    ]);
-  }, [customReferenceCount, setReferences]);
-
   return {
     references,
     setReferences,
@@ -116,9 +100,6 @@ export function useReferenceState() {
     setEditingRefId: (id: string | null) => updateUiCache({ editingRefId: id }),
     updateReferenceLimit,
     updateReferenceImage,
-    addReferenceCard,
-    addAiAvatarReference,
-    loading_avatars: false, // Defaulting as not implemented yet but used in layout
-    ai_avatars: [] // Defaulting as not implemented yet but used in layout
+    addReferenceCard
   };
 }
