@@ -29,93 +29,113 @@ export async function POST(req: NextRequest) {
       preferredTemplateId
     );
 
-    // Save to database if product_id is provided
-    if (product_id) {
-      const supabase = createSupabaseAdmin();
-      if (supabase) {
-        // 1. Clear existing scenes and references for this project
-        const { error: deleteScenesError } = await supabase.from("scenes").delete().eq("project_id", product_id);
-        if (deleteScenesError) {
-          throw new Error(`Failed to clear scenes: ${deleteScenesError.message}`);
-        }
-        // 2. Insert new scenes
-        const imageUrls = (image_contexts || [])
-          .map((ctx: { name: string; url: string }) => ctx.url)
-          .filter((url: string) => typeof url === "string" && url.length > 0);
-
-        const normalizedScenes = normalizeOrchestratorScenes(plan.SCENES, imageUrls);
-        const sceneInserts = normalizedScenes.map((scene) => ({
-          ...scene,
-          project_id: product_id,
-        }));
-
-        const { error: insertScenesError } = await supabase.from("scenes").insert(sceneInserts);
-        if (insertScenesError) {
-          throw new Error(`Failed to insert scenes: ${insertScenesError.message}`);
-        }
-
-        // 3. Update the project record itself with the new structured data
-        // Include the AI-selected template in settings
-        const currentSettings = settings || {};
-        const updatedSettings = {
-          ...currentSettings,
-          template_id: preferredTemplateId || plan.template_id
-        };
-
-        await supabase
-          .from("projects")
-          .update({
-            scenes: sceneInserts.map((s) => ({ ...s, id: s.scene_order })) as unknown as Json,
-            references: [] as unknown as Json,
-            settings: updatedSettings as unknown as Json,
-            updated_at: new Date().toISOString()
-          })
-          .eq("id", product_id);
-
-        // 5. Fetch and return the absolute latest "Full Project" object with structured merge
-        const { data: project } = await supabase
-          .from("projects")
-          .select("*")
-          .eq("id", product_id)
-          .single();
-
-        const { data: scenes } = await supabase.from("scenes").select("*").eq("project_id", product_id).order("scene_order", { ascending: true });
-        const { data: references } = await supabase.from("project_references").select("*").eq("project_id", product_id);
-
-        const projectScenes = Array.isArray(project?.scenes) ? (project.scenes as unknown as Scene[]) : [];
-        const mergedProject = {
-          ...project,
-          scenes: projectScenes.length > 0
-            ? projectScenes.map((s) => {
-                const ts = (scenes || []).find((row) => row.scene_order === s.id);
-                return {
-                  ...s,
-                  image_url: ts?.image_url || s.image_url || null,
-                  audio_url: ts?.audio_url || s.audio_url || null,
-                  audio_duration: ts?.audio_duration || s.audio_duration || null,
-                  video_url: ts?.video_url || s.video_url || null,
-                };
-              })
-            : (scenes || []).map((s) => ({
-                id: s.scene_order,
-                name: s.name || `Scene ${s.scene_order}`,
-                video_prompt: s.video_prompt || s.name || "",
-                speech: s.speech || s.video_prompt || "",
-                image_url: s.image_url,
-                audio_url: s.audio_url,
-                audio_duration: s.audio_duration,
-                video_url: s.video_url,
-                main_reference: s.main_reference,
-                secondary_reference: s.secondary_reference,
-              })),
-          references: (references || []).map(r => ({ ...r, id: r.reference_key }))
-        };
-
-        return NextResponse.json(mergedProject);
-      }
+    const supabase = createSupabaseAdmin();
+    if (!supabase) {
+      throw new Error("Supabase admin client not available");
     }
 
-    return NextResponse.json(plan);
+    // 1. Determine or create the project ID
+    let finalProjectId = product_id;
+    if (!finalProjectId) {
+      const { data: newProject, error: createError } = await supabase
+        .from("projects")
+        .insert({
+          product_name,
+          product_description,
+          settings: {
+            ...settings,
+            template_id: plan.template_id
+          } as unknown as Json,
+        })
+        .select("id")
+        .single();
+
+      if (createError) throw new Error(`Failed to create project: ${createError.message}`);
+      finalProjectId = newProject.id;
+    }
+
+    // 2. Clear existing scenes if updating
+    const { error: deleteScenesError } = await supabase.from("scenes").delete().eq("project_id", finalProjectId);
+    if (deleteScenesError) {
+      throw new Error(`Failed to clear scenes: ${deleteScenesError.message}`);
+    }
+
+    // 3. Normalize and Insert new scenes
+    const imageUrls = (image_contexts || [])
+      .map((ctx: { name: string; url: string }) => ctx.url)
+      .filter((url: string) => typeof url === "string" && url.length > 0);
+
+    // AI returns SCENES (caps), we use scenes (lowercase) in normalization helpers
+    const normalizedScenes = normalizeOrchestratorScenes(plan.SCENES, imageUrls);
+    const sceneInserts = normalizedScenes.map((scene) => ({
+      ...scene,
+      project_id: finalProjectId,
+    }));
+
+    const { error: insertScenesError } = await supabase.from("scenes").insert(sceneInserts);
+    if (insertScenesError) {
+      throw new Error(`Failed to insert scenes: ${insertScenesError.message}`);
+    }
+
+    // 4. Update the project record with normalized settings and scenes JSON
+    const updatedSettings = {
+      ...(settings || {}),
+      template_id: preferredTemplateId || plan.template_id
+    };
+
+    const { data: project, error: updateError } = await supabase
+      .from("projects")
+      .update({
+        scenes: sceneInserts.map((s) => ({ ...s, id: s.scene_order })) as unknown as Json,
+        references: [] as unknown as Json,
+        settings: updatedSettings as unknown as Json,
+        updated_at: new Date().toISOString()
+      })
+      .eq("id", finalProjectId)
+      .select("*")
+      .single();
+
+    if (updateError) throw new Error(`Failed to update project: ${updateError.message}`);
+
+    // 5. Final Merged Response
+    const { data: scenes } = await supabase
+      .from("scenes")
+      .select("*")
+      .eq("project_id", finalProjectId)
+      .order("scene_order", { ascending: true });
+    
+    const { data: references } = await supabase.from("project_references").select("*").eq("project_id", finalProjectId);
+
+    const projectScenes = Array.isArray(project?.scenes) ? (project.scenes as unknown as Scene[]) : [];
+    const mergedProject = {
+      ...project,
+      scenes: projectScenes.length > 0
+        ? projectScenes.map((s) => {
+            const ts = (scenes || []).find((row) => row.scene_order === s.id);
+            return {
+              ...s,
+              image_url: ts?.image_url || s.image_url || null,
+              audio_url: ts?.audio_url || s.audio_url || null,
+              audio_duration: ts?.audio_duration || s.audio_duration || null,
+              video_url: ts?.video_url || s.video_url || null,
+            };
+          })
+        : (scenes || []).map((s) => ({
+            id: s.scene_order,
+            name: s.name || `Scene ${s.scene_order}`,
+            video_prompt: s.video_prompt || s.name || "",
+            speech: s.speech || s.video_prompt || "",
+            image_url: s.image_url,
+            audio_url: s.audio_url,
+            audio_duration: s.audio_duration,
+            video_url: s.video_url,
+            main_reference: s.main_reference,
+            secondary_reference: s.secondary_reference,
+          })),
+      references: (references || []).map(r => ({ ...r, id: r.reference_key }))
+    };
+
+    return NextResponse.json(mergedProject);
   } catch (error: unknown) {
     const err = error as Error;
     console.error("Orchestration error:", err);

@@ -63,25 +63,29 @@ export async function orchestrateAdPlan(
       - Style: Distinctive, premium, modern. Avoid generic slideshow feel.
       - **Focus**: The product should be the star. Highlight features, benefits, and local availability (Blinkit/Zepto context).
       
-      Requirements:
-      1. SCENES: A list of scenes with:
-         - name (clear scene title)
-         - video_prompt (detailed visual direction)
-         - speech (short on-screen spoken line/caption for the scene; 6-14 words, punchy, no filler)
-      2. template_id: Choose the most appropriate template from this list:
+      Template Selection Strategy (CRITICAL):
+      1. Analyze the product category and brand tone (e.g., Luxury, Utility, High-Energy, Professional).
+      2. Match the tone to the most appropriate template from this list:
          ${templateListText}
+      3. Variety is key: If the product is high-end or skincare, bias towards "Minimalist". If it's for Gen-Z or fast-moving goods, bias towards "DynamicSocial". If it solves a problem, use "SplitScreen".
+      4. Only use "ProductShowcase" (Standard) if no other specific style fits better.
       
       Template orientation rules:
       - If orientation is portrait, choose ONLY from: ${portraitTemplateIds.map((id) => `"${id}"`).join(", ")}.
       - If orientation is landscape, choose ONLY from: ${landscapeTemplateIds.map((id) => `"${id}"`).join(", ")}.
       - For this request specifically, orientation is ${orientation}; bias strongly to ${orientationTemplateIds.map((id) => `"${id}"`).join(", ")}.
 
+      Scene Requirements:
+      1. SCENES: A list of scenes with:
+         - name (clear scene title)
+         - video_prompt (detailed visual direction)
+         - speech (short on-screen spoken line/caption for the scene; 6-14 words, punchy, no filler)
+      
       Creative quality rules (important):
       - Each scene should have a clear visual action, not just "show product".
       - Vary camera language across scenes (macro/detail, medium, wide, angle shifts, motion cues).
       - Keep copy specific and benefit-led; avoid generic adjectives like "amazing" without proof.
       - End with a decisive CTA tailored for fast-commerce purchase intent.
-
       Ensure the plan highlights the product clearly and ends with a strong CTA.
     `,
   });

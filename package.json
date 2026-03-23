@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "update-types": "npx supabase gen types typescript --project-id exywmwmvgtmpamjcpstt > lib/supabase/database.types.ts"
+    "update-types": "npx supabase gen types typescript --project-id exywmwmvgtmpamjcpstt > lib/supabase/database.types.ts",
+    "preview": "remotion preview remotion/Root.tsx"
   },
   "dependencies": {
     "@ai-sdk/google": "^3.0.43",
