@@ -174,6 +174,11 @@ const DEFAULT_PROPS_BY_TEMPLATE: Record<TemplateId, { productName: string; brand
     brandColor: "#78350f",
     scenes: DEFAULT_SCENES,
   },
+  MainAd: {
+    productName: "Main Ad",
+    brandColor: "#f97316",
+    scenes: DEFAULT_SCENES.map(s => ({ ...s, template_id: "ProductDemoVertical" as const })),
+  },
 };
 
 export const RemotionRoot: React.FC = () => {
@@ -181,6 +186,8 @@ export const RemotionRoot: React.FC = () => {
     <>
       {TEMPLATE_IDS.map((id) => {
         const config = resolveTemplateConfig(id);
+        const defaultProps = DEFAULT_PROPS_BY_TEMPLATE[id];
+
         return (
           <Composition
             key={id}
@@ -190,11 +197,24 @@ export const RemotionRoot: React.FC = () => {
             fps={30}
             width={config.width}
             height={config.height}
-            defaultProps={DEFAULT_PROPS_BY_TEMPLATE[id]}
-            calculateMetadata={({ props }: { props?: { scenes?: Array<{ id: number }> } }) => {
-              const sceneCount = Array.isArray(props?.scenes) && props.scenes.length > 0
-                ? props.scenes.length
-                : DEFAULT_PROPS_BY_TEMPLATE[id].scenes.length;
+            defaultProps={defaultProps}
+            calculateMetadata={({ props }: { props?: { scenes?: Array<{ id: number; template_id?: TemplateId }> } }) => {
+              const currentScenes = props?.scenes || defaultProps?.scenes;
+              
+              if (id === "MainAd" && currentScenes) {
+                let totalFrames = 0;
+                currentScenes.forEach((scene: any) => {
+                   // Match the fallback logic in MainAdTemplate
+                   const tid = scene.template_id || "ProductDemoVertical";
+                   const sceneConfig = resolveTemplateConfig(tid);
+                   totalFrames += Math.round(sceneConfig.sceneDurationSeconds * 30);
+                });
+                return { durationInFrames: Math.max(30, totalFrames) };
+              }
+
+              const sceneCount = Array.isArray(currentScenes) && currentScenes.length > 0
+                ? currentScenes.length
+                : 3;
 
               return {
                 durationInFrames: getTemplateDurationInFrames(id, sceneCount, 30),

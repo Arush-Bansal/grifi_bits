@@ -32,6 +32,7 @@ export const TEMPLATE_IDS = [
   "DailyRoutine",
   "WellnessFlow",
   "MaterialFocus",
+  "MainAd",
 ] as const;
 
 export type TemplateId = (typeof TEMPLATE_IDS)[number];
@@ -320,6 +321,14 @@ export const TEMPLATE_METADATA: Record<TemplateId, TemplateMetadata> = {
     tempo: "balanced",
     orchestrationHint: "Best for high-end furniture, luxury apparel, and hand-crafted hardware.",
   },
+  MainAd: {
+    label: "Main Ad Composition",
+    description: "System container for multi-template ads. Not for direct orchestration.",
+    orientation: "portrait",
+    sceneDurationSeconds: 4,
+    tempo: "balanced",
+    orchestrationHint: "Internal use only.",
+  },
 };
 
 export const TEMPLATE_PROMPT_CATALOG: Record<TemplateId, string> = {
@@ -356,6 +365,7 @@ export const TEMPLATE_PROMPT_CATALOG: Record<TemplateId, string> = {
   DailyRoutine: `${TEMPLATE_METADATA.DailyRoutine.description} (${TEMPLATE_METADATA.DailyRoutine.orientation}).`,
   WellnessFlow: `${TEMPLATE_METADATA.WellnessFlow.description} (${TEMPLATE_METADATA.WellnessFlow.orientation}).`,
   MaterialFocus: `${TEMPLATE_METADATA.MaterialFocus.description} (${TEMPLATE_METADATA.MaterialFocus.orientation}).`,
+  MainAd: "Main Ad Container",
 };
 
 export function getTemplateIdsForOrientation(orientation: TemplateOrientation): TemplateId[] {

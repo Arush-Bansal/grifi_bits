@@ -11,8 +11,8 @@ import {
 } from "./template-catalog";
 
 export const sceneSchema = z.object({
-  template_id: z.enum(TEMPLATE_IDS),
   SCENES: z.array(z.object({
+    template_id: z.enum(TEMPLATE_IDS),
     name: z.string().min(1),
     video_prompt: z.string().min(1),
     speech: z.string().min(1),
@@ -38,8 +38,8 @@ export async function orchestrateAdPlan(
   const portraitTemplateIds = getTemplateIdsForOrientation("portrait");
   const landscapeTemplateIds = getTemplateIdsForOrientation("landscape");
   const preferredTemplateText = preferredTemplateId
-    ? `\nTemplate preference from user: "${preferredTemplateId}". You MUST return this as template_id and write scenes for this style.`
-    : "\nNo fixed template preference provided. Pick the best template that matches orientation and product context.";
+    ? `\nTemplate preference from user: "${preferredTemplateId}". You should favor this template for most scenes unless another one specifically fits better.`
+    : "\nNo fixed template preference provided. Pick the best template for each scene that matches orientation and product context.";
 
   const imageContextText = imageContext && imageContext.length > 0 
     ? `\nReference Images Context:\n${imageContext.join("\n")}`
@@ -50,7 +50,7 @@ export async function orchestrateAdPlan(
     schema: sceneSchema,
     prompt: `
       You are an expert AI video advertisement director for "Bits by Grifi".
-      Based on the product info, reference images, and selected concept, generate a structured sequence of scenes for a focus product demo.
+      Based on the product info, reference images, and orientation, generate a structured sequence of scenes for a Focus video.
       
       Product Info:
       ${productInfo}
@@ -64,38 +64,31 @@ export async function orchestrateAdPlan(
       - **Focus**: The product should be the star. Highlight features, benefits, and local availability (Blinkit/Zepto context).
       
       Template Selection Strategy (CRITICAL):
-      1. Analyze the product category and brand tone (e.g., Luxury, Utility, High-Energy, Professional).
-      2. Match the tone to the most appropriate template from this list:
+      1. For EACH scene, you MUST select a "template_id" from the catalog.
+      2. Analyze the product category and brand tone (e.g., Luxury, Utility, High-Energy, Professional).
+      3. Match the tone of EACH scene to the most appropriate template from this list:
          ${templateListText}
-      3. Variety is key: If the product is high-end or skincare, bias towards "Minimalist". If it's for Gen-Z or fast-moving goods, bias towards "DynamicSocial". If it solves a problem, use "SplitScreen".
-      4. Only use "ProductShowcase" (Standard) if no other specific style fits better.
+      4. Variety is key: Mix templates to create a dynamic flow. If a scene shows reviews, use "SocialProofCarousel". If it shows features, use "BentoGrid" or "ProductDemo". If it's a reveal, use "PaperPop".
       
       Template orientation rules:
       - If orientation is portrait, choose ONLY from: ${portraitTemplateIds.map((id) => `"${id}"`).join(", ")}.
       - If orientation is landscape, choose ONLY from: ${landscapeTemplateIds.map((id) => `"${id}"`).join(", ")}.
-      - For this request specifically, orientation is ${orientation}; bias strongly to ${orientationTemplateIds.map((id) => `"${id}"`).join(", ")}.
+      - For this request specifically, orientation is ${orientation}; choose ONLY from ${orientationTemplateIds.map((id) => `"${id}"`).join(", ")}.
 
       Scene Requirements:
       1. SCENES: A list of scenes with:
-         - name (clear scene title)
-         - video_prompt (detailed visual direction)
-         - speech (short on-screen spoken line/caption for the scene; 6-14 words, punchy, no filler)
+         - template_id: The specific visual style for this scene.
+         - name: clear scene title
+         - video_prompt: detailed visual direction for this specific scene
+         - speech: short on-screen spoken line/caption for the scene; 6-14 words, punchy, no filler
       
       Creative quality rules (important):
       - Each scene should have a clear visual action, not just "show product".
       - Vary camera language across scenes (macro/detail, medium, wide, angle shifts, motion cues).
       - Keep copy specific and benefit-led; avoid generic adjectives like "amazing" without proof.
       - End with a decisive CTA tailored for fast-commerce purchase intent.
-      Ensure the plan highlights the product clearly and ends with a strong CTA.
     `,
   });
-
-  if (preferredTemplateId) {
-    return {
-      ...object,
-      template_id: preferredTemplateId,
-    };
-  }
 
   return object;
 }

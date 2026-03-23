@@ -42,6 +42,7 @@ export interface Scene {
   video_url?: string | null;
   main_reference?: string | null;
   secondary_reference?: string | null;
+  template_id?: TemplateId;
 }
 
 export interface ReferenceCard {
