@@ -47,6 +47,7 @@ export type TemplateMetadata = {
   sceneDurationSeconds: number;
   tempo: TemplateTempo;
   orchestrationHint: string;
+  isContainer?: boolean;
 };
 
 const TEMPLATE_ID_SET = new Set<string>(TEMPLATE_IDS);
@@ -329,6 +330,7 @@ export const TEMPLATE_METADATA: Record<TemplateId, TemplateMetadata> = {
     sceneDurationSeconds: 4,
     tempo: "balanced",
     orchestrationHint: "Internal use only.",
+    isContainer: true,
   },
   MainAdLandscape: {
     label: "Main Ad Composition (Landscape)",
@@ -337,6 +339,7 @@ export const TEMPLATE_METADATA: Record<TemplateId, TemplateMetadata> = {
     sceneDurationSeconds: 4,
     tempo: "balanced",
     orchestrationHint: "Internal use only.",
+    isContainer: true,
   },
 };
 

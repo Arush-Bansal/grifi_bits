@@ -29,7 +29,7 @@ export async function orchestrateAdPlan(
   orientation: TemplateOrientation = "portrait",
   preferredTemplateId?: TemplateId
 ): Promise<GeneratedPlan> {
-  const templateListText = TEMPLATE_IDS.map((id) => {
+  const templateListText = TEMPLATE_IDS.filter(id => !TEMPLATE_METADATA[id].isContainer).map((id) => {
     const template = TEMPLATE_METADATA[id];
     return `- "${id}" (${template.orientation}, ${template.tempo}, ${template.sceneDurationSeconds}s/scene): ${TEMPLATE_PROMPT_CATALOG[id]} Hint: ${template.orchestrationHint}`;
   }).join("\n");
