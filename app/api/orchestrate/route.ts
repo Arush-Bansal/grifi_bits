@@ -34,6 +34,10 @@ export async function POST(req: NextRequest) {
       throw new Error("Supabase admin client not available");
     }
 
+    // AI returns SCENES. Each scene has its own template_id now. 
+    // We pick the first one as a representative for the project settings if none preferred.
+    const representativeTemplateId = preferredTemplateId || plan.SCENES[0]?.template_id || "ProductDemo";
+
     // 1. Determine or create the project ID
     let finalProjectId = product_id;
     if (!finalProjectId) {
@@ -44,7 +48,7 @@ export async function POST(req: NextRequest) {
           product_description,
           settings: {
             ...settings,
-            template_id: plan.template_id
+            template_id: representativeTemplateId
           } as unknown as Json,
         })
         .select("id")
@@ -72,15 +76,30 @@ export async function POST(req: NextRequest) {
       project_id: finalProjectId,
     }));
 
-    const { error: insertScenesError } = await supabase.from("scenes").insert(sceneInserts);
-    if (insertScenesError) {
-      throw new Error(`Failed to insert scenes: ${insertScenesError.message}`);
+    let insertError: any = null;
+    try {
+      const { error } = await supabase.from("scenes").insert(sceneInserts);
+      insertError = error;
+    } catch (e) {
+      insertError = e;
+    }
+
+    if (insertError) {
+      console.warn("[Orchestrate] Failed to insert into 'scenes' table. This might be due to a missing 'template_id' column. Falling back to JSON-only storage.", insertError.message);
+      
+      // Fallback: Try inserting without template_id if it failed
+      const safeInserts = sceneInserts.map(({ template_id, ...rest }: any) => rest);
+      const { error: retryError } = await supabase.from("scenes").insert(safeInserts);
+      
+      if (retryError) {
+        throw new Error(`Failed to insert scenes even after fallback: ${retryError.message}`);
+      }
     }
 
     // 4. Update the project record with normalized settings and scenes JSON
     const updatedSettings = {
       ...(settings || {}),
-      template_id: preferredTemplateId || plan.template_id
+      template_id: representativeTemplateId
     };
 
     const { data: project, error: updateError } = await supabase
@@ -118,6 +137,7 @@ export async function POST(req: NextRequest) {
               audio_url: ts?.audio_url || s.audio_url || null,
               audio_duration: ts?.audio_duration || s.audio_duration || null,
               video_url: ts?.video_url || s.video_url || null,
+              template_id: (ts as any)?.template_id || (s as any).template_id || null,
             };
           })
         : (scenes || []).map((s) => ({
@@ -131,6 +151,7 @@ export async function POST(req: NextRequest) {
             video_url: s.video_url,
             main_reference: s.main_reference,
             secondary_reference: s.secondary_reference,
+            template_id: (s as any).template_id || null,
           })),
       references: (references || []).map(r => ({ ...r, id: r.reference_key }))
     };
