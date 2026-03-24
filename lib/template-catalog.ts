@@ -33,6 +33,7 @@ export const TEMPLATE_IDS = [
   "WellnessFlow",
   "MaterialFocus",
   "MainAd",
+  "MainAdLandscape",
 ] as const;
 
 export type TemplateId = (typeof TEMPLATE_IDS)[number];
@@ -329,6 +330,14 @@ export const TEMPLATE_METADATA: Record<TemplateId, TemplateMetadata> = {
     tempo: "balanced",
     orchestrationHint: "Internal use only.",
   },
+  MainAdLandscape: {
+    label: "Main Ad Composition (Landscape)",
+    description: "System container for multi-template ads in landscape. Not for direct orchestration.",
+    orientation: "landscape",
+    sceneDurationSeconds: 4,
+    tempo: "balanced",
+    orchestrationHint: "Internal use only.",
+  },
 };
 
 export const TEMPLATE_PROMPT_CATALOG: Record<TemplateId, string> = {
@@ -366,6 +375,7 @@ export const TEMPLATE_PROMPT_CATALOG: Record<TemplateId, string> = {
   WellnessFlow: `${TEMPLATE_METADATA.WellnessFlow.description} (${TEMPLATE_METADATA.WellnessFlow.orientation}).`,
   MaterialFocus: `${TEMPLATE_METADATA.MaterialFocus.description} (${TEMPLATE_METADATA.MaterialFocus.orientation}).`,
   MainAd: "Main Ad Container",
+  MainAdLandscape: "Main Ad Container (Landscape)",
 };
 
 export function getTemplateIdsForOrientation(orientation: TemplateOrientation): TemplateId[] {

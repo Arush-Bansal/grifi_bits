@@ -23,7 +23,8 @@ export const MainAdTemplate: React.FC<MainAdProps> = ({
   productName = "Product Name",
   brandColor = "#f97316",
 }) => {
-  const { fps } = useVideoConfig();
+  const { fps, width, height } = useVideoConfig();
+  const isLandscape = width > height;
 
   let currentFrame = 0;
 
@@ -36,7 +37,10 @@ export const MainAdTemplate: React.FC<MainAdProps> = ({
     <AbsoluteFill style={{ backgroundColor: "#000" }}>
       {scenes.map((scene, index) => {
         // Fallback rotation for standard templates if template_id is missing
-        const fallbackIds: TemplateId[] = ["ProductDemoVertical", "BentoGrid", "DynamicSocial", "Minimalist"];
+        const portraitFallbacks: TemplateId[] = ["ProductDemoVertical", "BentoGrid", "DynamicSocial", "Minimalist"];
+        const landscapeFallbacks: TemplateId[] = ["ProductDemo", "BentoGrid", "Minimalist", "SplitScreen"];
+        
+        const fallbackIds = isLandscape ? landscapeFallbacks : portraitFallbacks;
         const tid = scene.template_id || fallbackIds[index % fallbackIds.length];
         
         const component = TEMPLATE_COMPONENTS[tid];

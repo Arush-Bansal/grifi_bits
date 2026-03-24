@@ -179,6 +179,11 @@ const DEFAULT_PROPS_BY_TEMPLATE: Record<TemplateId, { productName: string; brand
     brandColor: "#f97316",
     scenes: DEFAULT_SCENES.map(s => ({ ...s, template_id: "ProductDemoVertical" as const })),
   },
+  MainAdLandscape: {
+    productName: "Main Ad Landscape",
+    brandColor: "#f97316",
+    scenes: DEFAULT_SCENES.map(s => ({ ...s, template_id: "ProductDemo" as const })),
+  },
 };
 
 export const RemotionRoot: React.FC = () => {
@@ -201,11 +206,12 @@ export const RemotionRoot: React.FC = () => {
             calculateMetadata={({ props }: { props?: { scenes?: Array<{ id: number; template_id?: TemplateId }> } }) => {
               const currentScenes = props?.scenes || defaultProps?.scenes;
               
-              if (id === "MainAd" && currentScenes) {
+              if ((id === "MainAd" || id === "MainAdLandscape") && currentScenes) {
                 let totalFrames = 0;
                 currentScenes.forEach((scene: any) => {
                    // Match the fallback logic in MainAdTemplate
-                   const tid = scene.template_id || "ProductDemoVertical";
+                   const isLandscape = id === "MainAdLandscape";
+                   const tid = scene.template_id || (isLandscape ? "ProductDemo" : "ProductDemoVertical");
                    const sceneConfig = resolveTemplateConfig(tid);
                    totalFrames += Math.round(sceneConfig.sceneDurationSeconds * 30);
                 });

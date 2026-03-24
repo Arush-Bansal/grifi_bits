@@ -47,6 +47,13 @@ const buildRegistry = (): Record<TemplateId, TemplateConfig> => {
     height: 1920,
     sceneDurationSeconds: 4,
   };
+  
+  registry.MainAdLandscape = {
+    component: MainAdTemplate as any,
+    width: 1920,
+    height: 1080,
+    sceneDurationSeconds: 4,
+  };
 
   return registry;
 };
