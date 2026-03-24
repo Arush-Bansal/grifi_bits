@@ -28,6 +28,7 @@ export interface VideoSettings {
   music_volume?: number;
   music_offset?: number;
   final_video_url?: string;
+  captions_enabled?: boolean;
 }
 
 export interface Scene {
@@ -66,9 +67,16 @@ export interface ProjectData extends Partial<Omit<ProjectRow, 'scenes' | 'refere
   settings?: VideoSettings;
 }
 
+export interface EditingPrompt {
+  sceneId?: number;
+  prompt?: string;
+}
+
 export interface ProjectUiState {
   editingRefId: string | null;
   isAutoSaveSuspended?: boolean;
+  sceneGenerating?: number | null;
+  editingImagePrompt?: EditingPrompt;
 }
 
 export const initialProjectUiState: ProjectUiState = {

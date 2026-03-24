@@ -1,10 +1,13 @@
+import React from "react";
 import { renderMediaOnWeb, RenderMediaOnWebProgress } from "@remotion/web-renderer";
 import { resolveTemplateConfig } from "@/remotion/template-registry";
 import { TemplateId } from "@/lib/template-catalog";
 import { supabaseClient } from "@/lib/supabase/client";
 
+import { Scene } from "@/app/create/types";
+
 export interface ClientRenderParams {
-  scenes: any[];
+  scenes: Scene[];
   productName: string;
   brandColor?: string;
   templateId: TemplateId;
@@ -28,7 +31,7 @@ export async function renderProductDemoOnClient({
   let durationInFrames = 0;
   if (templateId === "MainAd" || templateId === "MainAdLandscape") {
     const isLandscape = templateId === "MainAdLandscape";
-    scenes.forEach((scene: any) => {
+    scenes.forEach((scene: Scene) => {
       const tid = scene.template_id || (isLandscape ? "ProductDemo" : "ProductDemoVertical");
       const sc = resolveTemplateConfig(tid as TemplateId);
       durationInFrames += Math.round(sc.sceneDurationSeconds * fps);
@@ -54,7 +57,8 @@ export async function renderProductDemoOnClient({
         height: config.height,
         fps: fps,
         durationInFrames: durationInFrames,
-        component: config.component as any,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        component: config.component as React.ComponentType<any>,
         defaultProps: inputProps,
       },
       inputProps,

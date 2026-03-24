@@ -76,20 +76,25 @@ export async function POST(req: NextRequest) {
       project_id: finalProjectId,
     }));
 
-    let insertError: any = null;
+    let insertError: Error | null = null;
     try {
       const { error } = await supabase.from("scenes").insert(sceneInserts);
-      insertError = error;
+      insertError = error as unknown as Error;
     } catch (e) {
-      insertError = e;
+      insertError = e as Error;
     }
 
     if (insertError) {
       console.warn("[Orchestrate] Failed to insert into 'scenes' table. This might be due to a missing 'template_id' column. Falling back to JSON-only storage.", insertError.message);
       
       // Fallback: Try inserting without template_id if it failed
-      const safeInserts = sceneInserts.map(({ template_id, ...rest }: any) => rest);
-      const { error: retryError } = await supabase.from("scenes").insert(safeInserts);
+      const safeInserts = sceneInserts.map((s) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { template_id, ...rest } = s;
+        return rest;
+      });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error: retryError } = await supabase.from("scenes").insert(safeInserts as any[]);
       
       if (retryError) {
         throw new Error(`Failed to insert scenes even after fallback: ${retryError.message}`);
@@ -137,7 +142,8 @@ export async function POST(req: NextRequest) {
               audio_url: ts?.audio_url || s.audio_url || null,
               audio_duration: ts?.audio_duration || s.audio_duration || null,
               video_url: ts?.video_url || s.video_url || null,
-              template_id: (ts as any)?.template_id || (s as any).template_id || null,
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              template_id: (ts as any)?.template_id || (s as Scene).template_id || null,
             };
           })
         : (scenes || []).map((s) => ({
@@ -151,6 +157,7 @@ export async function POST(req: NextRequest) {
             video_url: s.video_url,
             main_reference: s.main_reference,
             secondary_reference: s.secondary_reference,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             template_id: (s as any).template_id || null,
           })),
       references: (references || []).map(r => ({ ...r, id: r.reference_key }))
