@@ -7,7 +7,8 @@ import { useProject } from "./useProject";
 const DEFAULT_SETTINGS: VideoSettings = {
   orientation: "portrait",
   duration: 20,
-  template_preference: "auto",
+  template_preference: "MainAd",
+  template_id: "MainAd",
   brand_color: "#f97316",
 };
 
