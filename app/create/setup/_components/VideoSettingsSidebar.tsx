@@ -1,51 +1,39 @@
 "use client";
 
+import { useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Smartphone, Monitor } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { VideoSettings } from "../../types";
-import { TemplateId, TEMPLATE_IDS, TEMPLATE_METADATA } from "@/lib/template-catalog";
+import { TemplateId } from "@/lib/template-catalog";
 
 interface VideoSettingsSidebarProps {
   settings: VideoSettings;
-  setSettings: (settings: VideoSettings) => void;
+  setSettings: (settings: VideoSettings | ((prev: VideoSettings) => VideoSettings)) => void;
 }
 
 export function VideoSettingsSidebar({ settings, setSettings }: VideoSettingsSidebarProps) {
-  const compatibleTemplates = TEMPLATE_IDS.filter(
-    (templateId) => TEMPLATE_METADATA[templateId].orientation === settings.orientation
-  );
-
-  const selectTemplate = (templateId: TemplateId | "auto") => {
-    if (templateId === "auto") {
-      setSettings({
-        ...settings,
-        template_preference: "auto",
-        template_id: undefined,
-      });
-      return;
+  useEffect(() => {
+    // Ensure the correct MainAd template is set for the current orientation
+    const expectedTemplate = settings.orientation === "portrait" ? "MainAd" : "MainAdLandscape";
+    if (settings.template_id !== expectedTemplate) {
+      setSettings((prev) => ({
+        ...prev,
+        template_id: expectedTemplate as TemplateId,
+        template_preference: expectedTemplate as TemplateId,
+      }));
     }
-
-    setSettings({
-      ...settings,
-      template_preference: templateId,
-      template_id: templateId,
-    });
-  };
+  }, [settings.orientation, settings.template_id, setSettings]);
 
   const updateOrientation = (orientation: "portrait" | "landscape") => {
-    const currentPreference = settings.template_preference;
-    const preferenceIsCompatible =
-      currentPreference &&
-      currentPreference !== "auto" &&
-      TEMPLATE_METADATA[currentPreference].orientation === orientation;
-
-    setSettings({
-      ...settings,
+    const nextTemplate = orientation === "portrait" ? "MainAd" : "MainAdLandscape";
+    
+    setSettings((prev) => ({
+      ...prev,
       orientation,
-      template_preference: preferenceIsCompatible ? currentPreference : "auto",
-      template_id: preferenceIsCompatible ? currentPreference : undefined,
-    });
+      template_preference: nextTemplate as TemplateId,
+      template_id: nextTemplate as TemplateId,
+    }));
   };
 
   return (
@@ -100,48 +88,6 @@ export function VideoSettingsSidebar({ settings, setSettings }: VideoSettingsSid
           </div>
         </div>
 
-        <div className="space-y-4">
-          <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Template Style</Label>
-          <div className="grid grid-cols-1 gap-2">
-            <button
-              onClick={() => selectTemplate("auto")}
-              className={cn(
-                "rounded-xl border px-4 py-3 text-left transition-all",
-                settings.template_preference === "auto" || !settings.template_preference
-                  ? "border-primary bg-primary/10"
-                  : "border-border/60 bg-background/60 hover:border-primary/40 hover:bg-primary/5"
-              )}
-            >
-              <p className="text-sm font-bold text-foreground">Auto (AI Pick)</p>
-              <p className="text-xs text-muted-foreground">AI chooses the best template for your product and orientation.</p>
-            </button>
-
-            {compatibleTemplates.map((templateId) => {
-              const template = TEMPLATE_METADATA[templateId];
-              const isSelected = settings.template_preference === templateId;
-              return (
-                <button
-                  key={templateId}
-                  onClick={() => selectTemplate(templateId)}
-                  className={cn(
-                    "rounded-xl border px-4 py-3 text-left transition-all",
-                    isSelected
-                      ? "border-primary bg-primary/10 shadow-sm shadow-primary/10"
-                      : "border-border/60 bg-background/60 hover:border-primary/40 hover:bg-primary/5"
-                  )}
-                >
-                  <div className="flex items-center justify-between gap-3">
-                    <p className="text-sm font-bold text-foreground">{template.label}</p>
-                    <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
-                      {template.tempo}
-                    </span>
-                  </div>
-                  <p className="mt-1 text-xs text-muted-foreground">{template.description}</p>
-                </button>
-              );
-            })}
-          </div>
-        </div>
 
         {/* Duration */}
         <div className="space-y-4">
@@ -158,7 +104,7 @@ export function VideoSettingsSidebar({ settings, setSettings }: VideoSettingsSid
               max="60"
               step="5"
               value={settings.duration}
-              onChange={(e) => setSettings({ ...settings, duration: parseInt(e.target.value) })}
+              onChange={(e) => setSettings((prev) => ({ ...prev, duration: parseInt(e.target.value) }))}
               className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-muted accent-primary transition-all hover:bg-muted/80"
             />
             <div className="mt-3 flex justify-between text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest px-1">

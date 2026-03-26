@@ -7,6 +7,7 @@ import { useProject } from "../../_hooks/useProject";
 import { useUIState } from "../../_hooks/useUIState";
 
 import { usePreviewAudio } from "./usePreviewAudio";
+import { DEFAULT_TEMPLATE_ID } from "@/lib/template-catalog";
 
 export function usePreviewPage() {
   const {
@@ -49,7 +50,7 @@ export function usePreviewPage() {
           settings?.template_id ||
           (settings?.template_preference && settings.template_preference !== "auto"
             ? settings.template_preference
-            : undefined),
+            : DEFAULT_TEMPLATE_ID),
       },
     });
 

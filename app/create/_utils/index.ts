@@ -31,7 +31,7 @@ export const buildInitialTimelineClips = (sourceScenes: Scene[]): StoryboardTime
     return {
       id: `scene-${scene.id}`,
       sceneId: scene.id,
-      title: scene.name,
+      title: scene.name || `Scene ${scene.id}`,
       start,
       end,
       color: timelineClipPalette[index % timelineClipPalette.length]

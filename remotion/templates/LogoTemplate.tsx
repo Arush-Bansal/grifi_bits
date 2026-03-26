@@ -1,8 +1,20 @@
 import { AbsoluteFill, Img, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 
-export const LogoTemplate: React.FC<{ logoUrl: string }> = ({ logoUrl }) => {
+interface LogoTemplateProps {
+  scenes?: Array<{ id: number; image_url?: string | null }>;
+  productName?: string;
+  brandColor?: string;
+}
+
+export const LogoTemplate: React.FC<LogoTemplateProps> = ({ 
+  scenes = [], 
+  productName = "Brand",
+  brandColor = "#f97316"
+}) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+
+  const logoUrl = scenes[0]?.image_url || "https://images.unsplash.com/photo-1523275335684-37898b6baf30";
 
   const entrance = spring({
     frame,
@@ -37,6 +49,16 @@ export const LogoTemplate: React.FC<{ logoUrl: string }> = ({ logoUrl }) => {
             objectFit: "contain"
           }} 
         />
+        <div style={{
+          fontSize: 48,
+          fontWeight: 800,
+          color: brandColor,
+          fontFamily: "sans-serif",
+          textTransform: "uppercase",
+          letterSpacing: "0.1em"
+        }}>
+          {productName}
+        </div>
       </div>
     </AbsoluteFill>
   );

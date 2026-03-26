@@ -9,3 +9,4 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 gen-lang-client-0601180464-642740172896.json
+tmp

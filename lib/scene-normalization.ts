@@ -1,4 +1,5 @@
 import { Database } from "@/lib/supabase/database.types";
+import { TemplateId } from "./template-catalog";
 
 type SceneInsert = Database["public"]["Tables"]["scenes"]["Insert"];
 
@@ -6,12 +7,13 @@ export type OrchestratorScene = {
   name: string;
   video_prompt: string;
   speech?: string;
+  template_id?: TemplateId;
 };
 
 export function normalizeOrchestratorScenes(
   scenes: OrchestratorScene[],
   imageUrls: string[] = []
-): SceneInsert[] {
+): (SceneInsert & { template_id?: TemplateId })[] {
   return scenes.map((scene, index) => {
     const order = index + 1;
     const normalizedName = scene.name?.trim() || `Scene ${order}`;
@@ -25,6 +27,7 @@ export function normalizeOrchestratorScenes(
       video_prompt: normalizedPrompt,
       speech: normalizedSpeech,
       image_url: imageUrl,
+      template_id: scene.template_id,
       image_prompt: null,
       audio_url: null,
       audio_duration: null,

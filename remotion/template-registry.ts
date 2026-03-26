@@ -1,15 +1,7 @@
 import React from "react";
-import { ProductDemoTemplate } from "./templates/ProductDemoTemplate";
-import { MinimalistTemplate } from "./templates/MinimalistTemplate";
-import { DynamicSocialTemplate } from "./templates/DynamicSocialTemplate";
-import { SplitScreenTemplate } from "./templates/SplitScreenTemplate";
-import { MinimalistVerticalTemplate } from "./templates/MinimalistVerticalTemplate";
-import { FlashSaleTemplate } from "./templates/FlashSaleTemplate";
-import { KineticTypeTemplate } from "./templates/KineticTypeTemplate";
-import { StoryCardsTemplate } from "./templates/StoryCardsTemplate";
-import { LuxuryShowcaseTemplate } from "./templates/LuxuryShowcaseTemplate";
-import { BeforeAfterTemplate } from "./templates/BeforeAfterTemplate";
+import { MainAdTemplate } from "./templates/MainAdTemplate";
 import { DEFAULT_TEMPLATE_ID, TEMPLATE_METADATA, TemplateId } from "../lib/template-catalog";
+import { TEMPLATE_COMPONENTS } from "./template-components";
 
 export type TemplateScene = {
   id: number;
@@ -29,74 +21,44 @@ export type TemplateConfig = {
   sceneDurationSeconds: number;
 };
 
-export const TEMPLATE_REGISTRY: Record<TemplateId, TemplateConfig> = {
-  ProductDemo: {
-    component: ProductDemoTemplate,
+// This helper constructs the registry by combining components from template-components.ts
+// with the metadata from template-catalog.ts
+const buildRegistry = (): Record<TemplateId, TemplateConfig> => {
+  const registry: any = {};
+  
+  // Fill in all standard templates from TEMPLATE_COMPONENTS
+  (Object.keys(TEMPLATE_COMPONENTS) as TemplateId[]).forEach((id) => {
+    const metadata = TEMPLATE_METADATA[id];
+    const component = TEMPLATE_COMPONENTS[id];
+    if (metadata && component) {
+      registry[id] = {
+        component,
+        width: metadata.orientation === "landscape" ? 1920 : 1080,
+        height: metadata.orientation === "landscape" ? 1080 : 1920,
+        sceneDurationSeconds: metadata.sceneDurationSeconds,
+      };
+    }
+  });
+
+  // Add the Special MainAd component
+  registry.MainAd = {
+    component: MainAdTemplate as any,
+    width: 1080,
+    height: 1920,
+    sceneDurationSeconds: 4,
+  };
+  
+  registry.MainAdLandscape = {
+    component: MainAdTemplate as any,
     width: 1920,
     height: 1080,
-    sceneDurationSeconds: TEMPLATE_METADATA.ProductDemo.sceneDurationSeconds,
-  },
-  ProductDemoVertical: {
-    component: ProductDemoTemplate,
-    width: 1080,
-    height: 1920,
-    sceneDurationSeconds: TEMPLATE_METADATA.ProductDemoVertical.sceneDurationSeconds,
-  },
-  Minimalist: {
-    component: MinimalistTemplate,
-    width: 1920,
-    height: 1080,
-    sceneDurationSeconds: TEMPLATE_METADATA.Minimalist.sceneDurationSeconds,
-  },
-  DynamicSocial: {
-    component: DynamicSocialTemplate,
-    width: 1080,
-    height: 1920,
-    sceneDurationSeconds: TEMPLATE_METADATA.DynamicSocial.sceneDurationSeconds,
-  },
-  SplitScreen: {
-    component: SplitScreenTemplate,
-    width: 1920,
-    height: 1080,
-    sceneDurationSeconds: TEMPLATE_METADATA.SplitScreen.sceneDurationSeconds,
-  },
-  MinimalistVertical: {
-    component: MinimalistVerticalTemplate,
-    width: 1080,
-    height: 1920,
-    sceneDurationSeconds: TEMPLATE_METADATA.MinimalistVertical.sceneDurationSeconds,
-  },
-  FlashSale: {
-    component: FlashSaleTemplate,
-    width: 1080,
-    height: 1920,
-    sceneDurationSeconds: TEMPLATE_METADATA.FlashSale.sceneDurationSeconds,
-  },
-  KineticType: {
-    component: KineticTypeTemplate,
-    width: 1080,
-    height: 1920,
-    sceneDurationSeconds: TEMPLATE_METADATA.KineticType.sceneDurationSeconds,
-  },
-  StoryCards: {
-    component: StoryCardsTemplate,
-    width: 1080,
-    height: 1920,
-    sceneDurationSeconds: TEMPLATE_METADATA.StoryCards.sceneDurationSeconds,
-  },
-  LuxuryShowcase: {
-    component: LuxuryShowcaseTemplate,
-    width: 1920,
-    height: 1080,
-    sceneDurationSeconds: TEMPLATE_METADATA.LuxuryShowcase.sceneDurationSeconds,
-  },
-  BeforeAfter: {
-    component: BeforeAfterTemplate,
-    width: 1920,
-    height: 1080,
-    sceneDurationSeconds: TEMPLATE_METADATA.BeforeAfter.sceneDurationSeconds,
-  },
+    sceneDurationSeconds: 4,
+  };
+
+  return registry;
 };
+
+export const TEMPLATE_REGISTRY: Record<TemplateId, TemplateConfig> = buildRegistry();
 
 export function resolveTemplateConfig(templateId?: TemplateId): TemplateConfig {
   if (templateId && TEMPLATE_REGISTRY[templateId]) {
