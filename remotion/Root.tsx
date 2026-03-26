@@ -34,6 +34,36 @@ const DEFAULT_PROPS_BY_TEMPLATE: Record<TemplateId, { productName: string; brand
     brandColor: "#ec4899",
     scenes: DEFAULT_SCENES,
   },
+  MinimalistVertical: {
+    productName: "Premium Minimal",
+    brandColor: "#18181b",
+    scenes: DEFAULT_SCENES,
+  },
+  FlashSale: {
+    productName: "Deal Drop",
+    brandColor: "#ef4444",
+    scenes: DEFAULT_SCENES,
+  },
+  KineticType: {
+    productName: "Bold Words",
+    brandColor: "#e11d48",
+    scenes: DEFAULT_SCENES,
+  },
+  StoryCards: {
+    productName: "Story Product",
+    brandColor: "#8b5cf6",
+    scenes: DEFAULT_SCENES,
+  },
+  LuxuryShowcase: {
+    productName: "Prestige Collection",
+    brandColor: "#c9a96e",
+    scenes: DEFAULT_SCENES,
+  },
+  BeforeAfter: {
+    productName: "Transform Pro",
+    brandColor: "#10b981",
+    scenes: DEFAULT_SCENES,
+  },
 };
 
 export const RemotionRoot: React.FC = () => {

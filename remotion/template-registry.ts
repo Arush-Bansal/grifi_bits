@@ -3,6 +3,12 @@ import { ProductDemoTemplate } from "./templates/ProductDemoTemplate";
 import { MinimalistTemplate } from "./templates/MinimalistTemplate";
 import { DynamicSocialTemplate } from "./templates/DynamicSocialTemplate";
 import { SplitScreenTemplate } from "./templates/SplitScreenTemplate";
+import { MinimalistVerticalTemplate } from "./templates/MinimalistVerticalTemplate";
+import { FlashSaleTemplate } from "./templates/FlashSaleTemplate";
+import { KineticTypeTemplate } from "./templates/KineticTypeTemplate";
+import { StoryCardsTemplate } from "./templates/StoryCardsTemplate";
+import { LuxuryShowcaseTemplate } from "./templates/LuxuryShowcaseTemplate";
+import { BeforeAfterTemplate } from "./templates/BeforeAfterTemplate";
 import { DEFAULT_TEMPLATE_ID, TEMPLATE_METADATA, TemplateId } from "../lib/template-catalog";
 
 export type TemplateScene = {
@@ -53,6 +59,42 @@ export const TEMPLATE_REGISTRY: Record<TemplateId, TemplateConfig> = {
     width: 1920,
     height: 1080,
     sceneDurationSeconds: TEMPLATE_METADATA.SplitScreen.sceneDurationSeconds,
+  },
+  MinimalistVertical: {
+    component: MinimalistVerticalTemplate,
+    width: 1080,
+    height: 1920,
+    sceneDurationSeconds: TEMPLATE_METADATA.MinimalistVertical.sceneDurationSeconds,
+  },
+  FlashSale: {
+    component: FlashSaleTemplate,
+    width: 1080,
+    height: 1920,
+    sceneDurationSeconds: TEMPLATE_METADATA.FlashSale.sceneDurationSeconds,
+  },
+  KineticType: {
+    component: KineticTypeTemplate,
+    width: 1080,
+    height: 1920,
+    sceneDurationSeconds: TEMPLATE_METADATA.KineticType.sceneDurationSeconds,
+  },
+  StoryCards: {
+    component: StoryCardsTemplate,
+    width: 1080,
+    height: 1920,
+    sceneDurationSeconds: TEMPLATE_METADATA.StoryCards.sceneDurationSeconds,
+  },
+  LuxuryShowcase: {
+    component: LuxuryShowcaseTemplate,
+    width: 1920,
+    height: 1080,
+    sceneDurationSeconds: TEMPLATE_METADATA.LuxuryShowcase.sceneDurationSeconds,
+  },
+  BeforeAfter: {
+    component: BeforeAfterTemplate,
+    width: 1920,
+    height: 1080,
+    sceneDurationSeconds: TEMPLATE_METADATA.BeforeAfter.sceneDurationSeconds,
   },
 };
 
