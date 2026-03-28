@@ -1,5 +1,6 @@
 import { AbsoluteFill, Easing, OffthreadVideo, Sequence, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import React from "react";
+import { LogoOverlay } from "./shared/LogoOverlay";
 
 interface Scene {
   image_url?: string | null;
@@ -12,18 +13,26 @@ interface CountdownLaunchProps {
   scenes?: Scene[];
   productName?: string;
   brandColor?: string;
+  bgColor?: string;
+  fontFamily?: string;
+  logoUrl?: string;
+  ctaText?: string;
 }
 
 export const CountdownLaunchTemplate: React.FC<CountdownLaunchProps> = ({
   scenes = [],
   productName = "Product Name",
   brandColor = "#f43f5e",
+  bgColor,
+  fontFamily,
+  logoUrl,
+  ctaText,
 }) => {
   const { fps } = useVideoConfig();
   const sceneDuration = Math.round(2.8 * fps);
 
   return (
-    <AbsoluteFill style={{ backgroundColor: "#0a0610", fontFamily: "Arial, Helvetica, sans-serif", color: "#fff" }}>
+    <AbsoluteFill style={{ backgroundColor: bgColor || "#0a0610", fontFamily: fontFamily || "Arial, Helvetica, sans-serif", color: "#fff" }}>
       {scenes.map((scene, index) => (
         <Sequence key={scene.id} from={index * sceneDuration} durationInFrames={sceneDuration}>
           <CountdownScene
@@ -35,6 +44,7 @@ export const CountdownLaunchTemplate: React.FC<CountdownLaunchProps> = ({
           />
         </Sequence>
       ))}
+      <LogoOverlay logoUrl={logoUrl} />
     </AbsoluteFill>
   );
 };

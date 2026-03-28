@@ -16,12 +16,20 @@ interface MainAdProps {
   scenes?: MultiScene[];
   productName?: string;
   brandColor?: string;
+  bgColor?: string;
+  fontFamily?: string;
+  logoUrl?: string;
+  ctaText?: string;
 }
 
 export const MainAdTemplate: React.FC<MainAdProps> = ({
   scenes = [],
   productName = "Product Name",
   brandColor = "#f97316",
+  bgColor,
+  fontFamily,
+  logoUrl,
+  ctaText,
 }) => {
   const { fps, width, height } = useVideoConfig();
   const isLandscape = width > height;
@@ -37,8 +45,8 @@ export const MainAdTemplate: React.FC<MainAdProps> = ({
     <AbsoluteFill style={{ backgroundColor: "#000" }}>
       {scenes.map((scene, index) => {
         // Fallback rotation for standard templates if template_id is missing
-        const portraitFallbacks: TemplateId[] = ["ProductDemoVertical", "BentoGrid", "DynamicSocial", "Minimalist"];
-        const landscapeFallbacks: TemplateId[] = ["ProductDemo", "BentoGrid", "Minimalist", "SplitScreen"];
+        const portraitFallbacks: TemplateId[] = ["ProductDemoVertical", "DynamicSocial", "MinimalistVertical", "FlashSale"];
+        const landscapeFallbacks: TemplateId[] = ["ProductDemo", "Minimalist", "SplitScreen", "BeforeAfter"];
         
         const fallbackIds = isLandscape ? landscapeFallbacks : portraitFallbacks;
         const tid = scene.template_id || fallbackIds[index % fallbackIds.length];
@@ -47,8 +55,18 @@ export const MainAdTemplate: React.FC<MainAdProps> = ({
         const metadata = TEMPLATE_METADATA[tid];
         
         if (!component || !metadata) {
-          console.error(`MainAdTemplate: Missing component or metadata for template_id: "${tid}". original: "${scene.template_id}". Scene object:`, JSON.stringify(scene, null, 2));
-          return null;
+          console.error(`MainAdTemplate: Missing component or metadata for template_id: "${tid}". original: "${scene.template_id}".`);
+          // Render error fallback instead of returning null (which breaks frame offsets)
+          const fallbackDuration = Math.round(3.0 * fps);
+          const errorStart = currentFrame;
+          currentFrame += fallbackDuration;
+          return (
+            <Sequence key={`error-${index}`} from={errorStart} durationInFrames={fallbackDuration}>
+              <AbsoluteFill style={{ backgroundColor: "#1a1a2e", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <p style={{ color: "#fff", fontSize: 24, fontFamily: "Arial", opacity: 0.6 }}>Scene {index + 1}</p>
+              </AbsoluteFill>
+            </Sequence>
+          );
         }
 
         const durationInFrames = Math.round(metadata.sceneDurationSeconds * fps);
@@ -67,6 +85,10 @@ export const MainAdTemplate: React.FC<MainAdProps> = ({
               scenes={[scene]}
               productName={productName}
               brandColor={brandColor}
+              bgColor={bgColor}
+              fontFamily={fontFamily}
+              logoUrl={logoUrl}
+              ctaText={ctaText}
             />
           </Sequence>
         );

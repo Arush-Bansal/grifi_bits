@@ -1,5 +1,6 @@
 import { AbsoluteFill, Easing, OffthreadVideo, Sequence, interpolate, useCurrentFrame, useVideoConfig } from "remotion";
 import React from "react";
+import { LogoOverlay } from "./shared/LogoOverlay";
 
 interface Scene {
   image_url?: string | null;
@@ -12,32 +13,41 @@ interface ProductDemoProps {
   scenes?: Scene[];
   productName?: string;
   brandColor?: string;
+  bgColor?: string;
+  fontFamily?: string;
+  logoUrl?: string;
+  ctaText?: string;
 }
 
 export const ProductDemoTemplate: React.FC<ProductDemoProps> = ({
   scenes = [],
   productName = "Product Name",
   brandColor = "#f97316",
+  bgColor,
+  fontFamily,
+  logoUrl,
+  ctaText,
 }) => {
   const { fps, width, height } = useVideoConfig();
   const sceneDurationSeconds = width > height ? 3.4 : 3.2;
   const sceneDuration = Math.round(sceneDurationSeconds * fps);
 
   return (
-    <AbsoluteFill style={{ backgroundColor: "#07090c", color: "white", fontFamily: "Arial, Helvetica, sans-serif" }}>
+    <AbsoluteFill style={{ backgroundColor: bgColor || "#07090c", color: "white", fontFamily: fontFamily || "Arial, Helvetica, sans-serif" }}>
       {scenes.map((scene, index) => {
         const startFrame = index * sceneDuration;
         return (
           <Sequence key={scene.id} from={startFrame} durationInFrames={sceneDuration}>
-            <SceneContent 
-              scene={scene} 
-              productName={productName} 
-              brandColor={brandColor} 
+            <SceneContent
+              scene={scene}
+              productName={productName}
+              brandColor={brandColor}
               isLast={index === scenes.length - 1}
             />
           </Sequence>
         );
       })}
+      <LogoOverlay logoUrl={logoUrl} />
     </AbsoluteFill>
   );
 };

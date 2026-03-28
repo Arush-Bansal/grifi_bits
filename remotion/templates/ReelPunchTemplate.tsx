@@ -1,5 +1,6 @@
 import { AbsoluteFill, Easing, OffthreadVideo, Sequence, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import React from "react";
+import { LogoOverlay } from "./shared/LogoOverlay";
 
 interface Scene {
   image_url?: string | null;
@@ -12,18 +13,26 @@ interface ReelPunchProps {
   scenes?: Scene[];
   productName?: string;
   brandColor?: string;
+  bgColor?: string;
+  fontFamily?: string;
+  logoUrl?: string;
+  ctaText?: string;
 }
 
 export const ReelPunchTemplate: React.FC<ReelPunchProps> = ({
   scenes = [],
   productName = "Product Name",
   brandColor = "#22c55e",
+  bgColor,
+  fontFamily,
+  logoUrl,
+  ctaText,
 }) => {
   const { fps } = useVideoConfig();
   const sceneDuration = Math.round(2.4 * fps);
 
   return (
-    <AbsoluteFill style={{ backgroundColor: "#000", fontFamily: "Arial Black, Arial, sans-serif", color: "#fff" }}>
+    <AbsoluteFill style={{ backgroundColor: bgColor || "#000", fontFamily: fontFamily || "Arial Black, Arial, sans-serif", color: "#fff" }}>
       {scenes.map((scene, index) => (
         <Sequence key={scene.id} from={index * sceneDuration} durationInFrames={sceneDuration}>
           <PunchScene
@@ -35,6 +44,7 @@ export const ReelPunchTemplate: React.FC<ReelPunchProps> = ({
           />
         </Sequence>
       ))}
+      <LogoOverlay logoUrl={logoUrl} />
     </AbsoluteFill>
   );
 };

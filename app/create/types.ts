@@ -29,6 +29,12 @@ export interface VideoSettings {
   music_offset?: number;
   final_video_url?: string;
   captions_enabled?: boolean;
+  bg_color?: string;
+  font_family?: string;
+  logo_url?: string;
+  cta_text?: string;
+  custom_music_url?: string;
+  custom_music_name?: string;
 }
 
 export interface Scene {

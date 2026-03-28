@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Label } from "@/components/ui/label";
-import { Smartphone, Monitor } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Smartphone, Monitor, Palette } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { VideoSettings } from "../../types";
 import { TemplateId } from "@/lib/template-catalog";
@@ -112,6 +113,33 @@ export function VideoSettingsSidebar({ settings, setSettings }: VideoSettingsSid
               <span>Medium</span>
               <span>Long</span>
             </div>
+          </div>
+        </div>
+
+        {/* Brand Color */}
+        <div className="space-y-4">
+          <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Brand Color</Label>
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <input
+                type="color"
+                value={settings.brand_color || "#f97316"}
+                onChange={(e) => setSettings((prev) => ({ ...prev, brand_color: e.target.value }))}
+                className="h-10 w-10 cursor-pointer rounded-lg border border-border/50 bg-transparent p-0.5"
+              />
+            </div>
+            <Input
+              value={settings.brand_color || "#f97316"}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (/^#[0-9a-fA-F]{0,6}$/.test(val)) {
+                  setSettings((prev) => ({ ...prev, brand_color: val }));
+                }
+              }}
+              placeholder="#f97316"
+              className="h-10 w-28 font-mono text-sm"
+            />
+            <Palette className="h-4 w-4 text-muted-foreground" />
           </div>
         </div>
 

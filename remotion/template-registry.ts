@@ -15,6 +15,10 @@ export type TemplateConfig = {
     scenes?: TemplateScene[];
     productName?: string;
     brandColor?: string;
+    bgColor?: string;
+    fontFamily?: string;
+    logoUrl?: string;
+    ctaText?: string;
   }>;
   width: number;
   height: number;

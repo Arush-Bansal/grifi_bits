@@ -10,6 +10,10 @@ export interface ClientRenderParams {
   scenes: Scene[];
   productName: string;
   brandColor?: string;
+  bgColor?: string;
+  fontFamily?: string;
+  logoUrl?: string;
+  ctaText?: string;
   templateId: TemplateId;
   onProgress?: (progress: number) => void;
 }
@@ -18,6 +22,10 @@ export async function renderProductDemoOnClient({
   scenes,
   productName,
   brandColor,
+  bgColor,
+  fontFamily,
+  logoUrl,
+  ctaText,
   templateId,
   onProgress,
 }: ClientRenderParams): Promise<string> {
@@ -27,12 +35,16 @@ export async function renderProductDemoOnClient({
   const config = resolveTemplateConfig(templateId);
   const fps = 30;
   
-  // Replication of Root.tsx duration logic for consistency
+  // Must match MainAdTemplate.tsx fallback arrays exactly
+  const portraitFallbacks: TemplateId[] = ["ProductDemoVertical", "DynamicSocial", "MinimalistVertical", "FlashSale"];
+  const landscapeFallbacks: TemplateId[] = ["ProductDemo", "Minimalist", "SplitScreen", "BeforeAfter"];
+
   let durationInFrames = 0;
   if (templateId === "MainAd" || templateId === "MainAdLandscape") {
     const isLandscape = templateId === "MainAdLandscape";
-    scenes.forEach((scene: Scene) => {
-      const tid = scene.template_id || (isLandscape ? "ProductDemo" : "ProductDemoVertical");
+    const fallbackIds = isLandscape ? landscapeFallbacks : portraitFallbacks;
+    scenes.forEach((scene: Scene, index: number) => {
+      const tid = scene.template_id || fallbackIds[index % fallbackIds.length];
       const sc = resolveTemplateConfig(tid as TemplateId);
       durationInFrames += Math.round(sc.sceneDurationSeconds * fps);
     });
@@ -46,6 +58,10 @@ export async function renderProductDemoOnClient({
     scenes,
     productName,
     brandColor,
+    bgColor,
+    fontFamily,
+    logoUrl,
+    ctaText,
   };
 
   try {

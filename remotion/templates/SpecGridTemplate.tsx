@@ -1,5 +1,6 @@
 import { AbsoluteFill, Easing, OffthreadVideo, Sequence, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import React from "react";
+import { LogoOverlay } from "./shared/LogoOverlay";
 
 interface Scene {
   image_url?: string | null;
@@ -12,18 +13,26 @@ interface SpecGridProps {
   scenes?: Scene[];
   productName?: string;
   brandColor?: string;
+  bgColor?: string;
+  fontFamily?: string;
+  logoUrl?: string;
+  ctaText?: string;
 }
 
 export const SpecGridTemplate: React.FC<SpecGridProps> = ({
   scenes = [],
   productName = "Product Name",
   brandColor = "#06b6d4",
+  bgColor,
+  fontFamily,
+  logoUrl,
+  ctaText,
 }) => {
   const { fps } = useVideoConfig();
   const sceneDuration = Math.round(3.8 * fps);
 
   return (
-    <AbsoluteFill style={{ backgroundColor: "#040810", fontFamily: "Arial, Helvetica, sans-serif", color: "#fff" }}>
+    <AbsoluteFill style={{ backgroundColor: bgColor || "#040810", fontFamily: fontFamily || "Arial, Helvetica, sans-serif", color: "#fff" }}>
       {scenes.map((scene, index) => (
         <Sequence key={scene.id} from={index * sceneDuration} durationInFrames={sceneDuration}>
           <SpecScene
@@ -35,6 +44,7 @@ export const SpecGridTemplate: React.FC<SpecGridProps> = ({
           />
         </Sequence>
       ))}
+      <LogoOverlay logoUrl={logoUrl} />
     </AbsoluteFill>
   );
 };

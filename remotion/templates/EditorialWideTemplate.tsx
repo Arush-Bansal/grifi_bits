@@ -1,5 +1,6 @@
 import { AbsoluteFill, Easing, OffthreadVideo, Sequence, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import React from "react";
+import { LogoOverlay } from "./shared/LogoOverlay";
 
 interface Scene {
   image_url?: string | null;
@@ -12,12 +13,20 @@ interface EditorialWideProps {
   scenes?: Scene[];
   productName?: string;
   brandColor?: string;
+  bgColor?: string;
+  fontFamily?: string;
+  logoUrl?: string;
+  ctaText?: string;
 }
 
 export const EditorialWideTemplate: React.FC<EditorialWideProps> = ({
   scenes = [],
   productName = "Product Name",
   brandColor = "#171717",
+  bgColor,
+  fontFamily,
+  logoUrl,
+  ctaText,
 }) => {
   const { fps } = useVideoConfig();
   const sceneDuration = Math.round(4.0 * fps);
@@ -25,8 +34,8 @@ export const EditorialWideTemplate: React.FC<EditorialWideProps> = ({
   return (
     <AbsoluteFill
       style={{
-        backgroundColor: "#f5f0e6",
-        fontFamily: "Georgia, Times New Roman, serif",
+        backgroundColor: bgColor || "#f5f0e6",
+        fontFamily: fontFamily || "Georgia, Times New Roman, serif",
         color: "#1a1a1a",
       }}
     >
@@ -41,6 +50,7 @@ export const EditorialWideTemplate: React.FC<EditorialWideProps> = ({
           />
         </Sequence>
       ))}
+      <LogoOverlay logoUrl={logoUrl} />
     </AbsoluteFill>
   );
 };

@@ -1,5 +1,6 @@
 import { AbsoluteFill, Easing, OffthreadVideo, Sequence, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import React from "react";
+import { LogoOverlay } from "./shared/LogoOverlay";
 
 interface Scene {
   image_url?: string | null;
@@ -12,18 +13,26 @@ interface UnboxRevealProps {
   scenes?: Scene[];
   productName?: string;
   brandColor?: string;
+  bgColor?: string;
+  fontFamily?: string;
+  logoUrl?: string;
+  ctaText?: string;
 }
 
 export const UnboxRevealTemplate: React.FC<UnboxRevealProps> = ({
   scenes = [],
   productName = "Product Name",
   brandColor = "#a855f7",
+  bgColor,
+  fontFamily,
+  logoUrl,
+  ctaText,
 }) => {
   const { fps } = useVideoConfig();
   const sceneDuration = Math.round(3.2 * fps);
 
   return (
-    <AbsoluteFill style={{ backgroundColor: "#08060e", fontFamily: "Arial, Helvetica, sans-serif", color: "#fff" }}>
+    <AbsoluteFill style={{ backgroundColor: bgColor || "#08060e", fontFamily: fontFamily || "Arial, Helvetica, sans-serif", color: "#fff" }}>
       {scenes.map((scene, index) => (
         <Sequence key={scene.id} from={index * sceneDuration} durationInFrames={sceneDuration}>
           <RevealScene
@@ -35,6 +44,7 @@ export const UnboxRevealTemplate: React.FC<UnboxRevealProps> = ({
           />
         </Sequence>
       ))}
+      <LogoOverlay logoUrl={logoUrl} />
     </AbsoluteFill>
   );
 };

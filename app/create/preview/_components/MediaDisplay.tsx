@@ -61,6 +61,10 @@ export function MediaDisplay({
             scenes: scenes || [],
             productName: productName || "Product Name",
             brandColor: settings?.brand_color || "#f97316",
+            bgColor: settings?.bg_color,
+            fontFamily: settings?.font_family,
+            logoUrl: settings?.logo_url,
+            ctaText: settings?.cta_text,
           }}
           durationInFrames={durationInFrames}
           fps={30}

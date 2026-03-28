@@ -1,5 +1,6 @@
 import { AbsoluteFill, Easing, OffthreadVideo, Sequence, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import React from "react";
+import { LogoOverlay } from "./shared/LogoOverlay";
 
 interface Scene {
   image_url?: string | null;
@@ -12,18 +13,26 @@ interface TestimonialProofProps {
   scenes?: Scene[];
   productName?: string;
   brandColor?: string;
+  bgColor?: string;
+  fontFamily?: string;
+  logoUrl?: string;
+  ctaText?: string;
 }
 
 export const TestimonialProofTemplate: React.FC<TestimonialProofProps> = ({
   scenes = [],
   productName = "Product Name",
   brandColor = "#f59e0b",
+  bgColor,
+  fontFamily,
+  logoUrl,
+  ctaText,
 }) => {
   const { fps } = useVideoConfig();
   const sceneDuration = Math.round(3.4 * fps);
 
   return (
-    <AbsoluteFill style={{ backgroundColor: "#0c0a08", fontFamily: "Arial, Helvetica, sans-serif" }}>
+    <AbsoluteFill style={{ backgroundColor: bgColor || "#0c0a08", fontFamily: fontFamily || "Arial, Helvetica, sans-serif" }}>
       {scenes.map((scene, index) => (
         <Sequence key={scene.id} from={index * sceneDuration} durationInFrames={sceneDuration}>
           <TestimonialScene
@@ -35,6 +44,7 @@ export const TestimonialProofTemplate: React.FC<TestimonialProofProps> = ({
           />
         </Sequence>
       ))}
+      <LogoOverlay logoUrl={logoUrl} />
     </AbsoluteFill>
   );
 };

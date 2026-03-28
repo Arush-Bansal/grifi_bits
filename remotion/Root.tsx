@@ -272,11 +272,14 @@ export const RemotionRoot: React.FC = () => {
               const currentScenes = props?.scenes || defaultProps?.scenes;
               
               if ((id === "MainAd" || id === "MainAdLandscape") && currentScenes) {
+                const isLandscape = id === "MainAdLandscape";
+                const portraitFallbacks: TemplateId[] = ["ProductDemoVertical", "DynamicSocial", "MinimalistVertical", "FlashSale"];
+                const landscapeFallbacks: TemplateId[] = ["ProductDemo", "Minimalist", "SplitScreen", "BeforeAfter"];
+                const fallbackIds = isLandscape ? landscapeFallbacks : portraitFallbacks;
+
                 let totalFrames = 0;
-                currentScenes.forEach((scene: any) => {
-                   // Match the fallback logic in MainAdTemplate
-                   const isLandscape = id === "MainAdLandscape";
-                   const tid = scene.template_id || (isLandscape ? "ProductDemo" : "ProductDemoVertical");
+                currentScenes.forEach((scene: any, index: number) => {
+                   const tid = scene.template_id || fallbackIds[index % fallbackIds.length];
                    const sceneConfig = resolveTemplateConfig(tid);
                    totalFrames += Math.round(sceneConfig.sceneDurationSeconds * 30);
                 });
