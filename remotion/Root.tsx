@@ -204,6 +204,41 @@ const DEFAULT_PROPS_BY_TEMPLATE: Record<TemplateId, { productName: string; brand
     brandColor: "#78350f",
     scenes: DEFAULT_SCENES,
   },
+  TestimonialProof: {
+    productName: "Glow Serum",
+    brandColor: "#f59e0b",
+    scenes: DEFAULT_SCENES,
+  },
+  VersusCompare: {
+    productName: "ProMax Shield",
+    brandColor: "#3b82f6",
+    scenes: DEFAULT_SCENES,
+  },
+  UnboxReveal: {
+    productName: "Mystery Box",
+    brandColor: "#a855f7",
+    scenes: DEFAULT_SCENES,
+  },
+  SpecGrid: {
+    productName: "TechCore X",
+    brandColor: "#06b6d4",
+    scenes: DEFAULT_SCENES,
+  },
+  CountdownLaunch: {
+    productName: "LaunchPad",
+    brandColor: "#f43f5e",
+    scenes: DEFAULT_SCENES,
+  },
+  EditorialWide: {
+    productName: "Maison Craft",
+    brandColor: "#171717",
+    scenes: DEFAULT_SCENES,
+  },
+  ReelPunch: {
+    productName: "Hype Drop",
+    brandColor: "#22c55e",
+    scenes: DEFAULT_SCENES,
+  },
   MainAd: {
     productName: "Main Ad",
     brandColor: "#f97316",

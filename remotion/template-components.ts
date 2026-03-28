@@ -37,6 +37,13 @@ import { KineticTypeTemplate } from "./templates/KineticTypeTemplate";
 import { StoryCardsTemplate } from "./templates/StoryCardsTemplate";
 import { LuxuryShowcaseTemplate } from "./templates/LuxuryShowcaseTemplate";
 import { BeforeAfterTemplate } from "./templates/BeforeAfterTemplate";
+import { TestimonialProofTemplate } from "./templates/TestimonialProofTemplate";
+import { VersusCompareTemplate } from "./templates/VersusCompareTemplate";
+import { UnboxRevealTemplate } from "./templates/UnboxRevealTemplate";
+import { SpecGridTemplate } from "./templates/SpecGridTemplate";
+import { CountdownLaunchTemplate } from "./templates/CountdownLaunchTemplate";
+import { EditorialWideTemplate } from "./templates/EditorialWideTemplate";
+import { ReelPunchTemplate } from "./templates/ReelPunchTemplate";
 import { TemplateId } from "../lib/template-catalog";
 
 export const TEMPLATE_COMPONENTS: Partial<Record<TemplateId, React.ComponentType<any>>> = {
@@ -79,4 +86,11 @@ export const TEMPLATE_COMPONENTS: Partial<Record<TemplateId, React.ComponentType
   StoryCards: StoryCardsTemplate,
   LuxuryShowcase: LuxuryShowcaseTemplate,
   BeforeAfter: BeforeAfterTemplate,
+  TestimonialProof: TestimonialProofTemplate,
+  VersusCompare: VersusCompareTemplate,
+  UnboxReveal: UnboxRevealTemplate,
+  SpecGrid: SpecGridTemplate,
+  CountdownLaunch: CountdownLaunchTemplate,
+  EditorialWide: EditorialWideTemplate,
+  ReelPunch: ReelPunchTemplate,
 };
